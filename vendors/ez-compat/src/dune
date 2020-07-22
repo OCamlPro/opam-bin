@@ -1,0 +1,14 @@
+(* -*- tuareg -*- *)
+
+let () =
+Jbuild_plugin.V1.send
+"(library
+ (public_name ez-compat)
+ (name ezCompat)
+ (wrapped false)
+ (libraries
+    (select ezCompat.ml from ( -> ezCompat.4_03_0.ml))
+    unix
+  )
+)
+"

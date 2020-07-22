@@ -1,0 +1,20 @@
+; Source files:
+;
+; opambinGlobals.ml : constants and paths
+; opambinMisc.ml : useful misc functions
+; opambinConfig.ml : configuration file and options
+; opambinCommandXXX.ml : sub-commands
+;    opambinCommandInstall.ml : command to install opam-bin hooks in OPAM
+;    opambinCommandUninstall : command to uninstall opam-bin hooks
+;    opambinCommandConfig.ml : command to configure opam-bin options
+;    opambinCommandPreBuild.ml : pre-build hook
+;    opambinCommandPreRemove.ml : pre-remove hook
+;    opambinCommandPostInstall.ml : post-install hook
+; opambin.ml : main
+
+(executable
+ (name opambin)
+ (public_name opam-bin)
+ (libraries
+        opam-file-format ez-cmdliner ez-file ez-config)
+)

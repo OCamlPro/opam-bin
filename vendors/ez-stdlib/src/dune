@@ -1,0 +1,6 @@
+(library
+ (public_name ez-stdlib)
+ (name ezStdlib)
+ (wrapped false)
+ (libraries ez-compat)
+  )

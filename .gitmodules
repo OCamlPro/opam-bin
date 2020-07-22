@@ -1,0 +1,3 @@
+[submodule "vendors/ez-cmdliner"]
+	path = vendors/ez-cmdliner
+	url = https://github.com/ocamlpro/ez-cmdliner
