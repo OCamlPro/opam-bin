@@ -8,15 +8,11 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open EzConfig.OP
+
 let config_filename = OpambinGlobals.config_file
 let config = EzConfig.create_config_file
     ( EzFile.Abstract.of_string config_filename )
-
-let () =
-  try
-    EzConfig.load config
-  with _ ->
-    Printf.eprintf "No configuration file.\n%!"
 
 let save () =
   EzConfig.save_with_help config;
@@ -46,6 +42,12 @@ let rsync_url = EzConfig.create_option config
     (EzConfig.option_option EzConfig.string_option)
     None
 
+let enabled = EzConfig.create_option config
+    [ "enabled" ]
+    [ "Whether we do something or not" ]
+    EzConfig.bool_option
+    true
+
 let create_enabled = EzConfig.create_option config
     [ "create_enabled" ]
     [ "Whether we produce binary packages after installing source packages" ]
@@ -59,3 +61,24 @@ let cache_enabled = EzConfig.create_option config
     ]
     EzConfig.bool_option
     true
+
+let current_version = 1
+(* This option should be used in the future to automatically upgrade
+   configuration *)
+let version = EzConfig.create_option config
+    [ "version" ]
+    [ "Version of the configuration file" ]
+    EzConfig.int_option
+    current_version
+
+let () =
+  try
+    EzConfig.load config
+  with _ ->
+    Printf.eprintf "No configuration file.\n%!"
+
+let () =
+  if !!version < current_version then begin
+    version =:= current_version ;
+    save ()
+  end

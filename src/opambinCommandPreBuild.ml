@@ -193,7 +193,8 @@ let action args =
     ( String.concat "\n    " ( "pre-build" :: args) ) ;
   match args with
   | name :: version :: package_uid :: depends :: [] ->
-    if not !!OpambinConfig.cache_enabled then begin
+    if not !!OpambinConfig.enabled
+    || not !!OpambinConfig.cache_enabled then begin
       OpambinMisc.global_log "cache is disabled";
       EzFile.write_file OpambinGlobals.marker_source
         "cache is disabled";

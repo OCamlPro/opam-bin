@@ -115,6 +115,21 @@ let cmd = {
     Ezcmd.info
       "opposite of --enable-create";
 
+
+    [ "enable" ], Arg.Unit (fun () ->
+        OpambinConfig.enabled =:= true ;
+        need_saving := true;
+      ),
+    Ezcmd.info
+      "enable binary packages";
+
+    [ "disable" ], Arg.Unit (fun () ->
+        OpambinConfig.enabled =:= false ;
+        need_saving := true;
+      ),
+    Ezcmd.info
+      "disable binary packages";
+
   ];
   cmd_man = [];
   cmd_doc = "configure options";

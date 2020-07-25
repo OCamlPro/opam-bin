@@ -11,7 +11,7 @@
 open EzCompat
 open Ezcmd.TYPES
 open EzFile.OP
-open SimpleConfig.OP
+open EzConfig.OP
 open OpamParserTypes
 
 let cmd_name = "post-install"
@@ -105,7 +105,8 @@ let compute_hash ~name ~version ~package_uid ~depends =
   ( short source_md5, depends, !dependset, !missing_versions )
 
 let commit ~name ~version ~package_uid ~depends files =
-  if not !!OpambinConfig.create_enabled then
+  if not !!OpambinConfig.enabled
+  || not !!OpambinConfig.create_enabled then
     OpambinMisc.global_log "package %s: create disabled" name
   else
     let opam_switch_prefix = OpambinGlobals.opam_switch_prefix () in
