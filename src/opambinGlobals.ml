@@ -39,17 +39,39 @@ let opambin_store_repo_packages_dir = opambin_store_repo_dir // "packages"
 let opam_config_file = opam_dir // "config"
 let opam_config_file_backup = opam_config_file ^ ".1"
 
-let opambin_switch_temp_dir ~opam_switch_prefix =
-  opam_switch_prefix // ".opam-switch" // command
+let opam_switch_prefix =
+  lazy (
+    try
+      Sys.getenv "OPAM_SWITCH_PREFIX"
+    with Not_found ->
+      Printf.eprintf
+        "Error in %s: OPAM_SWITCH_PREFIX not defined.\n%!"
+        command ;
+      exit 2
+  )
+let opam_switch_prefix () = Lazy.force opam_switch_prefix
+
+let opam_switch_dir = opam_switch_prefix
+let opam_switch_internal_dir () =
+  opam_switch_dir () // ".opam-switch"
+
+let opam_switch_internal_config_dir () =
+  opam_switch_internal_dir () // "config"
+
+let opambin_switch_temp_dir () =
+  opam_switch_internal_dir () // command
 
 (* Where bin versions are stored to solve deps *)
-let opambin_switch_packages_dir ~opam_switch_prefix =
-  opam_switch_prefix // "etc" // command // "packages"
+let opambin_switch_packages_dir () =
+  opam_switch_dir () // "etc" // command // "packages"
+
 
 (* names of the files created in the package `files` sub-dir *)
 let package_version = "bin-package.version"
 let package_config = "bin-package.config"
-let package_cached = "bin-package.cached"
+
+let marker_cached = "_bincache"
+let marker_source = "_binexec"
 
 let config_file = opambin_dir // "config"
 

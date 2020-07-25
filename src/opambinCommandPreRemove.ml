@@ -16,13 +16,12 @@ let action args =
     ( String.concat "\n    " ( "pre-build" :: args) ) ;
   match args with
   | name :: _version :: _package_uid :: _depends :: [] ->
-    let opam_switch_prefix = OpambinMisc.opam_switch_prefix () in
     List.iter (fun file_name ->
         try
           Sys.remove file_name
         with _ -> ()
       ) [
-      OpambinGlobals.opambin_switch_packages_dir ~opam_switch_prefix // name
+      OpambinGlobals.opambin_switch_packages_dir () // name
     ]
   | _ ->
     Printf.eprintf

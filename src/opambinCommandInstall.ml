@@ -63,11 +63,19 @@ archive-mirrors: "../../cache"
   EzFile.write_file ( OpambinGlobals.opambin_store_repo_dir // "version" )
     "0.9.0";
 
-  OpambinMisc.call
-    [| "opam"; "remote" ; "add" ; "local-bin";
-       "--all"; "--set-default";
-       Printf.sprintf "file://%s"
-         OpambinGlobals.opambin_store_repo_dir |]
+  let local_bin = "local-bin" in
+  if Sys.file_exists (OpambinGlobals.opam_repo_dir // local_bin ) then
+    OpambinMisc.call
+      [| "opam"; "remote" ; "set-url" ; local_bin;
+         "--all"; "--set-default";
+         Printf.sprintf "file://%s"
+           OpambinGlobals.opambin_store_repo_dir |]
+  else
+    OpambinMisc.call
+      [| "opam"; "remote" ; "add" ; local_bin;
+         "--all"; "--set-default";
+         Printf.sprintf "file://%s"
+           OpambinGlobals.opambin_store_repo_dir |]
 
 let cmd = {
   cmd_name ;

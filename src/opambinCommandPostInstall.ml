@@ -68,12 +68,12 @@ let iter_value_list v f =
   | v -> iter_value v
 
 let digest s = Digest.to_hex ( Digest.string s)
+let short s = String.sub s 0 8
 
 let compute_hash ~name ~version ~package_uid ~depends =
   let missing_versions = ref [] in
-  let opam_switch_prefix = OpambinMisc.opam_switch_prefix () in
   let packages_dir =
-    OpambinGlobals.opambin_switch_packages_dir ~opam_switch_prefix in
+    OpambinGlobals.opambin_switch_packages_dir () in
   OpambinMisc.global_log "depends: %S" depends;
   let depends = EzString.split depends ' ' in
   let dependset = ref EzCompat.StringSet.empty in
@@ -102,31 +102,29 @@ let compute_hash ~name ~version ~package_uid ~depends =
     digest (
       Printf.sprintf "%s.%s|%s|%s"
         name version package_uid (String.concat "," depends_nv)) in
-  ( source_md5, depends, !dependset, !missing_versions )
+  ( short source_md5, depends, !dependset, !missing_versions )
 
 let commit ~name ~version ~package_uid ~depends files =
   if not !!OpambinConfig.create_enabled then
     OpambinMisc.global_log "package %s: create disabled" name
   else
-    let opam_switch_prefix = OpambinMisc.opam_switch_prefix () in
+    let opam_switch_prefix = OpambinGlobals.opam_switch_prefix () in
     let packages_dir =
-      OpambinGlobals.opambin_switch_packages_dir ~opam_switch_prefix in
+      OpambinGlobals.opambin_switch_packages_dir () in
     if Sys.file_exists ( packages_dir // name ) then
       OpambinMisc.global_log "package %s: already a binary archive..." name
     else
       let nv = Printf.sprintf "%s.%s" name version in
 
       OpambinMisc.global_log "creating binary archive...";
-      let temp_dir = OpambinGlobals.opambin_switch_temp_dir ~opam_switch_prefix in
+      let temp_dir = OpambinGlobals.opambin_switch_temp_dir () in
       EzFile.make_dir ~p:true temp_dir ;
       let binary_archive = temp_dir // name ^ "-bin.tar.gz" in
       Unix.chdir opam_switch_prefix;
-      OpambinMisc.tar_zcf
-        ~prefix:OpambinGlobals.package_cached binary_archive files;
+      OpambinMisc.tar_zcf ~prefix:"prefix" binary_archive files;
       Unix.chdir OpambinGlobals.curdir;
       OpambinMisc.global_log "create binary archive DONE";
 
-      let short s = String.sub s 0 8 in
       let bin_md5 =
         digest ( EzFile.read_file binary_archive )
       in
@@ -141,7 +139,7 @@ let commit ~name ~version ~package_uid ~depends files =
         exit 2
       end;
       let final_md5 = Printf.sprintf "%s+%s"
-          ( short source_md5 ) ( short bin_md5 ) in
+          source_md5 ( short bin_md5 ) in
       let new_version = Printf.sprintf "%s+bin+%s" version final_md5 in
       EzFile.make_dir ~p:true packages_dir ;
       let oc = open_out ( packages_dir // name ) in
@@ -193,7 +191,8 @@ let commit ~name ~version ~package_uid ~depends files =
       close_out oc;
 
       let config_file =
-        opam_switch_prefix // ".opam-switch" // "config" // ( name ^ ".config" )
+        OpambinGlobals.opam_switch_internal_config_dir ()
+        // ( name ^ ".config" )
       in
       let has_config_file =
         if Sys.file_exists config_file then begin

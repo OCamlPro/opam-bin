@@ -17,15 +17,6 @@ let append_text_file file s =
   output_string oc s;
   close_out oc
 
-let opam_switch_prefix () =
-  try
-    Sys.getenv "OPAM_SWITCH_PREFIX"
-  with Not_found ->
-    Printf.eprintf
-      "Error in %s: OPAM_SWITCH_PREFIX not defined.\n%!"
-      OpambinGlobals.command ;
-    exit 2
-
 let date () =
   let tm = Unix.localtime (Unix.gettimeofday ()) in
   Printf.sprintf "%4d/%02d/%02d:%02d:%02d:%02d"
@@ -83,7 +74,7 @@ let tar_zcf ?prefix archive files =
         | None -> args
         | Some prefix ->
           "--transform"  ::
-          Printf.sprintf "s|^|%s/|" prefix ::
+          Printf.sprintf "s|^|%s/|S" prefix ::
           args
       in
       let args =

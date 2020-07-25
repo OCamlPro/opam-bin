@@ -40,4 +40,5 @@ let () =
     with
       exn ->
       OpambinMisc.global_log "fatal exception %s"
-        (Printexc.to_string exn)
+        (Printexc.to_string exn);
+      exit 2

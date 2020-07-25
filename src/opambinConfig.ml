@@ -58,4 +58,4 @@ let cache_enabled = EzConfig.create_option config
       "the corresponding source package."
     ]
     EzConfig.bool_option
-    false (* Not yet ready *)
+    true
