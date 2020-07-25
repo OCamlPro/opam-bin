@@ -14,11 +14,8 @@ open EzFile.OP
 
 let cmd_name = "wrap-install"
 
-(* We first perform the same thing as `wrap-build`, to be sure it was
-   done at least once. At this point, it returns true if it is a
-   source archive and we must perform the actions.
-   If it returns false, we check:
-   * if `bin-package.cached/` exists, we have found a binary archive in the
+(* We check:
+   * if `_bincached/` exists, we have found a binary archive in the
      cache. We go in that directory where we should find:
      * `bin-package.version`: we should move this file to
        "%{prefix}%/etc/opam-bin/packages/%{name}%". Once the file has been
@@ -28,6 +25,10 @@ let cmd_name = "wrap-install"
       "%{prefix}%/.opam-switch/config/%{name}%.config"
      * a directory: it is the content of the binary archive, to be copied
       into "%{prefix}%"
+   * if `_binsource` exists, we are in a source archive and should exec
+      the installation steps
+
+   NOTE: we could move the installation part in a pre-install command.
  *)
 
 let action args =

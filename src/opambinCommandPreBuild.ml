@@ -30,7 +30,7 @@ let find_archive_in_cache ~repo ~md5 =
     | Some file -> Some file
     | None ->
       ignore repo;
-    (*
+    (* TODO: lookup repo specific caches ?
 (* We should read .opam/repos-config to get the URL of the repository:
 ```
 repositories: [
@@ -61,11 +61,18 @@ archive-mirrors: "../../cache"
 *)
       None
 
-let wget _src =
-  assert false
-(*
-+ /usr/bin/curl "--write-out" "%{http_code}\\n" "--retry" "3" "--retry-delay" "2" "--user-agent" "opam/2.0.5" "-L" "-o" "/home/lefessan/.opam/test_bin/.opam-switch/sources/irmin.2.1.0/irmin-2.1.0.tbz.part" "https://github.com/mirage/irmin/releases/download/2.1.0/irmin-2.1.0.tbz"
-*)
+let wget ~url ~md5 =
+  let output = OpambinGlobals.opambin_switch_temp_dir () // md5 in
+  OpambinMisc.call [| "curl" ;
+          "--write-out" ; "%{http_code}\\n" ;
+          "--retry" ; "3" ;
+          "--retry-delay" ; "2" ;
+          "--user-agent" ; "opam-bin/2.0.5" ;
+          "-L" ;
+          "-o" ; output ;
+          url
+       |];
+  Some output
 
 let check_cached_binary_archive ~name ~repo ~package =
   OpambinMisc.global_log "found binary package in repo %s" repo;
@@ -100,15 +107,20 @@ let check_cached_binary_archive ~name ~repo ~package =
         | None ->
           Printf.eprintf "error: url.src not found\n%!";
           exit 2
-        | Some src ->
-          match wget src with
+        | Some url ->
+          match wget ~url ~md5 with
           | None ->
-            Printf.eprintf "Error: could not download archive at %S\n%!" src;
+            Printf.eprintf "Error: could not download archive at %S\n%!" url;
             exit 2
           | Some binary_archive ->
             let digest = Digest.file binary_archive in
             assert ( Digest.to_hex digest = md5 );
-            Some binary_archive
+            let cache_dir =
+              OpambinGlobals.opam_cache_dir //
+              "md5" // String.sub md5 0 2 in
+            let cached_file = cache_dir // md5 in
+            Sys.rename binary_archive cached_file ;
+            Some cached_file
   in
   EzFile.make_dir OpambinGlobals.marker_cached ;
   Unix.chdir OpambinGlobals.marker_cached ;

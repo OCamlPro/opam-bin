@@ -16,11 +16,14 @@ The framework is composed of:
   available here: https://github.com/ocamlpro/opam-repository-relocatable
   Check the README.md file there for more information.
 
-* A tool called `opam-bin` to create binary packages, available here:
+* A tool called `opam-bin` to create and use binary packages, available here:
   https://github.com/ocamlpro/opam-bin
 
-If you only want to use binary packages and not create them, you will
-only need to access the binary repositories in the first item.
+If you only want to use a repository of binary packages and not create
+them, you will only need to access one of the binary repositories in
+the first item, without the need for `opam-bin`.
+If you want to develop with a cache of binary packages, or to create
+repositories of binary packages, then you need `opam-bin`.
 
 Author: Fabrice LE FESSANT <fabrice.le_fessant@origin-labs.com>
   OCamlPro SAS & Origin Labs SAS
@@ -40,6 +43,16 @@ Binary packages created by `opam-bin` follow the following convention:
   ```
   $ opam install ocamlfind+bin
   ```
+
+When `opam-bin` is installed and you ask to install a package
+`NAME.VERSION`, OPAM may decide to install the source package instead
+of the binary package. OPAM will always select the source package if
+you have a `"NAME" { = VERSION }' dependencies asking for the package.
+
+HOWEVER, `opam-bin` will detect if there is a corresponding binary
+package, and if it is the case, it will install the binary package
+instead of compiling the package (OPAM will still show you the build
+steps, but these build steps will actually not be executed).
 
 Creating binary packages
 ------------------------
