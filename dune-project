@@ -17,7 +17,8 @@
  (depends
   (ocplib-json-typed (>= 0.7.0))
   (ezjsonm (>= 1.0.0))
-  (cmdliner (>= 1.0.0))
+  (ez-cmdliner (>= 0.1.0))
+  (ez-config (>= 0.1.0))
   (re (>= 1.0))
   (opam-file-format (>= 0.0))
   )

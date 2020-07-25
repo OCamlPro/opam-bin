@@ -1,6 +1,0 @@
-(library
- (public_name ez-file)
- (name ezFile)
- (wrapped false)
- (libraries ez-compat re ez-stdlib unix)
-  )
