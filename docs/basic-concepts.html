@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Basic Concepts &mdash; opam-bin gh-pages
- (f816055
-) (2020/07/26 23:52) documentation</title>
+ (ef61a53
+) (2020/07/27 00:17) documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
               <div class="version">
                 gh-pages
- (f816055
+ (ef61a53
 )
               </div>
             
@@ -95,6 +95,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Basic Concepts</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#binary-packages">Binary packages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#relocatable-packages">Relocatable packages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#file-structure">File Structure</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
@@ -244,6 +245,43 @@ directory).</p>
 <li>ocamlfind.1.8.0/</li>
 <li>ocamlfind.1.8.1/</li>
 <li>ocaml-variants.4.09.1+flambda/</li>
+</ul>
+</div>
+<div class="section" id="file-structure">
+<h2>File Structure<a class="headerlink" href="#file-structure" title="Permalink to this headline">¶</a></h2>
+<p><code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> creates the following file structure in the
+<code class="code docutils literal notranslate"><span class="pre">$HOME/.opam/</span></code> directory (or <code class="code docutils literal notranslate"><span class="pre">OPAMROOT</span></code>):</p>
+<ul class="simple">
+<li><code class="code docutils literal notranslate"><span class="pre">~/.opam/</span></code><ul>
+<li><code class="code docutils literal notranslate"><span class="pre">_opam-bin/</span></code><ul>
+<li><code class="code docutils literal notranslate"><span class="pre">opam-bin.exe</span></code> This file is the executable of
+<code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> used in <code class="code docutils literal notranslate"><span class="pre">opam</span></code> wrappers.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">opam-bin.log</span></code> This file is an internal log of
+<code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> used for debugging its behavior.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">cache/</span></code> This directory contains a cache of the archives
+of the binary packages created locally. It is necessary as the
+URLs in the <code class="code docutils literal notranslate"><span class="pre">opam</span></code> files are not correct before the
+archives have been uploaded to their final location.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">store/</span></code> This directory contains the files that have to be
+published to share binary packages between users/computers.<ul>
+<li><code class="code docutils literal notranslate"><span class="pre">archives/</span></code> This directory contains all the archives of
+the binary packages that have been created locally.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">repo/</span></code> This directory contains an <code class="code docutils literal notranslate"><span class="pre">opam</span></code>
+repository that exposes the binary packages locally
+created. It is used locally by <code class="code docutils literal notranslate"><span class="pre">opam</span></code>, and can be shared
+with other users/computers.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code class="code docutils literal notranslate"><span class="pre">SWITCH/</span></code><ul>
+<li><code class="code docutils literal notranslate"><span class="pre">etc/opam-bin/packages/</span></code> This directory contains, for every
+binary package that has been installed or built in the switch, its
+binary version.</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>

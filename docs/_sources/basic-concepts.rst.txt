@@ -84,3 +84,37 @@ Currently, it contains the following modified packages:
 * ocamlfind.1.8.0/
 * ocamlfind.1.8.1/
 * ocaml-variants.4.09.1+flambda/
+
+File Structure
+--------------
+
+:code:`opam-bin` creates the following file structure in the
+:code:`$HOME/.opam/` directory (or :code:`OPAMROOT`):
+
+* :code:`~/.opam/`
+  
+  * :code:`_opam-bin/`
+    
+    * :code:`opam-bin.exe` This file is the executable of
+      :code:`opam-bin` used in :code:`opam` wrappers.
+    * :code:`opam-bin.log` This file is an internal log of
+      :code:`opam-bin` used for debugging its behavior.
+    * :code:`cache/` This directory contains a cache of the archives
+      of the binary packages created locally. It is necessary as the
+      URLs in the :code:`opam` files are not correct before the
+      archives have been uploaded to their final location.
+    * :code:`store/` This directory contains the files that have to be
+      published to share binary packages between users/computers.
+
+      * :code:`archives/` This directory contains all the archives of
+        the binary packages that have been created locally.
+      * :code:`repo/` This directory contains an :code:`opam`
+        repository that exposes the binary packages locally
+        created. It is used locally by :code:`opam`, and can be shared
+        with other users/computers.
+
+  * :code:`SWITCH/`
+
+    * :code:`etc/opam-bin/packages/` This directory contains, for every
+      binary package that has been installed or built in the switch, its
+      binary version. 

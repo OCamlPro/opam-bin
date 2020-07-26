@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Commands &mdash; opam-bin gh-pages
- (f816055
-) (2020/07/26 23:52) documentation</title>
+ (ef61a53
+) (2020/07/27 00:17) documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
               <div class="version">
                 gh-pages
- (f816055
+ (ef61a53
 )
               </div>
             
@@ -96,7 +96,18 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="local-usage.html">Local Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sharing-packages.html">Sharing Packages</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Commands</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Commands</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#opam-bin-clean">opam-bin clean</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opam-bin-config">opam-bin config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opam-bin-help">opam-bin help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opam-bin-install">opam-bin install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opam-bin-list">opam-bin list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opam-bin-push">opam-bin push</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opam-bin-search">opam-bin search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opam-bin-uninstall">opam-bin uninstall</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opam-hooks">OPAM Hooks</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="repositories.html">Contributed Binary Repositories</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/ocamlpro/opam-bin">Github repository</a></li>
 </ul>
@@ -165,6 +176,53 @@
             
   <div class="section" id="commands">
 <h1>Commands<a class="headerlink" href="#commands" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="opam-bin-clean">
+<h2>opam-bin clean<a class="headerlink" href="#opam-bin-clean" title="Permalink to this headline">¶</a></h2>
+<p>clear all packages and archives from the cache and store</p>
+</div>
+<div class="section" id="opam-bin-config">
+<h2>opam-bin config<a class="headerlink" href="#opam-bin-config" title="Permalink to this headline">¶</a></h2>
+<p>configure options</p>
+</div>
+<div class="section" id="opam-bin-help">
+<h2>opam-bin help<a class="headerlink" href="#opam-bin-help" title="Permalink to this headline">¶</a></h2>
+<p>display help about opam-bin and opam-bin commands</p>
+</div>
+<div class="section" id="opam-bin-install">
+<h2>opam-bin install<a class="headerlink" href="#opam-bin-install" title="Permalink to this headline">¶</a></h2>
+<p>install in opam</p>
+</div>
+<div class="section" id="opam-bin-list">
+<h2>opam-bin list<a class="headerlink" href="#opam-bin-list" title="Permalink to this headline">¶</a></h2>
+<p>List binary packages created on this computer</p>
+</div>
+<div class="section" id="opam-bin-push">
+<h2>opam-bin push<a class="headerlink" href="#opam-bin-push" title="Permalink to this headline">¶</a></h2>
+<p>push binary packages to the remote server</p>
+</div>
+<div class="section" id="opam-bin-search">
+<h2>opam-bin search<a class="headerlink" href="#opam-bin-search" title="Permalink to this headline">¶</a></h2>
+<p>Search binary packages</p>
+</div>
+<div class="section" id="opam-bin-uninstall">
+<h2>opam-bin uninstall<a class="headerlink" href="#opam-bin-uninstall" title="Permalink to this headline">¶</a></h2>
+<p>un-install from opam config</p>
+</div>
+<div class="section" id="opam-hooks">
+<h2>OPAM Hooks<a class="headerlink" href="#opam-hooks" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>opam-bin pre-build:
+Backup the sources before building the package</li>
+<li>opam-bin wrap-build:
+Exec or not build commands</li>
+<li>opam-bin pre-install:
+Install cached binary archives if available</li>
+<li>opam-bin wrap-install
+Exec or not install commands</li>
+<li>opam-bin pre-remove:
+Remove binary install artefacts</li>
+</ul>
+</div>
 </div>
 
 
