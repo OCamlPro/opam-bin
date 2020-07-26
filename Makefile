@@ -8,3 +8,6 @@ build-deps:
 init:
 	git submodule init
 	git submodule update
+
+html:
+	sphinx-build rtd docs
