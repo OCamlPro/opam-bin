@@ -10,6 +10,7 @@
 
 open EzCompat
 open EzConfig.OP
+open EzFile.OP
 
 let append_text_file file s =
   let oc = open_out_gen [
@@ -191,3 +192,65 @@ let () =
     "*-bin", "4.07.1-bin-x", false ;
   ]
 *)
+
+(* stops if [f] returns true and returns true *)
+let iter_repos ?name f =
+  let repos = try
+      Sys.readdir OpambinGlobals.opam_repo_dir
+    with _ -> [||]
+  in
+  let repos = Array.to_list @@
+    Array.map (fun file ->
+        OpambinGlobals.opam_repo_dir // file) repos
+  in
+  let repos = OpambinGlobals.opambin_store_repo_dir :: repos in
+  (*
+  global_log "Searching repositories in:\n  %s"
+    ( String.concat "\n  " repos);
+  Printf.eprintf "Searching repositories in:\n  %s\n%!"
+    ( String.concat "\n  " repos);
+*)
+  let rec iter_repos repos =
+    match repos with
+    | [] ->
+      false
+    | repo :: repos ->
+      (* Printf.eprintf "Searching repo %S\n%!" repo; *)
+      let packages_dir = repo // "packages" in
+      let packages = match name with
+        | Some name -> [ name ]
+        | None ->
+          try
+            Array.to_list ( Sys.readdir packages_dir )
+          with _ -> []
+      in
+      iter_packages packages repo repos
+
+  and iter_packages packages repo repos =
+    match packages with
+    | [] ->
+      (* Printf.eprintf "Next repo ?\n%!"; *)
+      iter_repos repos
+    | package :: packages ->
+      (* Printf.eprintf " Searching package %S\n%!" package ; *)
+      let package_dir = repo // "packages" // package in
+      match Sys.readdir package_dir with
+      | exception _ -> iter_packages packages repo repos
+      | versions ->
+        let versions = Array.to_list versions in
+        iter_versions versions package packages repo repos
+
+  and iter_versions versions package packages repo repos =
+    match versions with
+    | [] ->
+      (* Printf.eprintf " Next package ?\n%!"; *)
+      iter_packages packages repo repos
+    | version :: versions ->
+      (* Printf.eprintf "  Searching version %S\n%!" version ; *)
+      if f ~repo ~package ~version then begin
+        (* Printf.eprintf "Found, stopping\n%!"; *)
+        true
+      end else
+        iter_versions versions package packages repo repos
+  in
+  iter_repos repos

@@ -74,9 +74,9 @@ let wget ~url ~md5 =
        |];
   Some output
 
-let check_cached_binary_archive ~name ~repo ~package =
+let check_cached_binary_archive ~version ~repo ~package =
   OpambinMisc.global_log "found binary package in repo %s" repo;
-  let package_dir = repo // "packages" // name // package in
+  let package_dir = repo // "packages" // version // package in
   let src = ref None in
   let md5 = ref None in
   let opam = OpamParser.file ( package_dir // "opam" ) in
@@ -150,47 +150,24 @@ let cached_binary_archive ~name ~version ~package_uid ~depends =
   if missing_versions <> [] then
     false
   else
-    let repos = try
-        Sys.readdir OpambinGlobals.opam_repo_dir
-      with _ -> [||]
-    in
-    (* TODO: use "repositories" in .opam/config *)
-    let repos = Array.to_list @@
-      Array.map (fun file ->
-          OpambinGlobals.opam_repo_dir // file) repos
-    in
-    let repos = OpambinGlobals.opambin_store_repo_dir :: repos in
-    OpambinMisc.global_log "Seaching cached binary package in:\n  %s"
-      ( String.concat "\n  " repos);
-    let package_prefix = Printf.sprintf "%s.%s+bin+%s+"
+    let version_prefix = Printf.sprintf "%s.%s+bin+%s+"
         name version source_md5 in
-    let rec iter_repos repos =
-      match repos with
-      | [] ->
-        OpambinMisc.global_log "Could not find cached binary package %s"
-          package_prefix;
-        false
-      | repo :: repos ->
-        let package_dir = repo // "packages" // name in
-        match Sys.readdir package_dir with
-        | exception _ -> iter_repos repos
-        | files ->
-          let files = Array.to_list files in
-          iter_files repo files repos
-    and iter_files repo files repos =
-      match files with
-      | [] -> iter_repos repos
-      | package :: files ->
-        if EzString.starts_with package ~prefix:package_prefix then
-          check_cached_binary_archive ~name ~repo ~package
-        else
-          iter_files repo files repos
-    in
-    iter_repos repos
+    if OpambinMisc.iter_repos (fun ~repo ~package ~version ->
+        if EzString.starts_with version ~prefix:version_prefix then begin
+          check_cached_binary_archive ~package ~repo ~version
+        end else
+          false
+      ) then
+      true
+    else begin
+      OpambinMisc.global_log "Could not find cached binary package %s"
+        version_prefix ;
+      false
+      end
 
 let action args =
   OpambinMisc.global_log "CMD: %s"
-    ( String.concat "\n    " ( "pre-build" :: args) ) ;
+    ( String.concat "\n    " ( cmd_name :: args) ) ;
   match args with
   | name :: version :: package_uid :: depends :: [] ->
     if not !!OpambinConfig.enabled

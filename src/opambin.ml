@@ -15,6 +15,7 @@ let commands = [
   OpambinCommandPush.cmd ;
   OpambinCommandClean.cmd ;
   OpambinCommandList.cmd ;
+  OpambinCommandSearch.cmd ;
 
   OpambinCommandPreBuild.cmd ;
   OpambinCommandWrapBuild.cmd ;
