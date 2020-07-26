@@ -1,0 +1,248 @@
+Using a Wallet to Transfer Tokens
+=================================
+
+To transfer DUNs tokens between accounts, you will need to use a
+wallet. We hope there will be plenty of available wallets soon, but
+for now, we will only explain how to use two of them, the initial web
+wallet (derived from Tezbox by Stephen Andrews), and the Dune command
+line client.
+
+Using the Dune Web Wallet
+-------------------------
+
+The initial Dune Web Wallet is
+`available here <https://wallet.dune.network/>`__. It is derived from
+Tezbox by Stephen Andrews, and the sources are
+`available here <https://gitlab.com/dune-network/dune-wallet>`__.
+
+There are several possibilities: using a hardware wallet (Ledger Nano),
+generating a new private key or restoring an existing private key.
+
+Using a Hardware Wallet (Ledger Nano S)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Connect your Ledger device and start Dune application in Wallet mode.
+  See how to install Dune App on Ledger Nano S
+  `on this page <advanced/using-a-ledger.html>`__.
+
+* Click on the "Ledger/Trezor" button if you have an hardware
+  wallet. It's the most secure way to keep your DUNs safe:
+
+  * Connect your Ledger Nano S on the USB port of your computer, enter
+    your PIN and select the Dune app (or Tezos app)
+  * Click the "Link Dunewallet" button on the website, and check the
+    screen of your Ledger Nano S, it should ask you to validate that you
+    want to export your public key, displaying your key hash.
+  * The wallet should display "Awesome!" and print your Dune key hash,
+    click on "Continue"
+  * The wallet will then ask your for a password, to keep your
+    information encrypted (remember that your private key never leaves
+    the Ledger Nano S, so no worries). Enter the password, click on
+    "Continue" and you are done!
+
+.. note:: For a more detailed tutorial on how to use Ledger Nano S with Dune
+   Network, you may want to `switch to this page
+   <advanced/using-a-ledger.html>`__ or `watch this video
+   <https://youtu.be/3oHV3xnt5k0>`__.
+
+Creating a New Account and a New Secret Key
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Click on "Create Dune Account"
+
+  * The page will display a list of 15 mnemonics. You MUST save these
+    words somewhere, on a paper and keep in a safe place, to be able to
+    restore this account later on another computer for example.
+
+  * We recommend to enter a passphrase and memorize it or write it down and keep
+    it in a safe place. It will also be required to restore your account if
+    needed.
+
+  * Click on "Continue". You will then be asked to confirm your mnemonics and
+    passphrase. Enter them and click on "Create Dune Account".
+
+  * Enter a password to encrypt your Web wallet and click on "Encrypt
+    Wallet". If the password you entered meets all the requirements, the main
+    page of your wallet will be displayed.
+
+
+Restoring an Existing Account
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+On Dune Web wallet, click on "Restore Dune Account" to restore you account.
+Depending on the information you have, you can restore an account in three
+different ways:
+
+**ICO/Fundraiser wallet**
+
+This method is for accounts created during Tezos fundraiser, and which have not
+been activated before Tezos block 600,000. People in this situation can still
+activate their account on Dune after airdrop.
+
+* If not already done, complete Tezos KYC/AML process on
+  `this page <https://verification.tezos.com>`__ to receive an activation code.
+
+* Enter your seed words, email address, password and the ``dn`` version of your
+  public key hash from the Tezos Fundraiser PDF. If your account has not been
+  activated, please enter the activation code below as well. Choose the mainnet
+  network and click on "Restore Dune Account". You can use `dunscan.io
+  <https://dunscan.io>`__ to get the `dn` encoding of your `tz` address. For
+  that, enter your Tezos key hash (tz1) in the search bar and hit GO. DunScan
+  will then display an account page with a Dune public key hash (dn1)
+  corresponding to the tz1 you entered.
+
+
+* Enter a password to encrypt your Web wallet and click on "Encrypt Wallet". If
+  the password you entered meets all the requirements, the main page of your
+  wallet will be displayed.
+
+.. tip:: You can use the same method to activate `a faucet
+         account <https://faucet.dune.network>`__ on Dune Testnet.
+
+**Seed phrase**
+
+* Click on "Seed Phrase" tab on Dune Wallet.
+
+* Provide your seed words (mnemonics), your passphrase if any, and click on
+  "Restore Dune Account".
+
+* Enter a password to encrypt your Web wallet and click on "Encrypt Wallet". If
+  the password you entered meets all the requirements, the main page of your
+  wallet will be displayed.
+
+**Private key**
+
+* Click on "Private Key" tab on Dune Wallet.
+
+* Provide your private key and click on "Restore Dune Account".
+
+* Enter a password to encrypt your Web wallet and click on "Encrypt Wallet". If
+  the password you entered meets all the requirements, the main page of your
+  wallet will be displayed.
+
+.. warning:: Keep in mind that the safest way to store one's private key is to
+             use a hardware wallet. You should be very careful when using your
+             mnemonics+passphrase or your private key in plain text.
+
+
+Using the Dune Command-line Wallet
+----------------------------------
+
+Using a Hardware Wallet (Ledger Nano S)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Connect your Ledger device and start the Dune app in wallet mode.
+  See how to install Dune App on Ledger Nano S
+  `on this page <advanced/using-a-ledger.html>`__.
+
+* In a terminal, use the ``dune-client`` binary to print the Ledgers that
+  it can see::
+
+    $ ./dune-client list connected ledgers
+    ## Ledger `previous-markhor-gleeful-ant`
+    Found a Wallet 0.4.1 (Dune) 20190908 v2.0.0-108-gc8c15b25* (git-description:
+    "v2.0.0-108-gc8c15b25*") application running on Ledger Nano S at
+    [0001:0008:00].
+
+    To use keys at BIP32 path m/44'/1729'/0'/0' (default Dune key path), use one
+    of:
+      dune-client import secret key ledger_user "ledger://previous-markhor-gleeful-ant/ed25519/0'/0'"
+      dune-client import secret key ledger_user "ledger://previous-markhor-gleeful-ant/secp256k1/0'/0'"
+      dune-client import secret key ledger_user "ledger://previous-markhor-gleeful-ant/P-256/0'/0'"
+
+
+  If the Ledger is not found, it usually means that you didn't start
+  the Dune app on the Ledger device, or that your Ledger is
+  not `detected by the operating system <baking/with-raspberry.html#setup-ledger>`__.
+
+* Record, for instance, the keyhash associated with the derivation ``0'/0'``
+  with the command::
+
+    $ ./dune-client import secret key ledger_user "ledger://previous-markhor-gleeful-ant/ed25519/0'/0'"
+
+* Validate (and write down) the public key hash displayed on the Ledger.  The
+  client will wait for you to confirm on the Ledger that you can read the same
+  key as displayed in the terminal. After confirmation, you get something like::
+
+    Dune address added: dn1xRrJrx1y7hMYEJFWjZ3zDE5uS6CtEnnAS1
+    Key ledger_user registered
+
+
+* The key ``ledger_user`` is now recorded in your client. You will be able to
+  use it for transfers and other operations. Each time you will need to sign an
+  operation for that key, the client will automatically ask the Ledger and you
+  will have confirm the operation. The command to transfer tokens on Testnet
+  using `dune-client` has the form:::
+
+    ./dune-client -A testnet-node.dunscan.io -P 80 transfer 10 from ledger_user to \
+      dn1XHn8M1XvYfS3qsGDDwxRjW1HwbNxGpPbn --burn-cap 0.257
+
+
+Creating a New Account and a New Secret Key
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Unencrypted keys**
+
+The following command::
+
+  $ ./dune-client gen keys user_key
+
+Will generate a unencrypted private key and its associated public key and public
+key hash. These keys are stored in ``dune-client``'s data directory (usually
+located in ``$HOME/.dune-client/`` on Unix systems. You can use these keys with
+the provided name ``user_key``. For instance, a transfer on Testnet from this
+wallet looks like::
+
+    ./dune-client -A testnet-node.dunscan.io -P 80 transfer 10 from user_key to \
+      dn1XHn8M1XvYfS3qsGDDwxRjW1HwbNxGpPbn --burn-cap 0.257
+
+**Encrypted keys**
+
+The following command::
+
+  $ ./dune-client gen keys encrypted_user_key --encrypted
+
+Will ask you to provide a password. Then, it will generate a private key and its
+associated public key and public key hash. As above, these keys are stored in
+``dune-client``'s data directory. But, the private key is now encrypted on disk
+with the provided password. A transfer on Testnet from this wallet
+looks like::
+
+    ./dune-client -A testnet-node.dunscan.io -P 80 transfer 10 from encrypted_user_key to \
+      dn1XHn8M1XvYfS3qsGDDwxRjW1HwbNxGpPbn --burn-cap 0.257
+
+Before the transfer operation is injected in the node, you will be asked to
+provide your password to decrypt the private key and sign that operation.
+
+Restoring an Existing Account
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Restoring an account from its private key**
+
+To restore a wallet from its private key, the ``dune-client`` command is as
+follows::
+  $ ./dune-client import secret key imported_wallet \
+  unencrypted:edsk42dhYHBxCJMhhZULCiEcnAh7sdJ6kSN8hfyQ7r5vhWocxZdfAT -f
+
+**Restoring an account from Tezos ICO/Fundraiser**
+
+To restore a wallet from Tezos ICO/Fundraiser, the ``dune-client`` command is of
+the form::
+
+  $ /dune-client -A mainnet-node.dunscan.io -P 80 activate fundraiser account \
+  <wallet_name> with <activation_key>
+where ``<wallet_name>`` is the name of your wallet and ``<activation_key>`` is
+the activation code you obtained after completing
+`Tezos KYC/AML  <https://verification.tezos.com>`__.
+
+**Activating a faucet account on Testnet**
+
+To activate a faucet account on Testnet. First, download a json file from
+`faucet.dune.network <https://faucet.dune.network>`__. Then, use the following
+command to activate the account::
+
+  $ /dune-client -A testnet-node.dunscan.io -P 80 activate \
+  account <wallet_name> with <dowloaded_file.json>
+
+where ``<wallet_name>`` is the name of your wallet and ``dowloaded_file.json`` is
+the file you just downloaded.

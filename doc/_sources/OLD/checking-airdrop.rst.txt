@@ -1,0 +1,26 @@
+
+Checking your Airdrop Allocation
+================================
+
+An airdrop was performed on September 9, 2019, to replicate accounts
+from the Tezos blockchain to Dune Network. For that, a snapshot was
+taken at 
+`block 600,000 of Tezos <https://tzscan.io/600000>`__.
+
+The following operations were performed:
+
+* All tokens on KT1 accounts were automatically moved to the tz1 manager
+* All accounts with less than 10 tokens were removed
+
+If you had an account on Tezos, you can check your balance:
+
+* Take only your Tezos key hashes (tz1)
+* Go to the `DunScan block explorer <https://dunscan.io/>`__
+* Enter your Tezos key hash (tz1) in the Search bar and hit GO
+* DunScan should display an account page with a Dune key hash (dn1)
+* In the "Account Details" box, hit the "tz" icon. A Tezos key hash should
+  appear below the Dune key hash. You can check it is yours.
+* In the same box, the "Balance" field should show your Dune tokens
+
+  
+

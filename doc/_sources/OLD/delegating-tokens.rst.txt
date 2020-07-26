@@ -1,0 +1,61 @@
+Delegating your Tokens
+======================
+
+This section is for the people that want to take part in the protocol that runs
+the network without having to deal with the complexity of running a delegate.
+
+Implicit accounts cannot have a delegate, so the first step is to originate an account,
+transfer your dun there and set a delegate.
+
+Using the Dune Web Wallet
+-------------------------
+
+Refer to the
+`this section <using-a-wallet.html#using-the-dune-web-wallet>`__ if you
+haven't setup your wallet yet.
+
+The first step is to originate an account and then transfer some dun there :
+
+* Click on "Add account+" in the section "My accounts" on the left
+* Wait for the operation to be included in the blockchain
+
+Once this is done, you can use the wallet to send dun to the newly
+created "KT1" account:
+
+* Select your main account on the list on the left
+* Navigate to the "Send" tab
+* Fill the destination field with the KT1 address
+  (you can use "My accounts" link to have a select box with you accounts)
+* Fill the remaining fields
+* Click the "Send" button
+* Wait for the operation to be included in the blockchain
+
+Once the operation is included your KT1 account should hold tokens.
+
+Now we can delegate the KT1 account to the delegate that we have chosen:
+
+* Select the KT1 account that you want to delegate on the list on the left
+* Navigate to the "Delegate" tab
+* Use the select box of the "Delegate Options" field and select "Custom"
+* You can enter the dn1 address of the chosen delegate in the
+  "Custom Delegate" field
+* Click the "Update Delegate" button
+* Wait for the operation to be included in the blockchain
+
+
+Using the Dune Command-line Wallet
+----------------------------------
+
+Refer to `this section <using-a-wallet.html#using-the-dune-command-line-wallet>`__ to setup the Dune Command-line Wallet.
+
+With the dune command-line wallet, you can originate a kt1 account,
+transfer tokens and delegate with one command::
+
+  dune-client originate account <kt1_alias> for <dn1_alias> transferring <amount> from <dn1_alias> --delegate <delegate_alias> --delegatable
+
+``<kt1_alias>`` specifies the alias of the newly created kt1 account.
+``<dn1_alias>`` is the alias of the dn1 account holding the tokens. ``<amount>``
+amount that will be send to the kt1 account (in dun). ``--delegate <delegate>``
+set the delegate of kt1 account (should be a dn1 address). Since by default an
+originated account is not delegatable the option ``--delegatable`` enables the
+"set delegate" operation on the kt1 account allowing to change delegate.

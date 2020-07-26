@@ -1,0 +1,19 @@
+
+Activating your Tezos ICO Tokens
+================================
+
+For people who participated to Tezos fundraiser, and who did not
+activate their Tezos wallet before (Tezos) block 600,000, they can still
+activate their account on Dune after airdrop.
+
+Using Dune Web wallet
+~~~~~~~~~~~~~~~~~~~~~
+
+The steps to activate your fundraiser account using Dune Web wallet are detailed
+in `this section <using-a-wallet.html#restoring-an-existing-account>`__.
+
+Using Comannd-line client
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The steps to activate your fundraiser account using ``dune-client`` command-line
+are detailed in `this section <using-a-wallet.html#id3>`__.
