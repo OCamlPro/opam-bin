@@ -194,7 +194,8 @@ let action args =
   match args with
   | name :: version :: package_uid :: depends :: [] ->
     if not !!OpambinConfig.enabled
-    || not !!OpambinConfig.cache_enabled then begin
+    || not !!OpambinConfig.cache_enabled
+    || OpambinMisc.not_this_switch () then begin
       OpambinMisc.global_log "cache is disabled";
       EzFile.write_file OpambinGlobals.marker_source
         "cache is disabled";

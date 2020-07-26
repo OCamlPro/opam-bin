@@ -36,6 +36,7 @@ let remove_opam_hooks file_contents =
           match name with
           | "pre-build-commands"
           | "wrap-build-commands"
+          | "pre-install-commands"
           | "wrap-install-commands"
           | "post-install-commands"
           | "pre-remove-commands"

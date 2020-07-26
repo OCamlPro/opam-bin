@@ -11,9 +11,11 @@
 open Ezcmd.TYPES
 open EzFile.OP
 
+let cmd_name = "pre-remove"
+
 let action args =
   OpambinMisc.global_log "CMD: %s"
-    ( String.concat "\n    " ( "pre-build" :: args) ) ;
+    ( String.concat "\n    " ( cmd_name :: args) ) ;
   match args with
   | name :: _version :: _package_uid :: _depends :: [] ->
     List.iter (fun file_name ->
@@ -21,7 +23,7 @@ let action args =
           Sys.remove file_name
         with _ -> ()
       ) [
-      OpambinGlobals.opambin_switch_packages_dir () // name
+      OpambinGlobals.opambin_switch_packages_dir () // name ;
     ]
   | _ ->
     Printf.eprintf
@@ -32,7 +34,7 @@ let action args =
 let cmd =
   let args = ref [] in
   Arg.{
-  cmd_name = "pre-remove" ;
+  cmd_name ;
   cmd_action = (fun () -> action !args) ;
   cmd_args = [
     [], Anons (fun list -> args := list),

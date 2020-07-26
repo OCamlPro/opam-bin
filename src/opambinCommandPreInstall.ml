@@ -10,8 +10,9 @@
 
 open EzCompat
 open Ezcmd.TYPES
+open EzFile.OP
 
-let cmd_name = "wrap-install"
+let cmd_name = "pre-install"
 
 (* We check:
    * if `_bincached/` exists, we have found a binary archive in the
@@ -35,9 +36,38 @@ let action args =
     ( String.concat "\n    " ( cmd_name :: args) ) ;
   OpambinMisc.make_cache_dir ();
   match args with
-  | _name :: _version :: _package_uid :: _depends :: cmd ->
+  | name :: _version :: _package_uid :: _depends :: [] ->
     if Sys.file_exists OpambinGlobals.marker_source then
-      OpambinMisc.call (Array.of_list cmd)
+      ()
+    else
+    if Sys.file_exists OpambinGlobals.marker_cached then begin
+      Unix.chdir OpambinGlobals.marker_cached;
+      if Sys.file_exists OpambinGlobals.package_version then
+        let files = Sys.readdir "." in
+        Array.iter (fun file ->
+            if file = OpambinGlobals.package_version then begin
+              let packages_dir =
+                OpambinGlobals.opambin_switch_packages_dir () in
+              EzFile.make_dir ~p:true packages_dir;
+              Sys.rename file ( packages_dir // name )
+            end
+            else
+            if file =  OpambinGlobals.package_config then begin
+              let config_dir = OpambinGlobals.opam_switch_internal_config_dir
+                  () in
+              EzFile.make_dir ~p:true config_dir ;
+              Sys.rename file ( config_dir // Printf.sprintf "%s.config" name )
+            end else
+            if file = OpambinGlobals.package_info then
+              Sys.remove OpambinGlobals.package_info
+            else
+              let pwd = Unix.getcwd () in
+              Unix.chdir file ;
+              OpambinMisc.call [| "cp" ; "-aT" ; "." ;
+                                  OpambinGlobals.opam_switch_dir () |];
+              Unix.chdir pwd
+          ) files
+    end
   | _ ->
     Printf.eprintf
       "Unexpected args: usage is '%s %s name version package_uid depends cmd...'\n%!" OpambinGlobals.command cmd_name;

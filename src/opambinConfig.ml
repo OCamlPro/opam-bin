@@ -62,6 +62,21 @@ let cache_enabled = EzConfig.create_option config
     EzConfig.bool_option
     true
 
+let all_switches = EzConfig.create_option config
+    [ "all_switches" ]
+    [ "Whether we use a binary package for all switches. The config variable" ;
+      "`switches` will only be used if this variable is false";
+    ]
+    EzConfig.bool_option
+    true
+
+let switches = EzConfig.create_option config
+    [ "switches" ]
+    [ "This list of switches (or regexp such as '*bin') for which" ;
+      "creating/caching binary packages should be used" ]
+    ( EzConfig.list_option EzConfig.string_option )
+    []
+
 let current_version = 1
 (* This option should be used in the future to automatically upgrade
    configuration *)

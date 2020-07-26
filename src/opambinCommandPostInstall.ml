@@ -45,12 +45,18 @@ let rec is_post_option = function
   | Logop  (_, `And, v1, v2 ) -> is_post_option v1 || is_post_option v2
   | _ -> false
 
-let add_post_depend depends post_depends name option =
-  if EzCompat.StringSet.mem name depends ||
-     not (List.exists is_post_option option) then
-    ()
-  else
+let rec is_build_option = function
+  | Ident (_, "build" ) -> true
+  | Logop  (_, `And, v1, v2 ) -> is_build_option v1 || is_build_option v2
+  | _ -> false
+
+let add_post_depend ~dependset ~buildset post_depends name option =
+  if not ( EzCompat.StringSet.mem name dependset ) &&
+     List.exists is_post_option option then
     post_depends := name :: !post_depends
+  else
+  if List.exists is_build_option option then
+    buildset := StringSet.add name !buildset
 
 let iter_value_list v f =
   let iter_value v =
@@ -106,8 +112,12 @@ let compute_hash ~name ~version ~package_uid ~depends =
 
 let commit ~name ~version ~package_uid ~depends files =
   if not !!OpambinConfig.enabled
-  || not !!OpambinConfig.create_enabled then
+  || not !!OpambinConfig.create_enabled
+  || OpambinMisc.not_this_switch () then
     OpambinMisc.global_log "package %s: create disabled" name
+  else
+  if Sys.file_exists OpambinGlobals.marker_cached then
+    OpambinMisc.global_log "package %s: installed a cached binary" name
   else
     let opam_switch_prefix = OpambinGlobals.opam_switch_prefix () in
     let packages_dir =
@@ -116,7 +126,7 @@ let commit ~name ~version ~package_uid ~depends files =
       OpambinMisc.global_log "package %s: already a binary archive..." name
     else
       let nv = Printf.sprintf "%s.%s" name version in
-
+      OpambinMisc.global_log "package %s is not a binary archive" name ;
       OpambinMisc.global_log "creating binary archive...";
       let temp_dir = OpambinGlobals.opambin_switch_temp_dir () in
       EzFile.make_dir ~p:true temp_dir ;
@@ -147,12 +157,7 @@ let commit ~name ~version ~package_uid ~depends files =
       output_string oc new_version ;
       close_out oc;
 
-      let switch =
-        let switch = Filename.basename opam_switch_prefix in
-        if String.lowercase switch = "_opam" then
-          opam_switch_prefix
-        else switch
-      in
+      let switch = OpambinMisc.current_switch () in
       let opam_file = temp_dir // name ^ "-src.opam" in
       let oc = Unix.openfile opam_file
           [ Unix.O_CREAT; Unix.O_WRONLY ; Unix.O_TRUNC ] 0o644 in
@@ -209,6 +214,8 @@ let commit ~name ~version ~package_uid ~depends files =
       let opam =
         let post_depends = ref [] in
         let conflicts = ref [] in
+        let opam_depends = ref None in
+        let opam_depopts = ref None in
         let file_contents =
           List.fold_left (fun acc v ->
               match v with
@@ -244,12 +251,10 @@ let commit ~name ~version ~package_uid ~depends files =
                     ->
                     acc
                   | "depends" ->
-                    iter_value_list value
-                      ( add_post_depend dependset post_depends);
+                    opam_depends := Some value ;
                     acc
                   | "depopts" ->
-                    iter_value_list value
-                      ( add_conflict dependset conflicts);
+                    opam_depopts := Some value ;
                     acc
                   | _ ->
                     OpambinMisc.global_log
@@ -258,6 +263,31 @@ let commit ~name ~version ~package_uid ~depends files =
                 end
               | _ -> acc
             ) [] file_contents in
+
+        let build_depends =
+          match !opam_depends with
+          | None -> StringSet.empty
+          | Some value ->
+            let buildset = ref StringSet.empty in
+            iter_value_list value
+              ( add_post_depend ~dependset ~buildset post_depends);
+            !buildset
+        in
+
+        let actual_depends =
+          match !opam_depopts with
+          | None ->
+            let actual_depends = ref [] in
+            List.iter (fun (name, version) ->
+                if not ( StringSet.mem name build_depends ) then
+                  actual_depends := ( name, version ) :: !actual_depends
+              ) depends;
+            !actual_depends
+          | Some value ->
+            iter_value_list value
+              ( add_conflict dependset conflicts);
+            depends
+        in
 
         (* We need to keep `package.version` here because it is used by
            wrap-build to check if it is a binary archive. It should
@@ -268,11 +298,13 @@ let commit ~name ~version ~package_uid ~depends files =
             {|
 [
   [  "mkdir" "-p" "%%{prefix}%%/etc/%s/packages" ]
+  [  "rm" "-f" "%s" ]
   [  "cp" "-aT" "." "%%{prefix}%%" ]%s
   [  "mv" "%%{prefix}%%/%s" "%%{prefix}%%/etc/%s/packages/%s" ]
 ]
 |}
             OpambinGlobals.command
+            OpambinGlobals.package_info
             (if has_config_file then
                Printf.sprintf {|
   [  "mkdir" "-p" "%%{prefix}%%/.opam-switch/config" ]
@@ -289,7 +321,7 @@ let commit ~name ~version ~package_uid ~depends files =
             (String.concat " "
                (List.map (fun (name, version) ->
                     Printf.sprintf "%S {= %S }" name version
-                  ) depends))
+                  ) actual_depends))
             (String.concat " "
                (List.map (fun name ->
                     Printf.sprintf "%S { post }" name
@@ -352,6 +384,40 @@ depends: [
             name
             name new_version in
         EzFile.write_file ( package_dir // "opam" ) s;
+
+        let oc = open_out ( package_files_dir //
+                            OpambinGlobals.package_info ) in
+        List.iter (fun (name, version) ->
+            Printf.fprintf oc "depend:%s:%s\n" name version
+          ) depends ;
+
+        Unix.chdir opam_switch_prefix;
+        let total_nbytes = ref 0 in
+        List.iter (fun file ->
+            match Unix.lstat file with
+            | exception _ -> ()
+            | st ->
+              Printf.fprintf oc "file:%09d:%s:%s\n"
+                (let size = st.Unix.st_size in
+                 total_nbytes := !total_nbytes + size ;
+                 size
+                )
+                (match st.Unix.st_kind with
+                 | S_REG -> "reg"
+                 | S_DIR -> "dir"
+                 | S_LNK -> "lnk"
+                 | _ -> "oth"
+                )
+                file
+          ) files ;
+        Unix.chdir OpambinGlobals.curdir;
+
+        Printf.fprintf oc "total:%05d:nfiles\n" (List.length files) ;
+        Printf.fprintf oc "total:%09d:nbytes\n" !total_nbytes ;
+        close_out oc;
+
+        OpambinMisc.global_log "Binary package for %s.%s created successfully"
+          name version
       end
 
 let action args =

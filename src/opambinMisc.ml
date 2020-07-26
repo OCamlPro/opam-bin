@@ -8,6 +8,9 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open EzCompat
+open EzConfig.OP
+
 let append_text_file file s =
   let oc = open_out_gen [
       Open_creat;
@@ -155,3 +158,36 @@ let opam_section ?name kind list =
                               section_kind = kind ;
                               section_name = name ;
                               section_items = list })
+
+let current_switch () =
+  let opam_switch_prefix = OpambinGlobals.opam_switch_prefix () in
+  let switch = Filename.basename opam_switch_prefix in
+  if String.lowercase switch = "_opam" then
+    opam_switch_prefix
+  else switch
+
+let not_this_switch () =
+  not !!OpambinConfig.all_switches &&
+  let switch = current_switch () in
+  List.for_all (fun s ->
+      let core = Re.Glob.glob s in
+      let re = Re.compile core in
+      Re.execp re switch
+    ) !!OpambinConfig.switches
+
+(*
+let () =
+  List.iter ( fun (s, test, matched) ->
+      let core = Re.Glob.glob ~anchored:true s in
+      let re = Re.compile core in
+      let result = Re.execp re test in
+      if result <> matched then begin
+        Printf.eprintf "result %b <> expected %b: regexp=%S test=%S\n%!"
+          result matched s test;
+        exit 2
+      end
+    ) [
+    "*-bin", "4.07.1-bin", true ;
+    "*-bin", "4.07.1-bin-x", false ;
+  ]
+*)

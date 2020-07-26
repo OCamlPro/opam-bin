@@ -14,9 +14,11 @@ let commands = [
   OpambinCommandUninstall.cmd ;
   OpambinCommandPush.cmd ;
   OpambinCommandClean.cmd ;
+  OpambinCommandList.cmd ;
 
   OpambinCommandPreBuild.cmd ;
   OpambinCommandWrapBuild.cmd ;
+  OpambinCommandPreInstall.cmd ;
   OpambinCommandWrapInstall.cmd ;
   OpambinCommandPostInstall.cmd ;
   OpambinCommandPreRemove.cmd ;
@@ -30,6 +32,8 @@ let () =
   | [| _ ; "--about" |] ->
     Printf.printf "%s\n%!" OpambinGlobals.about
   | _ ->
+    OpambinMisc.global_log "args: %s"
+      (String.concat " " (Array.to_list Sys.argv));
     try
       Ezcmd.main_with_subcommands
         ~name:OpambinGlobals.command

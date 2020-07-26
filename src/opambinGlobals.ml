@@ -69,6 +69,7 @@ let opambin_switch_packages_dir () =
 (* names of the files created in the package `files` sub-dir *)
 let package_version = "bin-package.version"
 let package_config = "bin-package.config"
+let package_info = "bin-package.info"
 
 let marker_cached = "_bincache"
 let marker_source = "_binexec"

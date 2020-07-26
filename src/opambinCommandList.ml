@@ -10,25 +10,17 @@
 
 open Ezcmd.TYPES
 
-let cmd_name = "clean"
+let cmd_name = "list"
 
 let action () =
-  List.iter (fun dir ->
-      Printf.eprintf "Cleaning %s\n%!" dir;
-      OpambinMisc.call [| "rm"; "-rf" ; dir |];
-      EzFile.make_dir dir ;
-    )
-    [ OpambinGlobals.opambin_cache_dir ;
-      OpambinGlobals.opambin_store_repo_packages_dir ;
-      OpambinGlobals.opambin_store_archives_dir ;
-    ];
-  Sys.remove OpambinGlobals.opambin_log ;
-  ()
+  Printf.eprintf "Binary packages in %s:\n%!"
+    OpambinGlobals.opambin_store_archives_dir;
+  OpambinMisc.call [| "ls" ; OpambinGlobals.opambin_store_archives_dir |]
 
 let cmd = {
   cmd_name ;
   cmd_action = action ;
   cmd_args = [];
   cmd_man = [];
-  cmd_doc = "clear all packages and archives from the cache and store";
+  cmd_doc = "List binary packages created on this computer";
 }

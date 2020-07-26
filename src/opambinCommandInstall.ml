@@ -40,6 +40,9 @@ let action () =
         OpambinMisc.opam_variable "wrap-build-commands"
           {| ["%s" "wrap-build" name version build-id depends "--"] {?build-id} |}
           OpambinGlobals.opambin_bin ::
+        OpambinMisc.opam_variable "pre-install-commands"
+          {| ["%s" "pre-install" name version build-id depends] {?build-id} |}
+          OpambinGlobals.opambin_bin ::
         OpambinMisc.opam_variable "wrap-install-commands"
           {| ["%s" "wrap-install" name version build-id depends "--"] {?build-id} |}
           OpambinGlobals.opambin_bin ::
