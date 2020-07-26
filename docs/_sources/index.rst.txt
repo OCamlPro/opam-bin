@@ -14,6 +14,12 @@ the source package manager of OCaml.
    :caption: Documentation
 
    introduction
+   basic-concepts
+   installation
+   local-usage
+   sharing-packages
+   commands
+   repositories
    Github repository <https://github.com/ocamlpro/opam-bin>
 
 Indices and tables
