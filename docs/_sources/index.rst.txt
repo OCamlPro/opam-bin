@@ -1,18 +1,17 @@
-.. Dune documentation master file, created by
+.. Opam-bin documentation master file, created by
    sphinx-quickstart on Tue Aug 14 12:54:10 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Dune's documentation!
-=====================================
+Welcome to Opam-bin
+===================
 
-Dune is a blockchain platform, based on Tezos software, and targetting
-business applications. Dune focuses on security, safety, but without
-compromising on accessibility and adoption.
+Opam-bin is a framework to create and use binary packages with Opam,
+the source package manager of OCaml.
 
 .. toctree::
    :maxdepth: 2
-   :caption: First Steps with Dune
+   :caption: Documentation
 
    introduction
    Github repository <https://github.com/ocamlpro/opam-bin>
