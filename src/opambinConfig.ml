@@ -42,6 +42,14 @@ let rsync_url = EzConfig.create_option config
     (EzConfig.option_option EzConfig.string_option)
     None
 
+let reloc_repo_url = EzConfig.create_option config
+    [ "reloc_repo_url" ]
+    [
+      "The URL of the relocatable repository that will be set as 'default'"
+    ]
+    EzConfig.string_option
+    "git@github.com:OCamlPro/opam-repository-relocatable"
+
 let enabled = EzConfig.create_option config
     [ "enabled" ]
     [ "Whether we do something or not" ]
@@ -74,6 +82,13 @@ let switches = EzConfig.create_option config
     [ "switches" ]
     [ "This list of switches (or regexp such as '*bin') for which" ;
       "creating/caching binary packages should be used" ]
+    ( EzConfig.list_option EzConfig.string_option )
+    []
+
+let protected_switches = EzConfig.create_option config
+    [ "protected_switches" ]
+    [ "This list of switches (or regexp such as '*bin') for which" ;
+      "creating/caching binary packages should NOT be used" ]
     ( EzConfig.list_option EzConfig.string_option )
     []
 

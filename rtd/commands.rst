@@ -2,6 +2,9 @@
 Commands
 ========
 
+You can use :code:`opam-bin` to list all available commands, and
+:code:`opam-bin COMMAND --help` for usage of a specific command.
+
 opam-bin clean
 --------------
 clear all packages and archives from the cache and store

@@ -53,16 +53,40 @@ let action () =
     if !need_refactoring then refactor ();
   end else begin
     let open EzConfig.LowLevel in
-    Printf.eprintf "Current options (from %s):\n%!"
+    Printf.printf "Current options (from %s):\n"
       OpambinConfig.config_filename;
     let options = simple_options "" OpambinConfig.config in
     List.iter (fun o ->
-        Printf.printf "  %s : %s\n%!"
+        Printf.printf "  %s : %s\n"
           ( String.concat "." o.option_name )
           o.option_value ;
-      ) options
+      ) options ;
+    Printf.printf "  switches : %s\n"
+      (String.concat "  " !!OpambinConfig.switches );
+    Printf.printf "  protected_switches : %s\n"
+      (String.concat "  " !!OpambinConfig.protected_switches );
   end;
   ()
+
+let modify_list_of_switches option s =
+  let add s =
+    option =:= !! OpambinConfig.switches @ [ s ]
+  in
+  let remove s =
+    OpambinConfig.switches =:=
+    List.filter ( (<>) s ) !!OpambinConfig.switches
+  in
+  List.iter (function
+      | "" -> ()
+      | "-" -> OpambinConfig.switches =:= []
+      | s ->
+        let c = s.[0] in
+        let len = String.length s in
+        match c with
+        | '+' -> add ( String.sub s 1 ( len - 1 ))
+        | '-' -> remove ( String.sub s 1 ( len - 1 ))
+        | _ -> add s
+    ) (EzString.split s ',')
 
 let cmd = {
   cmd_name = "config" ;
@@ -86,6 +110,13 @@ let cmd = {
     Printf.sprintf
       "target for rsync to push new binary packages with `%s push`"
       OpambinGlobals.command;
+
+    [ "reloc-repo-url" ], Arg.String (fun s ->
+        OpambinConfig.reloc_repo_url =:= s;
+        need_saving := true;
+      ),
+    Ezcmd.info @@
+    "target for the default repo containing relocatable packages" ;
 
     [ "enable-cache" ], Arg.Unit (fun () ->
         OpambinConfig.cache_enabled =:= true ;
@@ -115,7 +146,6 @@ let cmd = {
     Ezcmd.info
       "opposite of --enable-create";
 
-
     [ "enable" ], Arg.Unit (fun () ->
         OpambinConfig.enabled =:= true ;
         need_saving := true;
@@ -129,6 +159,39 @@ let cmd = {
       ),
     Ezcmd.info
       "disable binary packages";
+
+    [ "all-switches" ], Arg.Unit (fun () ->
+        OpambinConfig.all_switches =:= true ;
+        need_saving := true ;
+      ),
+    Ezcmd.info "Activate on all switches, except protected switches";
+
+    [ "not-all-switches" ], Arg.Unit (fun () ->
+        OpambinConfig.all_switches =:= false ;
+        need_saving := true ),
+    Ezcmd.info "Activate only on switches specified with --switches";
+
+    [ "switches" ], Arg.String (fun s ->
+        modify_list_of_switches OpambinConfig.switches s ;
+        need_saving := true;
+      ),
+    Ezcmd.info "With --not-all-switches, specify which switches \
+                (comma-separated) should create/use binary \
+                packages. '-' means none, 'SWITCH' or '+SWITCH' means \
+                add SWITCH to the list, `-SWITCH` means remove SWITCH \
+                from the list. A glob regexp can also be used for \
+                SWITCH.";
+
+    [ "protected-switches" ], Arg.String (fun s ->
+        modify_list_of_switches OpambinConfig.protected_switches s ;
+        need_saving := true;
+      ),
+    Ezcmd.info "With --all-switches, specify which switches \
+                (comma-separated) should NOT create/use binary \
+                packages. '-' means none, 'SWITCH' or '+SWITCH' means \
+                add SWITCH to the list, `-SWITCH` means remove SWITCH \
+                from the list. A glob regexp can also be used for \
+                SWITCH.";
 
   ];
   cmd_man = [];

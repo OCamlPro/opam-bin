@@ -62,7 +62,9 @@ archive-mirrors: "../../cache"
       None
 
 let wget ~url ~md5 =
-  let output = OpambinGlobals.opambin_switch_temp_dir () // md5 in
+  let temp_dir = OpambinGlobals.opambin_switch_temp_dir () in
+  EzFile.make_dir ~p:true temp_dir;
+  let output = temp_dir // md5 in
   OpambinMisc.call [| "curl" ;
           "--write-out" ; "%{http_code}\\n" ;
           "--retry" ; "3" ;
@@ -76,7 +78,7 @@ let wget ~url ~md5 =
 
 let check_cached_binary_archive ~version ~repo ~package =
   OpambinMisc.global_log "found binary package in repo %s" repo;
-  let package_dir = repo // "packages" // version // package in
+  let package_dir = repo // "packages" // package // version in
   let src = ref None in
   let md5 = ref None in
   let opam = OpamParser.file ( package_dir // "opam" ) in
@@ -119,10 +121,14 @@ let check_cached_binary_archive ~version ~repo ~package =
               OpambinGlobals.opam_cache_dir //
               "md5" // String.sub md5 0 2 in
             let cached_file = cache_dir // md5 in
+            EzFile.make_dir ~p:true cache_dir;
             Sys.rename binary_archive cached_file ;
             Some cached_file
   in
   EzFile.make_dir OpambinGlobals.marker_cached ;
+  let install_file = package ^ ".install" in
+  if Sys.file_exists install_file then
+    Sys.remove install_file ;
   Unix.chdir OpambinGlobals.marker_cached ;
   let package_files = package_dir // "files" in
   let s = EzFile.read_file
@@ -165,6 +171,11 @@ let cached_binary_archive ~name ~version ~package_uid ~depends =
       false
       end
 
+let error_on_compile =
+  match Sys.getenv "OPAM_BIN_FORCE" with
+  | exception _ -> false
+  | _ -> true
+
 let action args =
   OpambinMisc.global_log "CMD: %s"
     ( String.concat "\n    " ( cmd_name :: args) ) ;
@@ -198,9 +209,15 @@ let action args =
     end
     else begin
       OpambinMisc.global_log "no binary archive found.";
+      if error_on_compile then begin
+        Printf.eprintf
+          "Error: opam-bin is configured to prevent compilation.\n%!";
+        exit 2
+      end;
       EzFile.write_file OpambinGlobals.marker_source "no binary archive found";
     end
   | _ ->
+    OpambinMisc.global_log "unexpected arg.";
     Printf.eprintf
       "Unexpected args: usage is '%s %s name version package_uid depends cmd...'\n%!" OpambinGlobals.command cmd_name ;
     exit 2

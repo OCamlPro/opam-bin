@@ -168,13 +168,20 @@ let current_switch () =
   else switch
 
 let not_this_switch () =
-  not !!OpambinConfig.all_switches &&
-  let switch = current_switch () in
-  List.for_all (fun s ->
-      let core = Re.Glob.glob s in
-      let re = Re.compile core in
-      Re.execp re switch
-    ) !!OpambinConfig.switches
+  if  !!OpambinConfig.all_switches then
+    let switch = current_switch () in
+    List.exists (fun s ->
+        let core = Re.Glob.glob s in
+        let re = Re.compile core in
+        Re.execp re switch
+      ) !!OpambinConfig.protected_switches
+  else
+    let switch = current_switch () in
+    List.for_all (fun s ->
+        let core = Re.Glob.glob s in
+        let re = Re.compile core in
+        not ( Re.execp re switch )
+      ) !!OpambinConfig.switches
 
 (*
 let () =

@@ -10,8 +10,19 @@
 
 open Ezcmd.TYPES
 open EzFile.OP
+open EzConfig.OP
 
 let cmd_name = "install"
+
+let add_repo ~repo ~url =
+  if Sys.file_exists (OpambinGlobals.opam_repo_dir // repo ) then
+    OpambinMisc.call
+      [| "opam"; "remote" ; "set-url" ; repo;
+         "--all"; "--set-default"; url |]
+  else
+    OpambinMisc.call
+      [| "opam"; "remote" ; "add" ; repo ;
+         "--all"; "--set-default"; url |]
 
 let action () =
   Printf.eprintf "%s\n\n%!" OpambinGlobals.about ;
@@ -66,19 +77,11 @@ archive-mirrors: "../../cache"
   EzFile.write_file ( OpambinGlobals.opambin_store_repo_dir // "version" )
     "0.9.0";
 
-  let local_bin = "local-bin" in
-  if Sys.file_exists (OpambinGlobals.opam_repo_dir // local_bin ) then
-    OpambinMisc.call
-      [| "opam"; "remote" ; "set-url" ; local_bin;
-         "--all"; "--set-default";
-         Printf.sprintf "file://%s"
-           OpambinGlobals.opambin_store_repo_dir |]
-  else
-    OpambinMisc.call
-      [| "opam"; "remote" ; "add" ; local_bin;
-         "--all"; "--set-default";
-         Printf.sprintf "file://%s"
-           OpambinGlobals.opambin_store_repo_dir |]
+  add_repo ~repo:"default" ~url:!!OpambinConfig.reloc_repo_url ;
+
+  add_repo ~repo:"local-bin"
+    ~url:( Printf.sprintf "file://%s"
+             OpambinGlobals.opambin_store_repo_dir )
 
 let cmd = {
   cmd_name ;
