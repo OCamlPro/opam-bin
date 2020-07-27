@@ -117,7 +117,7 @@ let generate_html_index () =
 |};
   Buffer.contents b
 
-let action ~delete ~html =
+let action ~delete =
 
   match !!OpambinConfig.rsync_url with
   | None ->
@@ -127,12 +127,11 @@ let action ~delete ~html =
     exit 2
   | Some rsync_url ->
 
-    begin
+    if !delete then begin
       Unix.chdir OpambinGlobals.opambin_store_repo_dir;
       OpambinMisc.call [| "opam" ; "admin" ; "index" |];
-      Unix.chdir OpambinGlobals.curdir
-    end;
-    if !html then begin
+      Unix.chdir OpambinGlobals.curdir ;
+
       let html = generate_html_index () in
       EzFile.write_file
         ( OpambinGlobals.opambin_store_repo_dir // "index.html" ) html
@@ -156,17 +155,14 @@ let action ~delete ~html =
 
 let cmd =
   let delete = ref false in
-  let html = ref false in
   {
     cmd_name = "push" ;
-    cmd_action = (fun () -> action ~delete ~html) ;
+    cmd_action = (fun () -> action ~delete) ;
     cmd_args = [
 
       [ "delete" ], Arg.Set delete,
       Ezcmd.info "Delete non-existent files on the remote side";
 
-      [ "html" ], Arg.Set html,
-      Ezcmd.info "Generate an html index of the packages";
     ];
     cmd_man = [];
     cmd_doc = "push binary packages to the remote server";
