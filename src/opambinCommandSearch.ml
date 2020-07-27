@@ -20,7 +20,8 @@ let cmd_name = "search"
 
 let iter f =
   let tested_set = ref StringSet.empty in
-  let _ = OpambinMisc.iter_repos (fun ~repo ~package ~version ->
+  OpambinMisc.iter_repos ~cont:ignore (fun ~repo ~package ~version ->
+      (* OpambinMisc.global_log "searching %s" version; *)
       if StringSet.mem version !tested_set then
         false
       else
@@ -41,8 +42,7 @@ let iter f =
           Printf.eprintf "warning: exception %s while searching %s\n%!"
             (Printexc.to_string exn) file;
           false
-    ) in
-  ()
+    )
 
 let action ~i ?anon_arg () =
   let find_regexp core =
