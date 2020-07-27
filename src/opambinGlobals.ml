@@ -71,8 +71,8 @@ let package_version = "bin-package.version"
 let package_config = "bin-package.config"
 let package_info = "bin-package.info"
 
-let marker_cached = "_bincache"
-let marker_source = "_binexec"
+let marker_cached = "_bincached"
+let marker_source = "_binsource"
 
 let config_file = opambin_dir // "config"
 

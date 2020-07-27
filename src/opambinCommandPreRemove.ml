@@ -17,7 +17,7 @@ let action args =
   OpambinMisc.global_log "CMD: %s"
     ( String.concat "\n    " ( cmd_name :: args) ) ;
   match args with
-  | name :: _version :: _package_uid :: _depends :: [] ->
+  | name :: _version :: _depends :: [] ->
     List.iter (fun file_name ->
         try
           Sys.remove file_name

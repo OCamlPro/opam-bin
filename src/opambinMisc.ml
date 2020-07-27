@@ -201,10 +201,14 @@ let () =
 *)
 
 (* stops if [f] returns true and returns true *)
-let iter_repos ?name f =
-  let repos = try
-      Sys.readdir OpambinGlobals.opam_repo_dir
-    with _ -> [||]
+let iter_repos ?name ?opam_repos ~cont f =
+  let repos =
+    match opam_repos with
+    | Some repos -> repos
+    | None ->
+      try
+        Sys.readdir OpambinGlobals.opam_repo_dir
+      with _ -> [||]
   in
   let repos = Array.to_list @@
     Array.map (fun file ->
@@ -228,7 +232,9 @@ let iter_repos ?name f =
         | Some name -> [ name ]
         | None ->
           try
-            Array.to_list ( Sys.readdir packages_dir )
+            let files = Sys.readdir packages_dir in
+            Array.sort compare files ;
+            Array.to_list files
           with _ -> []
       in
       iter_packages packages repo repos
@@ -244,6 +250,7 @@ let iter_repos ?name f =
       match Sys.readdir package_dir with
       | exception _ -> iter_packages packages repo repos
       | versions ->
+        Array.sort compare versions;
         let versions = Array.to_list versions in
         iter_versions versions package packages repo repos
 
@@ -260,4 +267,4 @@ let iter_repos ?name f =
       end else
         iter_versions versions package packages repo repos
   in
-  iter_repos repos
+  iter_repos repos |> cont

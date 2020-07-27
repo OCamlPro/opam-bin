@@ -149,27 +149,27 @@ let check_cached_binary_archive ~version ~repo ~package =
   end;
   true
 
-let cached_binary_archive ~name ~version ~package_uid ~depends =
-  let ( source_md5, _depends, _dependset, missing_versions ) =
+let cached_binary_archive ~name ~version ~depends =
+  let ( source_md5, _depends, _dependset, missing_versions, _opam_file ) =
     OpambinCommandPostInstall.compute_hash
-      ~name ~version ~package_uid ~depends in
+      ~name ~version ~depends () in
   if missing_versions <> [] then
-    false
+    Some "missing-versions"
   else
     let version_prefix = Printf.sprintf "%s.%s+bin+%s+"
         name version source_md5 in
-    if OpambinMisc.iter_repos (fun ~repo ~package ~version ->
+    if OpambinMisc.iter_repos ~cont:(fun x -> x) (fun ~repo ~package ~version ->
         if EzString.starts_with version ~prefix:version_prefix then begin
           check_cached_binary_archive ~package ~repo ~version
         end else
           false
       ) then
-      true
+      None
     else begin
       OpambinMisc.global_log "Could not find cached binary package %s"
         version_prefix ;
-      false
-      end
+      Some source_md5
+    end
 
 let error_on_compile =
   match Sys.getenv "OPAM_BIN_FORCE" with
@@ -180,13 +180,13 @@ let action args =
   OpambinMisc.global_log "CMD: %s"
     ( String.concat "\n    " ( cmd_name :: args) ) ;
   match args with
-  | name :: version :: package_uid :: depends :: [] ->
+  | name :: version :: depends :: [] ->
     if not !!OpambinConfig.enabled
     || not !!OpambinConfig.cache_enabled
     || OpambinMisc.not_this_switch () then begin
       OpambinMisc.global_log "cache is disabled";
       EzFile.write_file OpambinGlobals.marker_source
-        "cache is disabled";
+        "cache-is-disabled";
     end else
     if Sys.file_exists OpambinGlobals.marker_source then begin
       OpambinMisc.global_log "%s should not already exist!"
@@ -201,25 +201,25 @@ let action args =
     if Sys.file_exists OpambinGlobals.package_version then begin
       OpambinMisc.global_log "already a binary package";
       EzFile.write_file OpambinGlobals.marker_source
-        "already a binary package";
-    end else
-    if cached_binary_archive ~name ~version ~package_uid ~depends then begin
-      OpambinMisc.global_log "found a binary archive in cache";
-      (* this should have created a marker_cached/ directory *)
-    end
-    else begin
-      OpambinMisc.global_log "no binary archive found.";
-      if error_on_compile then begin
-        Printf.eprintf
-          "Error: opam-bin is configured to prevent compilation.\n%!";
-        exit 2
-      end;
-      EzFile.write_file OpambinGlobals.marker_source "no binary archive found";
+        "already-a-binary-package";
+    end else begin
+      match cached_binary_archive ~name ~version ~depends with
+      | None ->
+        OpambinMisc.global_log "found a binary archive in cache";
+        (* this should have created a marker_cached/ directory *)
+      | Some source_md5 ->
+        OpambinMisc.global_log "no binary archive found.";
+        if error_on_compile then begin
+          Printf.eprintf
+            "Error: opam-bin is configured to prevent compilation.\n%!";
+          exit 2
+        end;
+        EzFile.write_file OpambinGlobals.marker_source source_md5
     end
   | _ ->
     OpambinMisc.global_log "unexpected arg.";
     Printf.eprintf
-      "Unexpected args: usage is '%s %s name version package_uid depends cmd...'\n%!" OpambinGlobals.command cmd_name ;
+      "Unexpected args: usage is '%s %s name version depends cmd...'\n%!" OpambinGlobals.command cmd_name ;
     exit 2
 
 

@@ -44,6 +44,7 @@ let () =
         commands
     with
       exn ->
-      OpambinMisc.global_log "fatal exception %s"
-        (Printexc.to_string exn);
+      let error = Printexc.to_string exn in
+      OpambinMisc.global_log "fatal exception %s" error ;
+      Printf.eprintf "fatal exception %s" error ;
       exit 2

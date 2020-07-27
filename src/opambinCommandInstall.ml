@@ -46,22 +46,22 @@ let action () =
       Some (
         List.rev @@
         OpambinMisc.opam_variable "pre-build-commands"
-          {| ["%s" "pre-build" name version build-id depends] {?build-id} |}
+          {| ["%s" "pre-build" name version depends] {?build-id} |}
           OpambinGlobals.opambin_bin ::
         OpambinMisc.opam_variable "wrap-build-commands"
-          {| ["%s" "wrap-build" name version build-id depends "--"] {?build-id} |}
+          {| ["%s" "wrap-build" name version depends "--"] {?build-id} |}
           OpambinGlobals.opambin_bin ::
         OpambinMisc.opam_variable "pre-install-commands"
-          {| ["%s" "pre-install" name version build-id depends] {?build-id} |}
+          {| ["%s" "pre-install" name version depends] {?build-id} |}
           OpambinGlobals.opambin_bin ::
         OpambinMisc.opam_variable "wrap-install-commands"
-          {| ["%s" "wrap-install" name version build-id depends "--"] {?build-id} |}
+          {| ["%s" "wrap-install" name version depends "--"] {?build-id} |}
           OpambinGlobals.opambin_bin ::
         OpambinMisc.opam_variable "post-install-commands"
-          {| ["%s" "post-install" name version build-id depends installed-files] {?build-id & error-code = 0} |}
+          {| ["%s" "post-install" name version depends installed-files] {?build-id & error-code = 0} |}
           OpambinGlobals.opambin_bin  ::
         OpambinMisc.opam_variable "pre-remove-commands"
-          {| ["%s" "pre-remove" name version build-id depends] {?build-id} |}
+          {| ["%s" "pre-remove" name version depends] {?build-id} |}
           OpambinGlobals.opambin_bin ::
         List.rev file_contents
       )

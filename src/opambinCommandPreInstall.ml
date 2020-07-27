@@ -36,7 +36,7 @@ let action args =
     ( String.concat "\n    " ( cmd_name :: args) ) ;
   OpambinMisc.make_cache_dir ();
   match args with
-  | name :: _version :: _package_uid :: _depends :: [] ->
+  | name :: _version :: _depends :: [] ->
     if Sys.file_exists OpambinGlobals.marker_source then
       ()
     else
@@ -70,7 +70,7 @@ let action args =
     end
   | _ ->
     Printf.eprintf
-      "Unexpected args: usage is '%s %s name version package_uid depends cmd...'\n%!" OpambinGlobals.command cmd_name;
+      "Unexpected args: usage is '%s %s name version depends cmd...'\n%!" OpambinGlobals.command cmd_name;
     exit 2
 
 let cmd =
