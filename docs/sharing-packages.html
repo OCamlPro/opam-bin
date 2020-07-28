@@ -8,9 +8,9 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Sharing Packages &mdash; opam-bin z-2020-07-28-add-pull-command
- (d951449
-) (2020/07/28 11:58) documentation</title>
+  <title>Sharing Packages &mdash; opam-bin z-2020-07-28-fix
+ (c4a5e5d
+) (2020/07/28 19:35) documentation</title>
   
 
   
@@ -63,8 +63,8 @@
             
             
               <div class="version">
-                z-2020-07-28-add-pull-command
- (d951449
+                z-2020-07-28-fix
+ (c4a5e5d
 )
               </div>
             
@@ -176,24 +176,24 @@
 <p><code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> provides a simple way to share the binary packages
 with other users and computers: it automatically creates an
 <code class="code docutils literal notranslate"><span class="pre">opam</span></code> repository with the binary packages that are created. The
-repository is located in <code class="code docutils literal notranslate"><span class="pre">~/.opam/_opam-bin/store/repo</span></code> and the
-corresponding archives are in
-<code class="code docutils literal notranslate"><span class="pre">~/.opam/_opam-bin/store/archives</span></code>.</p>
-<p>By sharing the directory <code class="code docutils literal notranslate"><span class="pre">~/.opam/_opam-bin/store/</span></code> with other
+repository is located in <code class="code docutils literal notranslate"><span class="pre">~/.opam/plugins/opam-bin/store/repo</span></code>
+and the corresponding archives are in
+<code class="code docutils literal notranslate"><span class="pre">~/.opam/plugins/opam-bin/store/archives</span></code>.</p>
+<p>By sharing the directory <code class="code docutils literal notranslate"><span class="pre">~/.opam/plugins/opam-bin/store/</span></code> with other
 computers, you can simply reuse your binary packages. Here is such an
 example session:</p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">clean</span>
 <span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="mi">4</span><span class="o">.</span><span class="mi">07</span><span class="o">.</span><span class="mi">1</span>
 <span class="n">opam</span> <span class="n">install</span> <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span> <span class="o">-</span><span class="n">y</span>
-<span class="n">rsync</span> <span class="o">-</span><span class="n">auv</span> <span class="o">--</span><span class="n">delete</span> <span class="o">~/.</span><span class="n">opam</span><span class="o">/_</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">store</span> <span class="n">other</span><span class="o">-</span><span class="n">computer</span><span class="o">:/</span><span class="n">tmp</span><span class="o">/</span>
-<span class="n">rsync</span> <span class="o">-</span><span class="n">auv</span> <span class="o">--</span><span class="n">delete</span> <span class="o">~/.</span><span class="n">opam</span><span class="o">/_</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">cache</span> <span class="n">other</span><span class="o">-</span><span class="n">computer</span><span class="o">:/</span><span class="n">tmp</span><span class="o">/</span>
+<span class="n">rsync</span> <span class="o">-</span><span class="n">auv</span> <span class="o">--</span><span class="n">delete</span> <span class="o">~/.</span><span class="n">opam</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">store</span> <span class="n">other</span><span class="o">-</span><span class="n">computer</span><span class="o">:/</span><span class="n">tmp</span><span class="o">/</span>
+<span class="n">rsync</span> <span class="o">-</span><span class="n">auv</span> <span class="o">--</span><span class="n">delete</span> <span class="o">~/.</span><span class="n">opam</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">cache</span> <span class="n">other</span><span class="o">-</span><span class="n">computer</span><span class="o">:/</span><span class="n">tmp</span><span class="o">/</span>
 <span class="n">ssh</span> <span class="n">other</span><span class="o">-</span><span class="n">computer</span>
 <span class="o">$</span> <span class="n">opam</span> <span class="n">remote</span> <span class="n">set</span><span class="o">-</span><span class="n">url</span> <span class="n">default</span> <span class="o">--</span><span class="n">all</span> <span class="o">--</span><span class="n">set</span><span class="o">-</span><span class="n">default</span> <span class="n">file</span><span class="o">:///</span><span class="n">tmp</span><span class="o">/</span><span class="n">store</span><span class="o">/</span><span class="n">repo</span>
 <span class="o">$</span> <span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="o">--</span><span class="n">empty</span>
 <span class="o">$</span> <span class="n">opam</span> <span class="n">install</span> <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span><span class="o">+</span><span class="n">bin</span>
 </pre></div>
 </div>
-<p>Note that we also add to share <code class="code docutils literal notranslate"><span class="pre">~/.opam/_opam-bin/cache</span></code> on the
+<p>Note that we also add to share <code class="code docutils literal notranslate"><span class="pre">~/.opam/plugins/opam-bin/cache</span></code> on the
 other computer, because without specific configuration, the <code class="code docutils literal notranslate"><span class="pre">url</span>
 <span class="pre">{</span> <span class="pre">src:</span> <span class="pre">}</span></code> field in generated <code class="code docutils literal notranslate"><span class="pre">opam</span></code> files will not provide the
 correct path to the archive. Fortunately, <code class="code docutils literal notranslate"><span class="pre">opam</span></code> is able to use

@@ -14,14 +14,17 @@ usually done by::
 
 This command will do the following modifications:
 
-* Install a copy of :code:`opam-bin` as :code:`~/.opam/_opam-bin/opam-bin.exe`
+* Install a copy of :code:`opam-bin` as
+  :code:`~/.opam/plugins/opam-bin/opam-bin.exe`, and a link in
+  :code:`~/.opam/plugins/bin/opam-bin` (so that :code:`opam bin` also
+  works)
 * Modify :code:`opam` configuration files to call :code:`opam-bin` everytime
   you install or remove a package. This is done by modifying the hooks
   in :code:`~/.opam/config`. For example::
 
     post-install-commands:
     [
-      "/home/user/.opam/_opam-bin/opam-bin.exe"
+      "/home/user/.opam/plugins/opam-bin/opam-bin.exe"
       "post-install" name version build-id depends installed-files
     ] {?build-id & error-code = 0}
 
@@ -30,7 +33,7 @@ This command will do the following modifications:
 * Add two new repositories:
   
   * :code:`local-bin` for
-    :code:`file:///home/user/.opam/_opam-bin/store/repo` to be able to
+    :code:`file:///home/user/.opam/plugins/opam-bin/store/repo` to be able to
     install binary packages on user request
   * :code:`default` for
     `git@github.com:OCamlPro/opam-repository-relocatable <https://github.com/OCamlPro/opam-repository-relocatable>`__ to
@@ -57,7 +60,7 @@ We can check that binary packages have been created::
 
 gives the following output::
 
-  Binary packages in /home/user/.opam/_opam-bin/store/archives:
+  Binary packages in /home/user/.opam/plugins/opam-bin/store/archives:
   alt-ergo.2.3.2+bin+e36313ee+a8034f9e-bin.tar.gz
   alt-ergo-lib.2.3.2+bin+c8fa4342+e81dc009-bin.tar.gz
   alt-ergo-parsers.2.3.2+bin+716cf20e+b265b234-bin.tar.gz
@@ -109,7 +112,7 @@ Let's have a look have the configuration of :code:`opam-bin`::
 
 outputs something like::
 
-  Current options (from /home/lefessan/.opam/_opam-bin/config):
+  Current options (from /home/lefessan/.opam/plugins/opam-bin/config):
     base_url : /change-this-option
     rsync_url : None
     reloc_repo_url : git@github.com:OCamlPro/opam-repository-relocatable

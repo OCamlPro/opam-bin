@@ -93,7 +93,7 @@ File Structure
 
 * :code:`~/.opam/`
   
-  * :code:`_opam-bin/`
+  * :code:`plugins/opam-bin/`
     
     * :code:`opam-bin.exe` This file is the executable of
       :code:`opam-bin` used in :code:`opam` wrappers.

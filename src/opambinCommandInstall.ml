@@ -24,17 +24,19 @@ let add_repo ~repo ~url =
       [| "opam"; "remote" ; "add" ; repo ;
          "--all"; "--set-default"; url |]
 
-let action () =
-  Printf.eprintf "%s\n\n%!" OpambinGlobals.about ;
-
-  EzFile.make_dir OpambinGlobals.opambin_dir ;
-  OpambinConfig.save ();
-
+let install_exe () =
   let s = FileString.read_file Sys.executable_name in
-  FileString.write_file OpambinGlobals.opambin_bin s;
-  Unix.chmod OpambinGlobals.opambin_bin 0o755;
-  Printf.eprintf "Executable copied as %s\n%!"
-    OpambinGlobals.opambin_bin;
+  EzFile.write_file OpambinGlobals.opambin_bin s;
+  Unix.chmod  OpambinGlobals.opambin_bin 0o755;
+  Printf.eprintf "Executable copied as %s\n%!" OpambinGlobals.opambin_bin;
+  EzFile.make_dir ~p:true OpambinGlobals.opam_plugins_bin_dir ;
+  OpambinMisc.call [|
+    "ln"; "-sf" ;
+    ".." // OpambinGlobals.command // OpambinGlobals.command_exe ;
+    OpambinGlobals.opam_plugins_bin_dir // OpambinGlobals.command
+  |]
+
+let install_hooks () =
 
   OpambinMisc.change_opam_config (fun file_contents ->
       let file_contents =
@@ -65,7 +67,21 @@ let action () =
           OpambinGlobals.opambin_bin ::
         List.rev file_contents
       )
-    );
+    )
+
+let install_repos () =
+  add_repo ~repo:"default" ~url:!!OpambinConfig.reloc_repo_url ;
+
+  add_repo ~repo:"local-bin"
+    ~url:( Printf.sprintf "file://%s"
+             OpambinGlobals.opambin_store_repo_dir )
+
+
+let action args =
+  Printf.eprintf "%s\n\n%!" OpambinGlobals.about ;
+
+  EzFile.make_dir OpambinGlobals.opambin_dir ;
+  OpambinConfig.save ();
 
   EzFile.make_dir ~p:true OpambinGlobals.opambin_cache_dir;
   EzFile.make_dir ~p:true OpambinGlobals.opambin_store_repo_packages_dir;
@@ -77,16 +93,32 @@ archive-mirrors: "../../cache"
   EzFile.write_file ( OpambinGlobals.opambin_store_repo_dir // "version" )
     "0.9.0";
 
-  add_repo ~repo:"default" ~url:!!OpambinConfig.reloc_repo_url ;
+  match args with
+  | [] ->
+    install_exe ();
+    install_hooks ();
+    install_repos ()
+  | _ ->
+    List.iter (function
+        | "exe" -> install_exe ()
+        | "hooks" -> install_hooks ()
+        | "repos" -> install_repos ()
+        | s ->
+          Printf.eprintf "Error: unexpected argument %S" s;
+          exit 2)
+      args
 
-  add_repo ~repo:"local-bin"
-    ~url:( Printf.sprintf "file://%s"
-             OpambinGlobals.opambin_store_repo_dir )
+let cmd =
+  let anon_args = ref [] in
+  {
+    cmd_name ;
+    cmd_action = (fun () -> action !anon_args) ;
+    cmd_args = [
 
-let cmd = {
-  cmd_name ;
-  cmd_action = action ;
-  cmd_args = [];
-  cmd_man = [];
-  cmd_doc = "install in opam";
-}
+      [], Anons (fun list -> anon_args := list),
+      Ezcmd.info "No args = all, otherwise 'exe', 'hooks' and/or 'repos'";
+
+    ];
+    cmd_man = [];
+    cmd_doc = "install in opam";
+  }
