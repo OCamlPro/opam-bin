@@ -8,9 +8,9 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Local Usage &mdash; opam-bin z-2020-07-28-add-pull-command
- (d951449
-) (2020/07/28 11:58) documentation</title>
+  <title>Local Usage &mdash; opam-bin z-2020-07-28-fix
+ (c4a5e5d
+) (2020/07/28 19:35) documentation</title>
   
 
   
@@ -63,8 +63,8 @@
             
             
               <div class="version">
-                z-2020-07-28-add-pull-command
- (d951449
+                z-2020-07-28-fix
+ (c4a5e5d
 )
               </div>
             
@@ -182,14 +182,17 @@ usually done by:</p>
 </div>
 <p>This command will do the following modifications:</p>
 <ul>
-<li><p class="first">Install a copy of <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> as <code class="code docutils literal notranslate"><span class="pre">~/.opam/_opam-bin/opam-bin.exe</span></code></p>
+<li><p class="first">Install a copy of <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> as
+<code class="code docutils literal notranslate"><span class="pre">~/.opam/plugins/opam-bin/opam-bin.exe</span></code>, and a link in
+<code class="code docutils literal notranslate"><span class="pre">~/.opam/plugins/bin/opam-bin</span></code> (so that <code class="code docutils literal notranslate"><span class="pre">opam</span> <span class="pre">bin</span></code> also
+works)</p>
 </li>
 <li><p class="first">Modify <code class="code docutils literal notranslate"><span class="pre">opam</span></code> configuration files to call <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> everytime
 you install or remove a package. This is done by modifying the hooks
 in <code class="code docutils literal notranslate"><span class="pre">~/.opam/config</span></code>. For example:</p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">post</span><span class="o">-</span><span class="n">install</span><span class="o">-</span><span class="n">commands</span><span class="o">:</span>
 <span class="o">[</span>
-  <span class="s2">&quot;/home/user/.opam/_opam-bin/opam-bin.exe&quot;</span>
+  <span class="s2">&quot;/home/user/.opam/plugins/opam-bin/opam-bin.exe&quot;</span>
   <span class="s2">&quot;post-install&quot;</span> <span class="n">name</span> <span class="n">version</span> <span class="n">build</span><span class="o">-</span><span class="n">id</span> <span class="n">depends</span> <span class="n">installed</span><span class="o">-</span><span class="n">files</span>
 <span class="o">]</span> <span class="o">{?</span><span class="n">build</span><span class="o">-</span><span class="n">id</span> <span class="o">&amp;</span> <span class="n">error</span><span class="o">-</span><span class="n">code</span> <span class="o">=</span> <span class="mi">0</span><span class="o">}</span>
 </pre></div>
@@ -200,7 +203,7 @@ you will have to modify the files manually.</p>
 <li><p class="first">Add two new repositories:</p>
 <ul class="simple">
 <li><code class="code docutils literal notranslate"><span class="pre">local-bin</span></code> for
-<code class="code docutils literal notranslate"><span class="pre">file:///home/user/.opam/_opam-bin/store/repo</span></code> to be able to
+<code class="code docutils literal notranslate"><span class="pre">file:///home/user/.opam/plugins/opam-bin/store/repo</span></code> to be able to
 install binary packages on user request</li>
 <li><code class="code docutils literal notranslate"><span class="pre">default</span></code> for
 <a class="reference external" href="https://github.com/OCamlPro/opam-repository-relocatable">git&#64;github.com:OCamlPro/opam-repository-relocatable</a> to
@@ -227,7 +230,7 @@ will generate binary packages:</p>
 </pre></div>
 </div>
 <p>gives the following output:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="nc">Binary</span> <span class="n">packages</span> <span class="k">in</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">opam</span><span class="o">/_</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">store</span><span class="o">/</span><span class="n">archives</span><span class="o">:</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="nc">Binary</span> <span class="n">packages</span> <span class="k">in</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">opam</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">store</span><span class="o">/</span><span class="n">archives</span><span class="o">:</span>
 <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">+</span><span class="n">bin</span><span class="o">+</span><span class="n">e36313ee</span><span class="o">+</span><span class="n">a8034f9e</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
 <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span><span class="o">-</span><span class="n">lib</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">+</span><span class="n">bin</span><span class="o">+</span><span class="n">c8fa4342</span><span class="o">+</span><span class="n">e81dc009</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
 <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span><span class="o">-</span><span class="n">parsers</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">+</span><span class="n">bin</span><span class="o">+</span><span class="mi">716</span><span class="n">cf20e</span><span class="o">+</span><span class="n">b265b234</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
@@ -279,7 +282,7 @@ install the binary packages:</p>
 </pre></div>
 </div>
 <p>outputs something like:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="nc">Current</span> <span class="n">options</span> <span class="o">(</span><span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">lefessan</span><span class="o">/.</span><span class="n">opam</span><span class="o">/_</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">config</span><span class="o">):</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="nc">Current</span> <span class="n">options</span> <span class="o">(</span><span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">lefessan</span><span class="o">/.</span><span class="n">opam</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">config</span><span class="o">):</span>
   <span class="n">base_url</span> <span class="o">:</span> <span class="o">/</span><span class="n">change</span><span class="o">-</span><span class="n">this</span><span class="o">-</span><span class="n">option</span>
   <span class="n">rsync_url</span> <span class="o">:</span> <span class="nc">None</span>
   <span class="n">reloc_repo_url</span> <span class="o">:</span> <span class="n">git</span><span class="o">@</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">:</span><span class="nc">OCamlPro</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">repository</span><span class="o">-</span><span class="n">relocatable</span>

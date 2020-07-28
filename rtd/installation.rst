@@ -27,9 +27,7 @@ the :code:`opam-bin` package and install it.
 
 For exemple::
 
-  opam switch create opam-bin --empty
-  opam remote add binaries https://www.origin-labs.com/opam-bin/debian10.4-amd64/repo
-  opam install opam-bin
+  opam switch create opam-bin --packages opam-bin -y --repos binaries=https://www.origin-labs.com/opam-bin/debian10.4-amd64/repo
 
 Once installation is successful, you can install it in your :code:`opam`
 configuration with::

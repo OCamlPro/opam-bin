@@ -11,7 +11,7 @@
 open EzFile.OP
 
 let command = "opam-bin"
-let version = "0.6.0"
+let version = "0.7.0"
 let about =
   Printf.sprintf "%s %s by OCamlPro SAS <contact@ocamlpro.com>"
     command version
@@ -25,11 +25,16 @@ let opam_dir = try
     Sys.getenv "OPAMROOT"
   with Not_found -> home_dir // ".opam"
 
+let command_exe = command ^ ".exe"
+let command_log = command ^ ".log"
+
 let opam_cache_dir = opam_dir // "download-cache"
 let opam_repo_dir = opam_dir // "repo"
-let opambin_dir = opam_dir // ( "_" ^ command )
-let opambin_bin = opambin_dir // ( command ^ ".exe" )
-let opambin_log = opambin_dir // ( command ^ ".log" )
+let opam_plugins_dir = opam_dir // "plugins"
+let opam_plugins_bin_dir = opam_plugins_dir // "bin"
+let opambin_dir = opam_plugins_dir // command
+let opambin_bin = opambin_dir // command_exe
+let opambin_log = opambin_dir // command_log
 let opambin_store_dir = opambin_dir // "store"
 let opambin_cache_dir = opambin_dir // "cache"
 let opambin_store_archives_dir = opambin_store_dir // "archives"
@@ -86,7 +91,7 @@ let system = "debian-buster-x86_64"
 File structure:
 
 $HOME/.opam
-   _opam-bin/
+   plugins/opam-bin/
      opam-bin.exe
      opam-bin.log
      cache/

@@ -8,9 +8,9 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation &mdash; opam-bin z-2020-07-28-add-pull-command
- (d951449
-) (2020/07/28 11:58) documentation</title>
+  <title>Installation &mdash; opam-bin z-2020-07-28-fix
+ (c4a5e5d
+) (2020/07/28 19:35) documentation</title>
   
 
   
@@ -63,8 +63,8 @@
             
             
               <div class="version">
-                z-2020-07-28-add-pull-command
- (d951449
+                z-2020-07-28-fix
+ (c4a5e5d
 )
               </div>
             
@@ -192,9 +192,7 @@ configuration with:</p>
 <p>Select an <code class="code docutils literal notranslate"><span class="pre">opam</span></code> binary repository for your os/arch containing
 the <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> package and install it.</p>
 <p>For exemple:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="o">--</span><span class="n">empty</span>
-<span class="n">opam</span> <span class="n">remote</span> <span class="n">add</span> <span class="n">binaries</span> <span class="n">https</span><span class="o">://</span><span class="n">www</span><span class="o">.</span><span class="n">origin</span><span class="o">-</span><span class="n">labs</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">debian10</span><span class="o">.</span><span class="mi">4</span><span class="o">-</span><span class="n">amd64</span><span class="o">/</span><span class="n">repo</span>
-<span class="n">opam</span> <span class="n">install</span> <span class="n">opam</span><span class="o">-</span><span class="n">bin</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="o">--</span><span class="n">packages</span> <span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="o">-</span><span class="n">y</span> <span class="o">--</span><span class="n">repos</span> <span class="n">binaries</span><span class="o">=</span><span class="n">https</span><span class="o">://</span><span class="n">www</span><span class="o">.</span><span class="n">origin</span><span class="o">-</span><span class="n">labs</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">debian10</span><span class="o">.</span><span class="mi">4</span><span class="o">-</span><span class="n">amd64</span><span class="o">/</span><span class="n">repo</span>
 </pre></div>
 </div>
 <p>Once installation is successful, you can install it in your <code class="code docutils literal notranslate"><span class="pre">opam</span></code>

@@ -24,8 +24,8 @@ Thanks
 We would like to warmly thanks some of our customers without whom this
 project would not have been possible:
 
-* Jane Street Ltd
-* Adacore SAS
+* `Jane Street Capital <https://www.janestreet.com/>`__
+* `Adacore SAS <https://www.adacore.com/>`__
 
 Funding
 -------
