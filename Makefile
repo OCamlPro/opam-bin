@@ -11,3 +11,6 @@ init:
 
 html:
 	sphinx-build rtd docs
+
+view:
+	xdg-open file://$$(pwd)/docs/index.html

@@ -27,6 +27,10 @@ List binary packages created on this computer
 
 opam-bin push
 -------------
+pull binary packages from the remote server
+
+opam-bin push
+-------------
 push binary packages to the remote server
 
 opam-bin search

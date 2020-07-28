@@ -20,7 +20,8 @@ the source package manager of OCaml.
    sharing-packages
    commands
    repositories
-   Github repository <https://github.com/ocamlpro/opam-bin>
+   about-and-thanks
+   Devel and Issues on Github <https://github.com/ocamlpro/opam-bin>
 
 Indices and tables
 ==================

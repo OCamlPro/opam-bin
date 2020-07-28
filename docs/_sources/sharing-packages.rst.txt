@@ -57,5 +57,46 @@ copied, and then use the :code:`opam-bin push` command::
   opam-bin config --rsync-url my.server.com:/var/www/opam-bin
   opam-bin push
 
+By default, this :code:`opam-bin push` will delete all upstream
+packages that are not locally present. It will also generate in the
+repository a file :code:`index.tar.gz` for :code:`opam`, and a file
+:code:`index.html` listing all available packages.
+
+If you don't want this behavior, i.e. you only want to merge new
+packages, you should use the :code:`--merge` option, you will also
+need to recreate the file :code:`index.tar.gz` upstream::
+
+  opam-bin config --rsync-url my.server.com:/var/www/opam-bin
+  opam-bin push --merge
+  ssh my.server.com
+  $ cd /var/www/opam-bin/repo
+  $ opam admin index
+
+Yet, most of the time, you will want to build your packages on top of
+former binary packages, so you may want to first download your
+upstream repo locally, so that you will be able to avoid the
+:code:`--merge` option. For that, you can use :code:`opam-bin
+pull`. For example, if you want to add a binary package for
+:code:`alt-ergo` and its dependencies::
+
+  opam-bin config --rsync-url my.server.com:/var/www/opam-bin
+  opam-bin pull
+  opam install alt-ergo -y
+  opam-bin push
+
+  
+Using a Binary Repository Only
+------------------------------
+
+Once a repository with binary packages has been published,
+:code:`opam-bin` is not needed to use it.
+
+For example::
+
+  export OPAMROOT=$HOME/opam-root
+  opam init --bare -n https://www.origin-labs.com/opam-bin/debian10.4-amd64/repo
+  opam switch create alt-ergo --empty
+  opam install alt-ergo -y
+
 
 

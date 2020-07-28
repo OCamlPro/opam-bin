@@ -8,9 +8,9 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Sharing Packages &mdash; opam-bin gh-pages
- (d90353d
-) (2020/07/27 17:03) documentation</title>
+  <title>Sharing Packages &mdash; opam-bin z-2020-07-28-add-pull-command
+ (d951449
+) (2020/07/28 11:58) documentation</title>
   
 
   
@@ -63,8 +63,8 @@
             
             
               <div class="version">
-                gh-pages
- (d90353d
+                z-2020-07-28-add-pull-command
+ (d951449
 )
               </div>
             
@@ -98,11 +98,13 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Sharing Packages</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#private-sharing">Private Sharing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#public-sharing">Public Sharing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-a-binary-repository-only">Using a Binary Repository Only</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repositories.html">Contributed Binary Repositories</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/ocamlpro/opam-bin">Github repository</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about-and-thanks.html">About, Thanks and Funding</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ocamlpro/opam-bin">Devel and Issues on Github</a></li>
 </ul>
 
             
@@ -217,6 +219,44 @@ the remote server. You first need to specify where the files should be
 copied, and then use the <code class="code docutils literal notranslate"><span class="pre">opam-bin</span> <span class="pre">push</span></code> command:</p>
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">rsync</span><span class="o">-</span><span class="n">url</span> <span class="n">my</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">com</span><span class="o">:/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span>
 <span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">push</span>
+</pre></div>
+</div>
+<p>By default, this <code class="code docutils literal notranslate"><span class="pre">opam-bin</span> <span class="pre">push</span></code> will delete all upstream
+packages that are not locally present. It will also generate in the
+repository a file <code class="code docutils literal notranslate"><span class="pre">index.tar.gz</span></code> for <code class="code docutils literal notranslate"><span class="pre">opam</span></code>, and a file
+<code class="code docutils literal notranslate"><span class="pre">index.html</span></code> listing all available packages.</p>
+<p>If you don’t want this behavior, i.e. you only want to merge new
+packages, you should use the <code class="code docutils literal notranslate"><span class="pre">--merge</span></code> option, you will also
+need to recreate the file <code class="code docutils literal notranslate"><span class="pre">index.tar.gz</span></code> upstream:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">rsync</span><span class="o">-</span><span class="n">url</span> <span class="n">my</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">com</span><span class="o">:/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span>
+<span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">push</span> <span class="o">--</span><span class="n">merge</span>
+<span class="n">ssh</span> <span class="n">my</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">com</span>
+<span class="o">$</span> <span class="n">cd</span> <span class="o">/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">repo</span>
+<span class="o">$</span> <span class="n">opam</span> <span class="n">admin</span> <span class="n">index</span>
+</pre></div>
+</div>
+<p>Yet, most of the time, you will want to build your packages on top of
+former binary packages, so you may want to first download your
+upstream repo locally, so that you will be able to avoid the
+<code class="code docutils literal notranslate"><span class="pre">--merge</span></code> option. For that, you can use <code class="code docutils literal notranslate"><span class="pre">opam-bin</span>
+<span class="pre">pull</span></code>. For example, if you want to add a binary package for
+<code class="code docutils literal notranslate"><span class="pre">alt-ergo</span></code> and its dependencies:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">rsync</span><span class="o">-</span><span class="n">url</span> <span class="n">my</span><span class="o">.</span><span class="n">server</span><span class="o">.</span><span class="n">com</span><span class="o">:/</span><span class="n">var</span><span class="o">/</span><span class="n">www</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span>
+<span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">pull</span>
+<span class="n">opam</span> <span class="n">install</span> <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span> <span class="o">-</span><span class="n">y</span>
+<span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">push</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-a-binary-repository-only">
+<h2>Using a Binary Repository Only<a class="headerlink" href="#using-a-binary-repository-only" title="Permalink to this headline">¶</a></h2>
+<p>Once a repository with binary packages has been published,
+<code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> is not needed to use it.</p>
+<p>For example:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="nc">OPAMROOT</span><span class="o">=$</span><span class="nc">HOME</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">root</span>
+<span class="n">opam</span> <span class="n">init</span> <span class="o">--</span><span class="n">bare</span> <span class="o">-</span><span class="n">n</span> <span class="n">https</span><span class="o">://</span><span class="n">www</span><span class="o">.</span><span class="n">origin</span><span class="o">-</span><span class="n">labs</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">debian10</span><span class="o">.</span><span class="mi">4</span><span class="o">-</span><span class="n">amd64</span><span class="o">/</span><span class="n">repo</span>
+<span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span> <span class="o">--</span><span class="n">empty</span>
+<span class="n">opam</span> <span class="n">install</span> <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span> <span class="o">-</span><span class="n">y</span>
 </pre></div>
 </div>
 </div>
