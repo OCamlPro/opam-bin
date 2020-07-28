@@ -118,6 +118,13 @@ let cmd = {
     Ezcmd.info @@
     "target for the default repo containing relocatable packages" ;
 
+    [ "title" ], Arg.String (fun s ->
+        OpambinConfig.title =:= s;
+        need_saving := true;
+      ),
+    Ezcmd.info @@
+    "The title in the generated index.html file" ;
+
     [ "enable-cache" ], Arg.Unit (fun () ->
         OpambinConfig.cache_enabled =:= true ;
         need_saving := true;

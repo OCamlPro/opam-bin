@@ -84,6 +84,17 @@ pull`. For example, if you want to add a binary package for
   opam install alt-ergo -y
   opam-bin push
 
+It is possible to customize the header and trailer of the generated
+:code:`index.html` file by defining the files
+:code:`~/.opam/plugins/opam-bin/header.html` and
+:code:`~/.opam/plugins/opam-bin/trailer.html`.  To test the impact of
+changing these files, you can use::
+
+  opam-bin push --local-only
+
+to generate a new
+:code:`~/.opam/plugins/opam-bin/store/repo/index.html` file and check
+the result.
   
 Using a Binary Repository Only
 ------------------------------

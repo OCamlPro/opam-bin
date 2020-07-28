@@ -11,7 +11,7 @@
 open EzFile.OP
 
 let command = "opam-bin"
-let version = "0.7.0"
+let version = "0.7.1"
 let about =
   Printf.sprintf "%s %s by OCamlPro SAS <contact@ocamlpro.com>"
     command version
@@ -37,6 +37,8 @@ let opambin_bin = opambin_dir // command_exe
 let opambin_log = opambin_dir // command_log
 let opambin_store_dir = opambin_dir // "store"
 let opambin_cache_dir = opambin_dir // "cache"
+let opambin_header_html = opambin_dir // "header.html"
+let opambin_trailer_html = opambin_dir // "trailer.html"
 let opambin_store_archives_dir = opambin_store_dir // "archives"
 let opambin_store_repo_dir = opambin_store_dir // "repo"
 let opambin_store_repo_packages_dir = opambin_store_repo_dir // "packages"
