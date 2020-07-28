@@ -1,6 +1,6 @@
 var DOCUMENTATION_OPTIONS = {
     URL_ROOT: document.getElementById("documentation_options").getAttribute('data-url_root'),
-    VERSION: 'gh-pages (d90353d) (2020/07/27 17:03)',
+    VERSION: 'z-2020-07-28-add-pull-command (d951449) (2020/07/28 11:58)',
     LANGUAGE: 'None',
     COLLAPSE_INDEX: false,
     FILE_SUFFIX: '.html',

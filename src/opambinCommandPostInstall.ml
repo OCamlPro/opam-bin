@@ -371,8 +371,7 @@ let commit ~name ~version ~depends files =
               OpambinGlobals.package_info
               (if has_config_file then
                  Printf.sprintf {|
-  [  "mkdir" "-p" "%%{prefix}%%/.opam-switch/config" ]
-  [  "mv" "%%{prefix}%%/%s" "%%{prefix}%%/.opam-switch/config/%s.config" ]
+  [  "mv" "%%{prefix}%%/%s" "%s.config" ]
 |}
                    OpambinGlobals.package_config name
                else "")

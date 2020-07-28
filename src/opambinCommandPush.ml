@@ -117,7 +117,7 @@ let generate_html_index () =
 |};
   Buffer.contents b
 
-let action ~delete =
+let action ~merge =
 
   match !!OpambinConfig.rsync_url with
   | None ->
@@ -127,7 +127,7 @@ let action ~delete =
     exit 2
   | Some rsync_url ->
 
-    if !delete then begin
+    if not !merge then begin
       Unix.chdir OpambinGlobals.opambin_store_repo_dir;
       OpambinMisc.call [| "opam" ; "admin" ; "index" |];
       Unix.chdir OpambinGlobals.curdir ;
@@ -138,11 +138,7 @@ let action ~delete =
     end;
 
     let args = [ "rsync"; "-auv" ; "--progress" ] in
-    let args = if !delete then
-        args @ [ "--delete" ]
-      else
-        args
-    in
+    let args = if !merge then args else args @ [ "--merge" ] in
     let args = args @ [
         OpambinGlobals.opambin_store_dir // "." ;
         rsync_url
@@ -154,14 +150,16 @@ let action ~delete =
     ()
 
 let cmd =
-  let delete = ref false in
+  let merge = ref false in
   {
     cmd_name = "push" ;
-    cmd_action = (fun () -> action ~delete) ;
+    cmd_action = (fun () -> action ~merge) ;
     cmd_args = [
 
-      [ "delete" ], Arg.Set delete,
-      Ezcmd.info "Delete non-existent files on the remote side";
+      [ "merge" ], Arg.Set merge,
+      Ezcmd.info "Merge instead of deleting non-existent files on the \
+                  remote side (do not generate index.tar.gz and \
+                  index.html)";
 
     ];
     cmd_man = [];

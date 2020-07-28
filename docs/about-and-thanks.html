@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Introduction &mdash; opam-bin z-2020-07-28-add-pull-command
+  <title>About, Thanks and Funding &mdash; opam-bin z-2020-07-28-add-pull-command
  (d951449
 ) (2020/07/28 11:58) documentation</title>
   
@@ -38,8 +38,7 @@
   <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Basic Concepts" href="basic-concepts.html" />
-    <link rel="prev" title="Welcome to Opam-bin" href="index.html" /> 
+    <link rel="prev" title="Contributed Binary Repositories" href="repositories.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -91,14 +90,19 @@
             
               <p class="caption"><span class="caption-text">Documentation</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="basic-concepts.html">Basic Concepts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="local-usage.html">Local Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sharing-packages.html">Sharing Packages</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="repositories.html">Contributed Binary Repositories</a></li>
-<li class="toctree-l1"><a class="reference internal" href="about-and-thanks.html">About, Thanks and Funding</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">About, Thanks and Funding</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#about">About</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#thanks">Thanks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#funding">Funding</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/ocamlpro/opam-bin">Devel and Issues on Github</a></li>
 </ul>
 
@@ -145,13 +149,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Introduction</li>
+      <li>About, Thanks and Funding</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/introduction.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/about-and-thanks.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -164,28 +168,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
-<p><code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> is a framework to build and use binary packages with
-<code class="code docutils literal notranslate"><span class="pre">opam</span></code>.  With <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code>, it is possible:</p>
+  <div class="section" id="about-thanks-and-funding">
+<h1>About, Thanks and Funding<a class="headerlink" href="#about-thanks-and-funding" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="about">
+<h2>About<a class="headerlink" href="#about" title="Permalink to this headline">¶</a></h2>
+<p><code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> is being developed collaboratively by
+<a class="reference external" href="https://www.ocamlpro.com">OCamlPro SAS</a> and
+<a class="reference external" href="https://www.origin-labs.com">Origin Labs SAS</a> by:</p>
 <ul class="simple">
-<li>To create a binary package for every source package built by <code class="code docutils literal notranslate"><span class="pre">opam</span></code>;</li>
-<li>To re-use previously built binary packages instead of rebuilding the
-corresponding source packages;</li>
-<li>To share these binary packages with other users, by exporting these
-packages as <code class="code docutils literal notranslate"><span class="pre">opam</span></code> repositories;</li>
+<li>Code:<ul>
+<li>Fabrice LE FESSANT &lt;<a class="reference external" href="mailto:fabrice&#46;le_fessant&#37;&#52;&#48;origin-labs&#46;com">fabrice<span>&#46;</span>le_fessant<span>&#64;</span>origin-labs<span>&#46;</span>com</a>&gt;</li>
 </ul>
-<p>Packages shared with <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> have to be relocatable, i.e. can be
-installed in any directory. A specific <code class="code docutils literal notranslate"><span class="pre">opam</span></code> repository is provided,
-that forks the official <code class="code docutils literal notranslate"><span class="pre">opam</span></code> repository and replace non-relocatable
-packages by relocatable packages.</p>
-<p>The following resources are associated with <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code>:</p>
+</li>
+<li>Expertise:<ul>
+<li>Raja BOUJBEL &lt;<a class="reference external" href="mailto:raja&#46;boujbel&#37;&#52;&#48;ocamlpro&#46;com">raja<span>&#46;</span>boujbel<span>&#64;</span>ocamlpro<span>&#46;</span>com</a>&gt;</li>
+<li>Louis GESBERT &lt;<a class="reference external" href="mailto:louis&#46;gesbert&#37;&#52;&#48;ocamlpro&#46;com">louis<span>&#46;</span>gesbert<span>&#64;</span>ocamlpro<span>&#46;</span>com</a>&gt;</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="thanks">
+<h2>Thanks<a class="headerlink" href="#thanks" title="Permalink to this headline">¶</a></h2>
+<p>We would like to warmly thanks some of our customers without whom this
+project would not have been possible:</p>
 <ul class="simple">
-<li><code class="code docutils literal notranslate"><span class="pre">opam</span></code> Package Repository with relocatable packages:
-<a class="reference external" href="https://github.com/OCamlPro/opam-repository-relocatable/">https://github.com/OCamlPro/opam-repository-relocatable/</a></li>
-<li>Software in the Github Project:
-<a class="reference external" href="https://github.com/OCamlPro/opam-bin/">https://github.com/OCamlPro/opam-bin/</a></li>
+<li>Jane Street Ltd</li>
+<li>Adacore SAS</li>
 </ul>
+</div>
+<div class="section" id="funding">
+<h2>Funding<a class="headerlink" href="#funding" title="Permalink to this headline">¶</a></h2>
+<p>We are looking for funding to support this project on the long
+term. If you want to help us, contact us at <a class="reference external" href="mailto:contact&#37;&#52;&#48;ocamlpro&#46;com">contact<span>&#64;</span>ocamlpro<span>&#46;</span>com</a>.</p>
+</div>
 </div>
 
 
@@ -196,10 +211,8 @@ packages by relocatable packages.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="basic-concepts.html" class="btn btn-neutral float-right" title="Basic Concepts" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to Opam-bin" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="repositories.html" class="btn btn-neutral float-left" title="Contributed Binary Repositories" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
