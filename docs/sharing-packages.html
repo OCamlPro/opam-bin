@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Sharing Packages &mdash; opam-bin z-2020-07-28-fix
- (c4a5e5d
-) (2020/07/28 19:35) documentation</title>
+ (e5b2932
+) (2020/07/28 20:07) documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
               <div class="version">
                 z-2020-07-28-fix
- (c4a5e5d
+ (e5b2932
 )
               </div>
             
@@ -247,6 +247,17 @@ upstream repo locally, so that you will be able to avoid the
 <span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">push</span>
 </pre></div>
 </div>
+<p>It is possible to customize the header and trailer of the generated
+<code class="code docutils literal notranslate"><span class="pre">index.html</span></code> file by defining the files
+<code class="code docutils literal notranslate"><span class="pre">~/.opam/plugins/opam-bin/header.html</span></code> and
+<code class="code docutils literal notranslate"><span class="pre">~/.opam/plugins/opam-bin/trailer.html</span></code>.  To test the impact of
+changing these files, you can use:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">push</span> <span class="o">--</span><span class="n">local</span><span class="o">-</span><span class="n">only</span>
+</pre></div>
+</div>
+<p>to generate a new
+<code class="code docutils literal notranslate"><span class="pre">~/.opam/plugins/opam-bin/store/repo/index.html</span></code> file and check
+the result.</p>
 </div>
 <div class="section" id="using-a-binary-repository-only">
 <h2>Using a Binary Repository Only<a class="headerlink" href="#using-a-binary-repository-only" title="Permalink to this headline">¶</a></h2>
