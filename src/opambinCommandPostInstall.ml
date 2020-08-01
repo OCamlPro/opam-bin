@@ -143,13 +143,15 @@ let compute_hash ?source_md5 ~name ~version ~depends () =
   let switch = OpambinMisc.current_switch () in
   let temp_dir = OpambinGlobals.opambin_switch_temp_dir () in
   EzFile.make_dir ~p:true temp_dir ;
-  let opam_file = temp_dir // name ^ "-src.opam" in
-  let oc = Unix.openfile opam_file
-      [ Unix.O_CREAT; Unix.O_WRONLY ; Unix.O_TRUNC ] 0o644 in
-  let nv = Printf.sprintf "%s.%s" name version in
-  OpambinMisc.call ~stdout:oc
-    [| "opam" ; "show" ; nv ; "--raw" ; "--safe" ; "--switch" ; switch |];
-  Unix.close oc;
+  let opam_file = OpambinGlobals.marker_opam ~name in
+  if not ( Sys.file_exists opam_file ) then begin
+    let oc = Unix.openfile opam_file
+        [ Unix.O_CREAT; Unix.O_WRONLY ; Unix.O_TRUNC ] 0o644 in
+    let nv = Printf.sprintf "%s.%s" name version in
+    OpambinMisc.call ~stdout:oc
+      [| "opam" ; "show" ; nv ; "--raw" ; "--safe" ; "--switch" ; switch |];
+    Unix.close oc;
+  end ;
   let opam_content = EzFile.read_file opam_file in
   let source_md5 = match source_md5 with
     | Some source_md5 -> source_md5
@@ -176,9 +178,10 @@ let error_on_missing =
   | _ -> true
 
 let commit ~name ~version ~depends files =
-  if not !!OpambinConfig.enabled
-  || not !!OpambinConfig.create_enabled
-  || OpambinMisc.not_this_switch () then
+  if
+    not !!OpambinConfig.create_enabled
+    || Sys.file_exists ( OpambinGlobals.marker_skip ~name )
+  then
     OpambinMisc.global_log "package %s: create disabled" name
   else
   if Sys.file_exists OpambinGlobals.marker_cached then
@@ -194,7 +197,8 @@ let commit ~name ~version ~depends files =
       OpambinMisc.global_log "package %s is not a binary archive" name ;
       OpambinMisc.global_log "creating binary archive...";
       EzFile.make_dir ~p:true temp_dir ;
-      let source_md5 = EzFile.read_file OpambinGlobals.marker_source in
+      let source_md5 =
+        EzFile.read_file ( OpambinGlobals.marker_source ~name ) in
       let ( source_md5, depends, dependset, missing_versions, opam_file ) =
         compute_hash ~source_md5 ~name ~version ~depends () in
       if missing_versions <> [] then begin

@@ -70,17 +70,40 @@ let install_hooks () =
     )
 
 let install_repos () =
-  add_repo ~repo:"default" ~url:!!OpambinConfig.reloc_repo_url ;
 
   add_repo ~repo:"local-bin"
     ~url:( Printf.sprintf "file://%s"
              OpambinGlobals.opambin_store_repo_dir )
 
+let install_patches () =
+  let patches_url = !!OpambinConfig.patches_url in
+  if EzString.starts_with patches_url ~prefix:"file://" then
+    (* nothing to do *)
+    ()
+  else
+  if EzString.starts_with patches_url ~prefix:"git@"
+  || EzString.starts_with patches_url ~prefix:"https://"
+  || EzString.starts_with patches_url ~prefix:"http://"
+  then
+    let opambin_patches_dir = OpambinGlobals.opambin_patches_dir in
+    OpambinMisc.call [| "rm"; "-rf"; opambin_patches_dir ^ ".tmp" |];
+    OpambinMisc.call
+      [| "git"; "clone" ; patches_url ; opambin_patches_dir ^ ".tmp" |];
+    OpambinMisc.call [| "rm"; "-rf"; opambin_patches_dir |];
+    OpambinMisc.call
+      [| "mv"; opambin_patches_dir ^ ".tmp"; opambin_patches_dir |]
+  else
+    begin
+      Printf.eprintf
+        "Error: patches_url '%s' should either be local (file://) or git (git@, http[s]://)\n%!" patches_url;
+      exit 2
+    end
+
 
 let action args =
   Printf.eprintf "%s\n\n%!" OpambinGlobals.about ;
 
-  EzFile.make_dir OpambinGlobals.opambin_dir ;
+  EzFile.make_dir ~p:true OpambinGlobals.opambin_dir ;
   OpambinConfig.save ();
 
   EzFile.make_dir ~p:true OpambinGlobals.opambin_cache_dir;
@@ -97,12 +120,14 @@ archive-mirrors: "../../cache"
   | [] ->
     install_exe ();
     install_hooks ();
-    install_repos ()
+    install_repos ();
+    install_patches ()
   | _ ->
     List.iter (function
         | "exe" -> install_exe ()
         | "hooks" -> install_hooks ()
         | "repos" -> install_repos ()
+        | "patches" -> install_patches ()
         | s ->
           Printf.eprintf "Error: unexpected argument %S" s;
           exit 2)

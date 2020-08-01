@@ -30,14 +30,11 @@ This command will do the following modifications:
 
   Note that the command will remove sandboxing, so you think it shouldn't,
   you will have to modify the files manually.
-* Add two new repositories:
-  
+* Add the local repository of binary packages:
+
   * :code:`local-bin` for
     :code:`file:///home/user/.opam/plugins/opam-bin/store/repo` to be able to
     install binary packages on user request
-  * :code:`default` for
-    `git@github.com:OCamlPro/opam-repository-relocatable <https://github.com/OCamlPro/opam-repository-relocatable>`__ to
-    use relocatable packages by default
 
 After this step, :code:`opam-bin` will create a binary package every
 time you compile a new source package, if and only if all the
@@ -94,13 +91,13 @@ install the binary packages::
 
   opam switch create test-reloc 4.07.1
   opam install alt-ergo+bin -y
-  
+
 We can also search in the generated binary archives for specific files::
 
   opam-bin search bin/alt-ergo
 
 and the output is::
-  
+
   alt-ergo.2.3.2+bin+b7812268+ea4c83e2:file:009664912:reg:bin/alt-ergo
 
 Basic Configuration
@@ -115,35 +112,34 @@ outputs something like::
   Current options (from /home/lefessan/.opam/plugins/opam-bin/config):
     base_url : /change-this-option
     rsync_url : None
-    reloc_repo_url : git@github.com:OCamlPro/opam-repository-relocatable
+    patches_url : git@github.com:OCamlPro/relocation-patches
     enabled : true
     create_enabled : true
-    cache_enabled : true
     all_switches : true
     version : 1
-    switches : 
-    protected_switches : 
+    switches :
+    protected_switches :
 
 We will not discuss the first 2 options that are only useful if you
 plan to share the binary packages that you generate. Instead, we can
 look at the other options.
 
-:code:`reloc_repo_url` is the URL to the repository for relocatable
-packages. It is used when you call :code:`opam-bin install`. For
+:code:`patches_url` is the URL to the :code:`git` repository
+containing patches to make packages relocatable. It is used when you
+call :code:`opam-bin install` or :code:`opam-bin install patches`. For
 example, if you want to use a local copy of this repository, you can
 modify it for later use::
 
-  git clone git@github.com:OCamlPro/opam-repository-relocatable
-  cd opam-repository-relocatable
-  opam-bin config --reloc-repo-url file://$(pwd)
-  opam-bin install
+  git clone git@github.com:OCamlPro/relocation-patches
+  cd relocation-patches
+  opam-bin config --patches-url file://$(pwd)
+  opam-bin install patches
 
 The next options are used to enable/disable :code:`opam-bin` globally
-(:code:`enable`), to enable/disable creation of binary packages from
-source packages (:code:`enable_create`), and to enable/disable
-replacement of source packages by binary packages
-(:code:`enable_cache`). For example, if you want to create cached
-binary archives for a package dependencies but not for it::
+(:code:`enable`) and to enable/disable creation of binary packages
+from source packages (:code:`enable_create`). For example, if you want
+to create cached binary archives for the dependencies of a package but
+not for the package itself::
 
   opam-bin config --enable-create
   opam install --deps-only coq
@@ -163,4 +159,3 @@ It is also possible to disable :code:`opam-bin` for all switches
 except some of them::
 
   opam-bin config --not-all-switches --switches '-,*+bin'
-

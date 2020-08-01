@@ -20,7 +20,7 @@ let clean_all () =
   List.iter (fun dir ->
       Printf.eprintf "Cleaning %s\n%!" dir;
       OpambinMisc.call [| "rm"; "-rf" ; dir |];
-      EzFile.make_dir dir ;
+      EzFile.make_dir ~p:true dir ;
     )
     [ OpambinGlobals.opambin_cache_dir ;
       OpambinGlobals.opambin_store_repo_packages_dir ;

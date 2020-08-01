@@ -28,6 +28,7 @@ let commands = [
 
 
 let () =
+  Printexc.record_backtrace true;
   match Sys.argv with
   | [| _ ; "--version" |] ->
     Printf.printf "%s\n%!" OpambinGlobals.version
@@ -45,7 +46,8 @@ let () =
         commands
     with
       exn ->
+      let bt = Printexc.get_backtrace () in
       let error = Printexc.to_string exn in
-      OpambinMisc.global_log "fatal exception %s" error ;
-      Printf.eprintf "fatal exception %s" error ;
+      Printf.eprintf "fatal exception %s\n%s\n%!" error bt ;
+      OpambinMisc.global_log "fatal exception %s\n%s" error bt;
       exit 2

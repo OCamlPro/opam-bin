@@ -9,16 +9,18 @@ The framework is composed of:
   will only work for people using the same distribution on the same
   architecture. You will need to select carefully the right one if
   you want to use them. These repositories are provided by external
-  contributors.
+  contributors. `Check this list <repositories.html>`__
 
-* A source repository containing relocatable packages. Relocatable
-  packages are needed because binary packages will be installed in
-  different directories by different users. The repository is
-  available here:
-  `https://github.com/ocamlpro/opam-repository-relocatable <https://github.com/ocamlpro/opam-repository-relocatable>`__
+* A :code:`git` repository containing patches to make :code:`opam`
+  packages relocatable. Relocatable packages are needed because binary
+  packages will be installed in different directories by different
+  users. The repository is available here:
+  `https://github.com/ocamlpro/relocation-patches
+  <https://github.com/ocamlpro/relocation-patches>`__
 
-* A tool called :code:`opam-bin` to create and use binary packages, available here:
-  `https://github.com/ocamlpro/opam-bin <https://github.com/ocamlpro/opam-bin>`__
+* A tool called :code:`opam-bin` to create and use binary packages,
+  available here: `https://github.com/ocamlpro/opam-bin
+  <https://github.com/ocamlpro/opam-bin>`__
 
 If you only want to use a repository of binary packages and not create
 them, you will only need to access one of the binary repositories in
@@ -61,29 +63,39 @@ them are not. For example, :code:`ocaml-base-compiler`,
 If you want to create binary packages, you should only use relocatable
 packages.
 
-For this reason, we provide a specific :code:`opam` repository
-containing modified versions of these packages.  This repository is
-available in the project:
+We provide a specific :code:`git` repository containing patches to
+make packages relocatable. This repository is available in the
+project:
 
-`https://github.com/OCamlPro/opam-repository-relocatable/ <https://github.com/OCamlPro/opam-repository-relocatable/>`__
+`https://github.com/OCamlPro/relocation-patches <https://github.com/OCamlPro/relocation-patches/>`__
 
-It contains a fork of the official :code:`opam` repository, where
-packages known as non-relocatable have been removed, and replaced
-with some relocatable versions (in the :code:`packages/relocatable/`
-directory).
+It can be used automatically by :code:`opam-bin` with any :code:`opam`
+repository.
 
-Currently, it contains the following modified packages:
+If you want to use or contribute to this repository, you may want to
+use a local version. You will then have to set the :code:`patches_url`
+option, for example using the :code:`opam-bin config` command::
 
-* apron.20160125/
-* menhir.20181113/
-* mlgmpidl.1.2.9/
-* ocaml-base-compiler.4.07.1/
-* ocaml-base-compiler.4.09.1/
-* ocamlbuild.0.12.1/
-* ocaml-config.1/
-* ocamlfind.1.8.0/
-* ocamlfind.1.8.1/
-* ocaml-variants.4.09.1+flambda/
+  opam bin config --patches-url file:///home/user/GIT/relocation-patches
+
+Currently, it contains patches for the following packages:
+
+* apron
+* menhir
+* mlgmpidl
+* ocaml-base-compiler
+* ocaml-variants
+* ocamlbuild
+* ocaml-config
+* ocamlfind
+* ocamlfind
+* ocaml-variants
+
+:code:`opam-bin` will try to find the best patch for a given source
+package. For that, it will use the patch with the highest version less
+or equal to the current package version. If :code:`opam-bin` cannot
+find such a patch, it will disable itself automatically and let
+:code:`opam` build the package without using/creating binary packages.
 
 File Structure
 --------------
@@ -92,9 +104,9 @@ File Structure
 :code:`$HOME/.opam/` directory (or :code:`OPAMROOT`):
 
 * :code:`~/.opam/`
-  
+
   * :code:`plugins/opam-bin/`
-    
+
     * :code:`opam-bin.exe` This file is the executable of
       :code:`opam-bin` used in :code:`opam` wrappers.
     * :code:`opam-bin.log` This file is an internal log of
@@ -117,4 +129,23 @@ File Structure
 
     * :code:`etc/opam-bin/packages/` This directory contains, for every
       binary package that has been installed or built in the switch, its
-      binary version. 
+      binary version.
+    * :code:`.opam-switch/opam-bin` This directory contains information
+      on the packages viewed by :code:`opam-bin`. In particular, it contains
+      the :code:`opam` file used to generate the binary package, the
+      package patch if one was applied.
+
+Patches Repository Structure
+----------------------------
+The :code:`git` repository of patches follows the following structure:
+
+* :code:`patches/` directory:
+
+  * :code:`NAME/` where :code:`NAME` is the name of a package
+
+    * :code:`VERSION.patch` where :code:`VERSION` is the minimal version
+      to which this patch can be applied.
+    * :code:`NAME.alias` where :code:`NAME` is another package name,
+      whose patches should be used for this package.
+    * :code:`VERSION=.patch` where :code:`VERSION` is a version that should
+      exactly match the version of the package on which it should be applied

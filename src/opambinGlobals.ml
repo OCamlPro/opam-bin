@@ -42,6 +42,8 @@ let opambin_trailer_html = opambin_dir // "trailer.html"
 let opambin_store_archives_dir = opambin_store_dir // "archives"
 let opambin_store_repo_dir = opambin_store_dir // "repo"
 let opambin_store_repo_packages_dir = opambin_store_repo_dir // "packages"
+let opambin_patches_dir = opambin_dir // "patches"
+let opambin_patches_temp_dir = opambin_dir // "patches.tmp"
 
 let opam_config_file = opam_dir // "config"
 let opam_config_file_backup = opam_config_file ^ ".1"
@@ -78,8 +80,11 @@ let package_version = "bin-package.version"
 let package_config = "bin-package.config"
 let package_info = "bin-package.info"
 
+let marker_skip ~name = opambin_switch_temp_dir () // ( name ^ ".skip" )
 let marker_cached = "_bincached"
-let marker_source = "_binsource"
+let marker_source ~name = opambin_switch_temp_dir () // ( name ^  ".source" )
+let marker_opam ~name = opambin_switch_temp_dir () // ( name ^ ".opam" )
+let marker_patch ~name = opambin_switch_temp_dir () // ( name ^ ".patch" )
 
 let config_file = opambin_dir // "config"
 

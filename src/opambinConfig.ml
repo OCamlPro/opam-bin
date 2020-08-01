@@ -42,6 +42,15 @@ let rsync_url = EzConfig.create_option config
     (EzConfig.option_option EzConfig.string_option)
     None
 
+let patches_url = EzConfig.create_option config
+    [ "patches_url" ]
+    [
+      "The path to the repository containing relocation patches";
+      "Either using GIT (git@, https://) or local (file://)";
+    ]
+    EzConfig.string_option
+    "https://github.com/OCamlPro/relocation-patches"
+
 let title = EzConfig.create_option config
     [ "title" ]
     [
@@ -53,31 +62,16 @@ let title = EzConfig.create_option config
     EzConfig.string_option
     "Repository of Binary Packages"
 
-let reloc_repo_url = EzConfig.create_option config
-    [ "reloc_repo_url" ]
-    [
-      "The URL of the relocatable repository that will be set as 'default'"
-    ]
-    EzConfig.string_option
-    "git@github.com:OCamlPro/opam-repository-relocatable"
-
 let enabled = EzConfig.create_option config
     [ "enabled" ]
-    [ "Whether we do something or not" ]
+    [ "Whether we do something or not. When [true], existing binary packages";
+      "will be used instead of equivalent source packages";]
     EzConfig.bool_option
     true
 
 let create_enabled = EzConfig.create_option config
     [ "create_enabled" ]
     [ "Whether we produce binary packages after installing source packages" ]
-    EzConfig.bool_option
-    true
-
-let cache_enabled = EzConfig.create_option config
-    [ "cache_enabled" ]
-    [ "Whether we use a binary package when available instead of building";
-      "the corresponding source package."
-    ]
     EzConfig.bool_option
     true
 
