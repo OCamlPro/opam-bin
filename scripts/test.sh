@@ -5,6 +5,11 @@ NC='\033[0m' # No Color
 
 function call {
     echo -e "${RED} $* ${NC}"
+    $* || exit 2
+}
+
+function call_safe {
+    echo -e "${RED} $* ${NC}"
     $*
 }
 
@@ -20,4 +25,3 @@ call opam update local-bin
 call opam switch remove test_bin -y
 call opam switch create test_bin --empty
 call opam install ocamlfind+bin -y
-

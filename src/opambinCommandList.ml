@@ -15,6 +15,7 @@ let cmd_name = "list"
 let action () =
   Printf.eprintf "Binary packages in %s:\n%!"
     OpambinGlobals.opambin_store_archives_dir;
+  EzFile.make_dir ~p:true OpambinGlobals.opambin_store_archives_dir ;
   OpambinMisc.call [| "ls" ; OpambinGlobals.opambin_store_archives_dir |]
 
 let cmd = {

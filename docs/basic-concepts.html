@@ -1,17 +1,21 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html4" lang="en" >
 <head>
   <meta charset="utf-8">
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Basic Concepts &mdash; opam-bin z-2020-07-28-fix
- (e5b2932
-) (2020/07/28 20:07) documentation</title>
+  <title>Basic Concepts &mdash; opam-bin master
+ (993f488
+) (2020/08/01 20:51) documentation</title>
   
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
 
   
   
@@ -19,7 +23,9 @@
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -31,11 +37,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Installation" href="installation.html" />
@@ -53,7 +54,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> opam-bin
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> opam-bin
           
 
           
@@ -63,8 +64,8 @@
             
             
               <div class="version">
-                z-2020-07-28-fix
- (e5b2932
+                master
+ (993f488
 )
               </div>
             
@@ -82,6 +83,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -96,6 +98,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#binary-packages">Binary packages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#relocatable-packages">Relocatable packages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#file-structure">File Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#patches-repository-structure">Patches Repository Structure</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
@@ -110,6 +113,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -148,7 +152,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Basic Concepts</li>
     
@@ -178,14 +182,14 @@ The framework is composed of:</p>
 will only work for people using the same distribution on the same
 architecture. You will need to select carefully the right one if
 you want to use them. These repositories are provided by external
-contributors.</li>
-<li>A source repository containing relocatable packages. Relocatable
-packages are needed because binary packages will be installed in
-different directories by different users. The repository is
-available here:
-<a class="reference external" href="https://github.com/ocamlpro/opam-repository-relocatable">https://github.com/ocamlpro/opam-repository-relocatable</a></li>
-<li>A tool called <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> to create and use binary packages, available here:
-<a class="reference external" href="https://github.com/ocamlpro/opam-bin">https://github.com/ocamlpro/opam-bin</a></li>
+contributors. <a class="reference external" href="repositories.html">Check this list</a></li>
+<li>A <code class="code docutils literal notranslate"><span class="pre">git</span></code> repository containing patches to make <code class="code docutils literal notranslate"><span class="pre">opam</span></code>
+packages relocatable. Relocatable packages are needed because binary
+packages will be installed in different directories by different
+users. The repository is available here:
+<a class="reference external" href="https://github.com/ocamlpro/relocation-patches">https://github.com/ocamlpro/relocation-patches</a></li>
+<li>A tool called <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> to create and use binary packages,
+available here: <a class="reference external" href="https://github.com/ocamlpro/opam-bin">https://github.com/ocamlpro/opam-bin</a></li>
 </ul>
 <p>If you only want to use a repository of binary packages and not create
 them, you will only need to access one of the binary repositories in
@@ -226,27 +230,36 @@ them are not. For example, <code class="code docutils literal notranslate"><span
 <code class="code docutils literal notranslate"><span class="pre">ocaml-variants</span></code>, <code class="code docutils literal notranslate"><span class="pre">ocamlfind</span></code>, <code class="code docutils literal notranslate"><span class="pre">ocamlbuild</span></code>, etc.
 If you want to create binary packages, you should only use relocatable
 packages.</p>
-<p>For this reason, we provide a specific <code class="code docutils literal notranslate"><span class="pre">opam</span></code> repository
-containing modified versions of these packages.  This repository is
-available in the project:</p>
-<p><a class="reference external" href="https://github.com/OCamlPro/opam-repository-relocatable/">https://github.com/OCamlPro/opam-repository-relocatable/</a></p>
-<p>It contains a fork of the official <code class="code docutils literal notranslate"><span class="pre">opam</span></code> repository, where
-packages known as non-relocatable have been removed, and replaced
-with some relocatable versions (in the <code class="code docutils literal notranslate"><span class="pre">packages/relocatable/</span></code>
-directory).</p>
-<p>Currently, it contains the following modified packages:</p>
+<p>We provide a specific <code class="code docutils literal notranslate"><span class="pre">git</span></code> repository containing patches to
+make packages relocatable. This repository is available in the
+project:</p>
+<p><a class="reference external" href="https://github.com/OCamlPro/relocation-patches/">https://github.com/OCamlPro/relocation-patches</a></p>
+<p>It can be used automatically by <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> with any <code class="code docutils literal notranslate"><span class="pre">opam</span></code>
+repository.</p>
+<p>If you want to use or contribute to this repository, you may want to
+use a local version. You will then have to set the <code class="code docutils literal notranslate"><span class="pre">patches_url</span></code>
+option, for example using the <code class="code docutils literal notranslate"><span class="pre">opam-bin</span> <span class="pre">config</span></code> command:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span> <span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">patches</span><span class="o">-</span><span class="n">url</span> <span class="n">file</span><span class="o">:///</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="nc">GIT</span><span class="o">/</span><span class="n">relocation</span><span class="o">-</span><span class="n">patches</span>
+</pre></div>
+</div>
+<p>Currently, it contains patches for the following packages:</p>
 <ul class="simple">
-<li>apron.20160125/</li>
-<li>menhir.20181113/</li>
-<li>mlgmpidl.1.2.9/</li>
-<li>ocaml-base-compiler.4.07.1/</li>
-<li>ocaml-base-compiler.4.09.1/</li>
-<li>ocamlbuild.0.12.1/</li>
-<li>ocaml-config.1/</li>
-<li>ocamlfind.1.8.0/</li>
-<li>ocamlfind.1.8.1/</li>
-<li>ocaml-variants.4.09.1+flambda/</li>
+<li>apron</li>
+<li>menhir</li>
+<li>mlgmpidl</li>
+<li>ocaml-base-compiler</li>
+<li>ocaml-variants</li>
+<li>ocamlbuild</li>
+<li>ocaml-config</li>
+<li>ocamlfind</li>
+<li>ocamlfind</li>
+<li>ocaml-variants</li>
 </ul>
+<p><code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> will try to find the best patch for a given source
+package. For that, it will use the patch with the highest version less
+or equal to the current package version. If <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> cannot
+find such a patch, it will disable itself automatically and let
+<code class="code docutils literal notranslate"><span class="pre">opam</span></code> build the package without using/creating binary packages.</p>
 </div>
 <div class="section" id="file-structure">
 <h2>File Structure<a class="headerlink" href="#file-structure" title="Permalink to this headline">¶</a></h2>
@@ -279,6 +292,28 @@ with other users/computers.</li>
 <li><code class="code docutils literal notranslate"><span class="pre">etc/opam-bin/packages/</span></code> This directory contains, for every
 binary package that has been installed or built in the switch, its
 binary version.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">.opam-switch/opam-bin</span></code> This directory contains information
+on the packages viewed by <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code>. In particular, it contains
+the <code class="code docutils literal notranslate"><span class="pre">opam</span></code> file used to generate the binary package, the
+package patch if one was applied.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="patches-repository-structure">
+<h2>Patches Repository Structure<a class="headerlink" href="#patches-repository-structure" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="code docutils literal notranslate"><span class="pre">git</span></code> repository of patches follows the following structure:</p>
+<ul class="simple">
+<li><code class="code docutils literal notranslate"><span class="pre">patches/</span></code> directory:<ul>
+<li><code class="code docutils literal notranslate"><span class="pre">NAME/</span></code> where <code class="code docutils literal notranslate"><span class="pre">NAME</span></code> is the name of a package<ul>
+<li><code class="code docutils literal notranslate"><span class="pre">VERSION.patch</span></code> where <code class="code docutils literal notranslate"><span class="pre">VERSION</span></code> is the minimal version
+to which this patch can be applied.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">NAME.alias</span></code> where <code class="code docutils literal notranslate"><span class="pre">NAME</span></code> is another package name,
+whose patches should be used for this package.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">VERSION=.patch</span></code> where <code class="code docutils literal notranslate"><span class="pre">VERSION</span></code> is a version that should
+exactly match the version of the package on which it should be applied</li>
 </ul>
 </li>
 </ul>
@@ -307,11 +342,19 @@ binary version.</li>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, OCamlPro &amp; Origin Labs SAS. &lt;contact@ocamlpro.com&gt;
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -322,7 +365,6 @@ binary version.</li>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

@@ -48,7 +48,7 @@ let action () =
   Printf.eprintf "%s\n%!" OpambinGlobals.about ;
 
   if !need_saving then begin
-    EzFile.make_dir OpambinGlobals.opambin_dir ;
+    EzFile.make_dir ~p:true OpambinGlobals.opambin_dir ;
     OpambinConfig.save ();
     if !need_refactoring then refactor ();
   end else begin
@@ -111,12 +111,13 @@ let cmd = {
       "target for rsync to push new binary packages with `%s push`"
       OpambinGlobals.command;
 
-    [ "reloc-repo-url" ], Arg.String (fun s ->
-        OpambinConfig.reloc_repo_url =:= s;
-        need_saving := true;
+    [ "patches-url" ], Arg.String (fun s ->
+        OpambinConfig.patches_url =:= s ;
+        need_saving := true ;
       ),
     Ezcmd.info @@
-    "target for the default repo containing relocatable packages" ;
+    Printf.sprintf
+      "location of relocation patches (git@ or file://)" ;
 
     [ "title" ], Arg.String (fun s ->
         OpambinConfig.title =:= s;
@@ -124,20 +125,6 @@ let cmd = {
       ),
     Ezcmd.info @@
     "The title in the generated index.html file" ;
-
-    [ "enable-cache" ], Arg.Unit (fun () ->
-        OpambinConfig.cache_enabled =:= true ;
-        need_saving := true;
-      ),
-    Ezcmd.info
-      "use binary packages when available instead of building source packages";
-
-    [ "disable-cache" ], Arg.Unit (fun () ->
-        OpambinConfig.cache_enabled =:= false ;
-        need_saving := true ;
-      ),
-    Ezcmd.info
-      "opposite of --enable-cache";
 
     [ "enable-create" ], Arg.Unit (fun () ->
         OpambinConfig.create_enabled =:= true ;
@@ -147,7 +134,7 @@ let cmd = {
       "create a binary package after building a source package";
 
     [ "disable-create" ], Arg.Unit (fun () ->
-        OpambinConfig.cache_enabled =:= false ;
+        OpambinConfig.create_enabled =:= false ;
         need_saving := true;
       ),
     Ezcmd.info

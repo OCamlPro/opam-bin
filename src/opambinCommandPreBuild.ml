@@ -149,30 +149,129 @@ let check_cached_binary_archive ~version ~repo ~package =
   end;
   true
 
-let cached_binary_archive ~name ~version ~depends =
-  let ( source_md5, _depends, _dependset, missing_versions, _opam_file ) =
-    OpambinCommandPostInstall.compute_hash
-      ~name ~version ~depends () in
-  if missing_versions <> [] then
-    Some "missing-versions"
+let chop_prefix s ~prefix =
+  if EzString.starts_with s ~prefix then
+    let prefix_len = String.length prefix in
+    let len = String.length s in
+    Some ( String.sub s prefix_len (len - prefix_len) )
   else
-    let version_prefix = Printf.sprintf "%s.%s+bin+%s+"
-        name version source_md5 in
-    if OpambinMisc.iter_repos ~cont:(fun x -> x) (fun ~repo ~package ~version ->
-        if EzString.starts_with version ~prefix:version_prefix then begin
-          check_cached_binary_archive ~package ~repo ~version
-        end else
+    None
+
+let chop_suffix s ~suffix =
+  if EzString.ends_with s ~suffix then
+    let suffix_len = String.length suffix in
+    let len = String.length s in
+    Some ( String.sub s 0 (len - suffix_len) )
+  else
+    None
+
+let has_equal_suffix v =
+  let len = String.length v in
+  assert ( len > 0 );
+  v.[len-1] = '='
+
+let maybe_apply_patch ~name ~version =
+  let keep_version = version in
+  let patches_dir =
+    let patches_url = !!OpambinConfig.patches_url in
+    match chop_prefix patches_url ~prefix:"file://" with
+    | Some s -> s
+    | None -> OpambinGlobals.opambin_patches_dir
+  in
+  if not ( Sys.file_exists patches_dir ) then
+    Printf.kprintf failwith
+      {|
+Error: patches dir '%s' does not exist.\n
+  Maybe you didn't use 'opam-bin install patches' ?\n%!|}
+      patches_dir ;
+  let rec iter_package package =
+    let package_dir = patches_dir // "patches" // package in
+    if Sys.file_exists package_dir then
+      let files = Sys.readdir package_dir in
+      let versions = ref [] in
+      let alias = ref None in
+      Array.iter (fun file ->
+          match chop_suffix file ~suffix:".alias" with
+          | Some package -> alias := Some package
+          | None ->
+            match chop_suffix file ~suffix:".patch" with
+            | Some version -> versions := version :: !versions
+            | None -> ()
+        ) files;
+      match !alias with
+      | Some package -> iter_package package
+      | None ->
+        let versions = Array.of_list !versions in
+        Array.sort OpamVersionCompare.compare versions ;
+        let rec iter version versions current =
+          match versions with
+          | [] -> current
+          | v :: versions ->
+            if has_equal_suffix v then
+              if v = version ^ "=" then
+                Some v
+              else
+                iter version versions current
+            else
+            if OpamVersionCompare.compare version v >= 0 then
+              iter version versions (Some v)
+            else current
+        in
+        match iter version (Array.to_list versions) None with
+        | None ->
+          Printf.eprintf
+            "Package %S is not relocatable, but no patch found for version %S.\n%!"
+            name version;
+          Printf.eprintf
+            "You may have to disable opam-bin to install that version.\n%!";
           false
-      ) then
-      None
-    else begin
-      OpambinMisc.global_log "Could not find cached binary package %s"
-        version_prefix ;
-      Some source_md5
-    end
+        | Some version ->
+          let patch = package_dir // version ^ ".patch" in
+          OpambinMisc.global_log "Using patch %s for %s.%s"
+            patch name keep_version ;
+          OpambinMisc.call [| "cp" ; "-f";
+                              patch ; OpambinGlobals.marker_patch ~name |];
+          OpambinMisc.call [| "patch" ; "-p1"; "-i"; patch |] ;
+          if Sys.file_exists "reloc-patch.sh" then
+            OpambinMisc.call [| "sh"; "-c"; "./reloc_patch.sh" |];
+          true
+    else
+      true
+  in
+  iter_package name
+
+let cached_binary_archive ~name ~version ~depends =
+  if not ( maybe_apply_patch ~name ~version ) then
+    `NotRelocatable
+  else
+    let ( source_md5, _depends, _dependset, missing_versions, _opam_file ) =
+      OpambinCommandPostInstall.compute_hash
+        ~name ~version ~depends () in
+    if missing_versions <> [] then
+      `MissingVersions missing_versions
+    else
+      let version_prefix = Printf.sprintf "%s.%s+bin+%s+"
+          name version source_md5 in
+      if OpambinMisc.iter_repos ~cont:(fun x -> x) (fun ~repo ~package ~version ->
+          if EzString.starts_with version ~prefix:version_prefix then begin
+            check_cached_binary_archive ~package ~repo ~version
+          end else
+            false
+        ) then
+        `BinaryArchiveFound
+      else begin
+        OpambinMisc.global_log "Could not find cached binary package %s"
+          version_prefix ;
+        `NoBinaryArchiveFound source_md5
+      end
 
 let error_on_compile =
   match Sys.getenv "OPAM_BIN_FORCE" with
+  | exception _ -> false
+  | _ -> true
+
+let error_on_non_reloc =
+  match Sys.getenv "OPAM_BIN_RELOC" with
   | exception _ -> false
   | _ -> true
 
@@ -181,41 +280,54 @@ let action args =
     ( String.concat "\n    " ( cmd_name :: args) ) ;
   match args with
   | name :: version :: depends :: [] ->
+    let marker_skip = OpambinGlobals.marker_skip ~name in
     if not !!OpambinConfig.enabled
-    || not !!OpambinConfig.cache_enabled
     || OpambinMisc.not_this_switch () then begin
-      OpambinMisc.global_log "cache is disabled";
-      EzFile.write_file OpambinGlobals.marker_source
-        "cache-is-disabled";
+      OpambinMisc.global_log "opam-bin is disabled";
+      EzFile.write_file marker_skip
+        "opam-bin is disabled";
     end else
-    if Sys.file_exists OpambinGlobals.marker_source then begin
-      OpambinMisc.global_log "%s should not already exist!"
-        OpambinGlobals.marker_source;
-      exit 2
-    end else
-    if Sys.file_exists OpambinGlobals.marker_cached then begin
-      OpambinMisc.global_log "%s should not already exist!"
-        OpambinGlobals.marker_cached;
-      exit 2
-    end else
-    if Sys.file_exists OpambinGlobals.package_version then begin
-      OpambinMisc.global_log "already a binary package";
-      EzFile.write_file OpambinGlobals.marker_source
-        "already-a-binary-package";
-    end else begin
-      match cached_binary_archive ~name ~version ~depends with
-      | None ->
-        OpambinMisc.global_log "found a binary archive in cache";
-        (* this should have created a marker_cached/ directory *)
-      | Some source_md5 ->
-        OpambinMisc.global_log "no binary archive found.";
-        if error_on_compile then begin
-          Printf.eprintf
-            "Error: opam-bin is configured to prevent compilation.\n%!";
-          exit 2
-        end;
-        EzFile.write_file OpambinGlobals.marker_source source_md5
-    end
+      let marker_source = OpambinGlobals.marker_source ~name in
+      let marker_opam = OpambinGlobals.marker_opam ~name in
+      let marker_patch = OpambinGlobals.marker_patch ~name in
+      if Sys.file_exists marker_source then Sys.remove marker_source ;
+      if Sys.file_exists marker_opam then Sys.remove marker_opam ;
+      if Sys.file_exists marker_patch then Sys.remove marker_patch ;
+      if Sys.file_exists OpambinGlobals.marker_cached then begin
+        OpambinMisc.global_log "%s should not already exist!"
+          OpambinGlobals.marker_cached;
+        exit 2
+      end else
+      if Sys.file_exists OpambinGlobals.package_version then begin
+        OpambinMisc.global_log "already a binary package";
+        EzFile.write_file marker_source "already-a-binary-package";
+      end else begin
+        OpambinMisc.global_log "checking for cached archive";
+        match cached_binary_archive ~name ~version ~depends with
+        | `BinaryArchiveFound ->
+          OpambinMisc.global_log "found a binary archive in cache";
+          (* this should have created a marker_cached/ directory *)
+        | `NoBinaryArchiveFound source_md5 ->
+          OpambinMisc.global_log "no binary archive found.";
+          if error_on_compile then begin
+            Printf.eprintf
+              "Error: opam-bin is configured to prevent compilation.\n%!";
+            exit 2
+          end;
+          EzFile.write_file marker_source source_md5
+        | `MissingVersions missing_versions ->
+          EzFile.write_file marker_skip
+            ( Printf.sprintf "Missing binary deps: %s"
+                ( String.concat " " missing_versions ) )
+        | `NotRelocatable ->
+          if error_on_non_reloc then begin
+            Printf.eprintf
+              "Error: opam-bin is configured to force relocation.\n%!";
+            exit 2
+          end;
+          EzFile.write_file marker_skip
+            "Missing relocation patch for unrelocatable package"
+      end
   | _ ->
     OpambinMisc.global_log "unexpected arg.";
     Printf.eprintf

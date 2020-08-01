@@ -37,7 +37,9 @@ let action args =
   OpambinMisc.make_cache_dir ();
   match args with
   | name :: _version :: _depends :: [] ->
-    if Sys.file_exists OpambinGlobals.marker_source then
+    if Sys.file_exists ( OpambinGlobals.marker_source ~name )
+    || Sys.file_exists ( OpambinGlobals.marker_skip ~name )
+    then
       ()
     else
     if Sys.file_exists OpambinGlobals.marker_cached then begin

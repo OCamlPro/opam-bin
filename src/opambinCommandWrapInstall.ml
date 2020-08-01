@@ -35,8 +35,10 @@ let action args =
     ( String.concat "\n    " ( cmd_name :: args) ) ;
   OpambinMisc.make_cache_dir ();
   match args with
-  | _name :: _version :: _depends :: cmd ->
-    if Sys.file_exists OpambinGlobals.marker_source then
+  | name :: _version :: _depends :: cmd ->
+    if Sys.file_exists ( OpambinGlobals.marker_source ~name )
+    || Sys.file_exists ( OpambinGlobals.marker_skip ~name )
+    then
       OpambinMisc.call (Array.of_list cmd)
   | _ ->
     Printf.eprintf
