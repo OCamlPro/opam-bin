@@ -10,7 +10,7 @@ OCaml.
 
 Then, you can use the following instructions::
 
-  opam remote add reloc https://github.com/OCamlPro/opam-repository-relocatable
+  opam remote add reloc git@github.com:OCamlPro/opam-bin-repository
   opam install opam-bin -y
 
 Once installation is successful, you can install it in your :code:`opam`
@@ -50,7 +50,5 @@ You can use the following instructions::
 
 Once compilation is successful, you can install it in your :code:`opam`
 configuration with::
-  
+
   ./opam-bin install
-
-
