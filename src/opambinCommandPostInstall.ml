@@ -108,7 +108,7 @@ let digest_sources () =
   in
   iter ".";
   let s = Buffer.contents b in
-  OpambinMisc.global_log "buffer: %s" s ;
+  (*  OpambinMisc.global_log "buffer: %s" s ; *)
   EzFile.write_file
     ( Printf.sprintf "/tmp/buffer.%d" (Unix.getpid ()) ) s;
   digest s
@@ -143,31 +143,31 @@ let compute_hash ?source_md5 ~name ~version ~depends () =
   let switch = OpambinMisc.current_switch () in
   let temp_dir = OpambinGlobals.opambin_switch_temp_dir () in
   EzFile.make_dir ~p:true temp_dir ;
-  let opam_file = OpambinGlobals.marker_opam ~name in
-  if not ( Sys.file_exists opam_file ) then begin
-    let oc = Unix.openfile opam_file
-        [ Unix.O_CREAT; Unix.O_WRONLY ; Unix.O_TRUNC ] 0o644 in
-    let nv = Printf.sprintf "%s.%s" name version in
-    OpambinMisc.call ~stdout:oc
-      [| "opam" ; "show" ; nv ; "--raw" ; "--safe" ; "--switch" ; switch |];
-    Unix.close oc;
-  end ;
-  let opam_content = EzFile.read_file opam_file in
-  let source_md5 = match source_md5 with
-    | Some source_md5 -> source_md5
+  let ( source_md5, opam_file ) = match source_md5 with
+    | Some source_md5 ->
+      source_md5, OpambinGlobals.backup_opam ~name
     | None ->
+      let digest_sources = digest_sources () in
+
+      let opam_file = OpambinGlobals.marker_opam in
+      let oc = Unix.openfile opam_file
+          [ Unix.O_CREAT; Unix.O_WRONLY ; Unix.O_TRUNC ] 0o644 in
+      let nv = Printf.sprintf "%s.%s" name version in
+      OpambinMisc.call ~stdout:oc
+        [| "opam" ; "show" ; nv ; "--raw" ; "--safe" ; "--switch" ; switch |];
+      Unix.close oc;
+      let opam_content = EzFile.read_file opam_file in
       OpambinMisc.global_log "File (%s):\n%s" name opam_content;
       let digest_opam = digest opam_content in
       OpambinMisc.global_log "Opam (%s): %s" name digest_opam;
 
-      let package_uid = digest (
-          digest_opam ^ digest_sources ()
-        ) in
+      let package_uid = digest ( digest_opam ^ digest_sources ) in
+
       OpambinMisc.global_log "package_uid(%s): %s" name package_uid;
       let s = Printf.sprintf "%s.%s|%s|%s"
           name version package_uid (String.concat "," depends_nv) in
       OpambinMisc.global_log "source(%s) : %s" name s ;
-      short ( digest s )
+      short ( digest s ), opam_file
   in
   OpambinMisc.global_log "source_md5 (%s): %s" name source_md5;
   ( source_md5, depends, !dependset, !missing_versions, opam_file )
@@ -180,7 +180,7 @@ let error_on_missing =
 let commit ~name ~version ~depends files =
   if
     not !!OpambinConfig.create_enabled
-    || Sys.file_exists ( OpambinGlobals.marker_skip ~name )
+    || Sys.file_exists ( OpambinGlobals.backup_skip ~name )
   then
     OpambinMisc.global_log "package %s: create disabled" name
   else
@@ -198,7 +198,7 @@ let commit ~name ~version ~depends files =
       OpambinMisc.global_log "creating binary archive...";
       EzFile.make_dir ~p:true temp_dir ;
       let source_md5 =
-        EzFile.read_file ( OpambinGlobals.marker_source ~name ) in
+        EzFile.read_file ( OpambinGlobals.backup_source ~name ) in
       let ( source_md5, depends, dependset, missing_versions, opam_file ) =
         compute_hash ~source_md5 ~name ~version ~depends () in
       if missing_versions <> [] then begin

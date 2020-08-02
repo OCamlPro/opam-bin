@@ -268,3 +268,9 @@ let iter_repos ?name ?opam_repos ~cont f =
         iter_versions versions package packages repo repos
   in
   iter_repos repos |> cont
+
+let write_marker marker content =
+  let dir = OpambinGlobals.opambin_switch_temp_dir () in
+  if not ( Sys.file_exists dir ) then EzFile.make_dir ~p:true dir;
+  global_log "writing marker %s" marker;
+  EzFile.write_file marker content

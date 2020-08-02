@@ -24,10 +24,10 @@ let action args =
         with _ -> ()
       ) [
       OpambinGlobals.opambin_switch_packages_dir () // name ;
-      OpambinGlobals.marker_source ~name ;
-      OpambinGlobals.marker_opam ~name ;
-      OpambinGlobals.marker_skip ~name ;
-      OpambinGlobals.marker_patch ~name ;
+      OpambinGlobals.backup_marker ~name ".source" ;
+      OpambinGlobals.backup_marker ~name ".skip" ;
+      OpambinGlobals.backup_marker ~name ".opam" ;
+      OpambinGlobals.backup_marker ~name ".patch" ;
     ]
   | _ ->
     Printf.eprintf
