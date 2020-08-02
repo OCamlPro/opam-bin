@@ -11,7 +11,7 @@
 open EzFile.OP
 
 let command = "opam-bin"
-let version = "0.7.1"
+let version = "0.8.1"
 let about =
   Printf.sprintf "%s %s by OCamlPro SAS <contact@ocamlpro.com>"
     command version
@@ -79,6 +79,11 @@ let opambin_switch_packages_dir () =
 let package_version = "bin-package.version"
 let package_config = "bin-package.config"
 let package_info = "bin-package.info"
+
+let write_marker marker content =
+  let dir = opambin_switch_temp_dir () in
+  if not ( Sys.file_exists dir ) then EzFile.make_dir ~p:true dir;
+  EzFile.write_file marker content
 
 let marker_skip ~name = opambin_switch_temp_dir () // ( name ^ ".skip" )
 let marker_cached = "_bincached"
