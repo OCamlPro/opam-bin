@@ -284,7 +284,7 @@ let action args =
     if not !!OpambinConfig.enabled
     || OpambinMisc.not_this_switch () then begin
       OpambinMisc.global_log "opam-bin is disabled";
-      EzFile.write_file marker_skip
+      OpambinGlobals.write_marker marker_skip
         "opam-bin is disabled";
     end else
       let marker_source = OpambinGlobals.marker_source ~name in
@@ -300,7 +300,7 @@ let action args =
       end else
       if Sys.file_exists OpambinGlobals.package_version then begin
         OpambinMisc.global_log "already a binary package";
-        EzFile.write_file marker_source "already-a-binary-package";
+        OpambinGlobals.write_marker marker_source "already-a-binary-package";
       end else begin
         OpambinMisc.global_log "checking for cached archive";
         match cached_binary_archive ~name ~version ~depends with
@@ -314,9 +314,9 @@ let action args =
               "Error: opam-bin is configured to prevent compilation.\n%!";
             exit 2
           end;
-          EzFile.write_file marker_source source_md5
+          OpambinGlobals.write_marker marker_source source_md5
         | `MissingVersions missing_versions ->
-          EzFile.write_file marker_skip
+          OpambinGlobals.write_marker marker_skip
             ( Printf.sprintf "Missing binary deps: %s"
                 ( String.concat " " missing_versions ) )
         | `NotRelocatable ->
@@ -325,7 +325,7 @@ let action args =
               "Error: opam-bin is configured to force relocation.\n%!";
             exit 2
           end;
-          EzFile.write_file marker_skip
+          OpambinGlobals.write_marker marker_skip
             "Missing relocation patch for unrelocatable package"
       end
   | _ ->
