@@ -61,21 +61,6 @@ archive-mirrors: "../../cache"
 *)
       None
 
-let wget ~url ~md5 =
-  let temp_dir = OpambinGlobals.opambin_switch_temp_dir () in
-  EzFile.make_dir ~p:true temp_dir;
-  let output = temp_dir // md5 in
-  OpambinMisc.call [| "curl" ;
-          "--write-out" ; "%{http_code}\\n" ;
-          "--retry" ; "3" ;
-          "--retry-delay" ; "2" ;
-          "--user-agent" ; "opam-bin/2.0.5" ;
-          "-L" ;
-          "-o" ; output ;
-          url
-       |];
-  Some output
-
 let check_cached_binary_archive ~version ~repo ~package =
   OpambinMisc.global_log "found binary package in repo %s" repo;
   let package_dir = repo // "packages" // package // version in
@@ -110,7 +95,10 @@ let check_cached_binary_archive ~version ~repo ~package =
           Printf.eprintf "error: url.src not found\n%!";
           exit 2
         | Some url ->
-          match wget ~url ~md5 with
+
+          let temp_dir = OpambinGlobals.opambin_switch_temp_dir () in
+          let output = temp_dir // md5 in
+          match OpambinMisc.wget ~url ~output with
           | None ->
             Printf.eprintf "Error: could not download archive at %S\n%!" url;
             exit 2
@@ -230,10 +218,10 @@ Error: patches dir '%s' does not exist.\n
           OpambinMisc.global_log "Using patch %s for %s.%s"
             patch name keep_version ;
           OpambinMisc.call [| "cp" ; "-f";
-                              patch ; OpambinGlobals.marker_patch ~name |];
+                              patch ; OpambinGlobals.marker_patch |];
           OpambinMisc.call [| "patch" ; "-p1"; "-i"; patch |] ;
           if Sys.file_exists "reloc-patch.sh" then
-            OpambinMisc.call [| "sh"; "-c"; "./reloc_patch.sh" |];
+            OpambinMisc.call [| "sh"; "./reloc_patch.sh" |];
           true
     else
       true
@@ -280,19 +268,28 @@ let action args =
     ( String.concat "\n    " ( cmd_name :: args) ) ;
   match args with
   | name :: version :: depends :: [] ->
-    let marker_skip = OpambinGlobals.marker_skip ~name in
+    let marker_skip = OpambinGlobals.marker_skip in
     if not !!OpambinConfig.enabled
     || OpambinMisc.not_this_switch () then begin
       OpambinMisc.global_log "opam-bin is disabled";
-      OpambinGlobals.write_marker marker_skip
+      EzFile.write_file marker_skip
         "opam-bin is disabled";
     end else
-      let marker_source = OpambinGlobals.marker_source ~name in
-      let marker_opam = OpambinGlobals.marker_opam ~name in
-      let marker_patch = OpambinGlobals.marker_patch ~name in
-      if Sys.file_exists marker_source then Sys.remove marker_source ;
-      if Sys.file_exists marker_opam then Sys.remove marker_opam ;
-      if Sys.file_exists marker_patch then Sys.remove marker_patch ;
+      let marker_source = OpambinGlobals.marker_source in
+      let marker_opam = OpambinGlobals.marker_opam in
+      let marker_patch = OpambinGlobals.marker_patch in
+      if Sys.file_exists marker_source then begin
+        OpambinMisc.global_log "removing marker_source";
+        Sys.remove marker_source ;
+      end;
+      if Sys.file_exists marker_opam then begin
+        OpambinMisc.global_log "removing marker_opam";
+        Sys.remove marker_opam ;
+      end;
+      if Sys.file_exists marker_patch then begin
+        OpambinMisc.global_log "removing marker_patch";
+        Sys.remove marker_patch ;
+      end;
       if Sys.file_exists OpambinGlobals.marker_cached then begin
         OpambinMisc.global_log "%s should not already exist!"
           OpambinGlobals.marker_cached;
@@ -300,7 +297,7 @@ let action args =
       end else
       if Sys.file_exists OpambinGlobals.package_version then begin
         OpambinMisc.global_log "already a binary package";
-        OpambinGlobals.write_marker marker_source "already-a-binary-package";
+        EzFile.write_file marker_source "already-a-binary-package";
       end else begin
         OpambinMisc.global_log "checking for cached archive";
         match cached_binary_archive ~name ~version ~depends with
@@ -314,9 +311,9 @@ let action args =
               "Error: opam-bin is configured to prevent compilation.\n%!";
             exit 2
           end;
-          OpambinGlobals.write_marker marker_source source_md5
+          EzFile.write_file marker_source source_md5
         | `MissingVersions missing_versions ->
-          OpambinGlobals.write_marker marker_skip
+          EzFile.write_file marker_skip
             ( Printf.sprintf "Missing binary deps: %s"
                 ( String.concat " " missing_versions ) )
         | `NotRelocatable ->
@@ -325,7 +322,7 @@ let action args =
               "Error: opam-bin is configured to force relocation.\n%!";
             exit 2
           end;
-          OpambinGlobals.write_marker marker_skip
+          EzFile.write_file marker_skip
             "Missing relocation patch for unrelocatable package"
       end
   | _ ->

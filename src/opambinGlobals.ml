@@ -11,7 +11,7 @@
 open EzFile.OP
 
 let command = "opam-bin"
-let version = "0.8.1"
+let version = "0.9.0"
 let about =
   Printf.sprintf "%s %s by OCamlPro SAS <contact@ocamlpro.com>"
     command version
@@ -47,6 +47,7 @@ let opambin_patches_temp_dir = opambin_dir // "patches.tmp"
 
 let opam_config_file = opam_dir // "config"
 let opam_config_file_backup = opam_config_file ^ ".1"
+let opam_opambin_repo = "local-bin"
 
 let opam_switch_prefix =
   lazy (
@@ -80,16 +81,19 @@ let package_version = "bin-package.version"
 let package_config = "bin-package.config"
 let package_info = "bin-package.info"
 
-let write_marker marker content =
-  let dir = opambin_switch_temp_dir () in
-  if not ( Sys.file_exists dir ) then EzFile.make_dir ~p:true dir;
-  EzFile.write_file marker content
-
-let marker_skip ~name = opambin_switch_temp_dir () // ( name ^ ".skip" )
+let marker_skip = ".binskip"
 let marker_cached = "_bincached"
-let marker_source ~name = opambin_switch_temp_dir () // ( name ^  ".source" )
-let marker_opam ~name = opambin_switch_temp_dir () // ( name ^ ".opam" )
-let marker_patch ~name = opambin_switch_temp_dir () // ( name ^ ".patch" )
+let marker_source = ".binsource"
+let marker_opam = ".binopam"
+let marker_patch = ".binpatch"
+
+let backup_marker ~name ext =
+  opambin_switch_temp_dir () // ( name ^ ext )
+let backup_skip ~name = backup_marker ~name ".skip"
+let backup_opam ~name = backup_marker ~name ".opam"
+let backup_source ~name = backup_marker ~name ".source"
+let backup_patch ~name = backup_marker ~name ".patch"
+
 
 let config_file = opambin_dir // "config"
 

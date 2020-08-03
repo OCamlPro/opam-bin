@@ -31,9 +31,9 @@ let action args =
     ( String.concat "\n    " ( cmd_name :: args) ) ;
   OpambinMisc.make_cache_dir ();
   match args with
-  | name :: _version :: _depends :: cmd ->
-    if Sys.file_exists ( OpambinGlobals.marker_source ~name )
-    || Sys.file_exists ( OpambinGlobals.marker_skip ~name )
+  | _name :: _version :: _depends :: cmd ->
+    if Sys.file_exists OpambinGlobals.marker_source
+    || Sys.file_exists OpambinGlobals.marker_skip
     then
       OpambinMisc.call (Array.of_list cmd)
   | _ ->

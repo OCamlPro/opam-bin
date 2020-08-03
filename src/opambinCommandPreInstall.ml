@@ -31,14 +31,30 @@ let cmd_name = "pre-install"
    NOTE: we could move the installation part in a pre-install command.
  *)
 
+(* During the pre-install, we should copy local markers to switch
+   markers, to avoid them being copied by install steps. We could not
+   have done it before because they would be removed by the removal of
+   a previous version of the package happening between build and
+   install. *)
+
 let action args =
   OpambinMisc.global_log "CMD: %s\n%!"
     ( String.concat "\n    " ( cmd_name :: args) ) ;
   OpambinMisc.make_cache_dir ();
   match args with
   | name :: _version :: _depends :: [] ->
-    if Sys.file_exists ( OpambinGlobals.marker_source ~name )
-    || Sys.file_exists ( OpambinGlobals.marker_skip ~name )
+    List.iter (fun (marker, backup) ->
+        if Sys.file_exists marker then
+          Sys.rename marker ( backup ~name )
+      ) [
+      OpambinGlobals.marker_skip , OpambinGlobals.backup_skip;
+      OpambinGlobals.marker_source , OpambinGlobals.backup_source;
+      OpambinGlobals.marker_opam , OpambinGlobals.backup_opam;
+      OpambinGlobals.marker_patch ,OpambinGlobals.backup_patch;
+    ];
+
+    if Sys.file_exists ( OpambinGlobals.backup_source ~name )
+    || Sys.file_exists ( OpambinGlobals.backup_skip ~name )
     then
       ()
     else

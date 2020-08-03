@@ -117,7 +117,7 @@ let cmd = {
       ),
     Ezcmd.info @@
     Printf.sprintf
-      "location of relocation patches (git@ or file://)" ;
+      "location of relocation patches (git@, file:// or https://)" ;
 
     [ "title" ], Arg.String (fun s ->
         OpambinConfig.title =:= s;

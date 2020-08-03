@@ -46,10 +46,12 @@ let patches_url = EzConfig.create_option config
     [ "patches_url" ]
     [
       "The path to the repository containing relocation patches";
-      "Either using GIT (git@, https://) or local (file://)";
+      "Either using GIT (git@), local (file://) or an http archive";
+      "(https://.../x.tar.gz).";
+      "Example: git@github.com:OCamlPro/relocation-patches";
     ]
     EzConfig.string_option
-    "https://github.com/OCamlPro/relocation-patches"
+    "https://www.typerex.org/opam-bin/relocation-patches.tar.gz"
 
 let title = EzConfig.create_option config
     [ "title" ]

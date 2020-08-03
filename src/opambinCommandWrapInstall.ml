@@ -36,8 +36,8 @@ let action args =
   OpambinMisc.make_cache_dir ();
   match args with
   | name :: _version :: _depends :: cmd ->
-    if Sys.file_exists ( OpambinGlobals.marker_source ~name )
-    || Sys.file_exists ( OpambinGlobals.marker_skip ~name )
+    if Sys.file_exists ( OpambinGlobals.backup_source ~name )
+    || Sys.file_exists ( OpambinGlobals.backup_skip ~name )
     then
       OpambinMisc.call (Array.of_list cmd)
   | _ ->

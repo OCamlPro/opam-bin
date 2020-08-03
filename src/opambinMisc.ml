@@ -268,3 +268,24 @@ let iter_repos ?name ?opam_repos ~cont f =
         iter_versions versions package packages repo repos
   in
   iter_repos repos |> cont
+
+let write_marker marker content =
+  let dir = OpambinGlobals.opambin_switch_temp_dir () in
+  if not ( Sys.file_exists dir ) then EzFile.make_dir ~p:true dir;
+  global_log "writing marker %s" marker;
+  EzFile.write_file marker content
+
+let wget ~url ~output =
+  let dirname = Filename.dirname output in
+  if not ( Sys.file_exists dirname ) then
+    EzFile.make_dir ~p:true dirname;
+  call [| "curl" ;
+          "--write-out" ; "%{http_code}\\n" ;
+          "--retry" ; "3" ;
+          "--retry-delay" ; "2" ;
+          "--user-agent" ; "opam-bin/2.0.5" ;
+          "-L" ;
+          "-o" ; output ;
+          url
+       |];
+  Some output
