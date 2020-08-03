@@ -61,21 +61,6 @@ archive-mirrors: "../../cache"
 *)
       None
 
-let wget ~url ~md5 =
-  let temp_dir = OpambinGlobals.opambin_switch_temp_dir () in
-  EzFile.make_dir ~p:true temp_dir;
-  let output = temp_dir // md5 in
-  OpambinMisc.call [| "curl" ;
-          "--write-out" ; "%{http_code}\\n" ;
-          "--retry" ; "3" ;
-          "--retry-delay" ; "2" ;
-          "--user-agent" ; "opam-bin/2.0.5" ;
-          "-L" ;
-          "-o" ; output ;
-          url
-       |];
-  Some output
-
 let check_cached_binary_archive ~version ~repo ~package =
   OpambinMisc.global_log "found binary package in repo %s" repo;
   let package_dir = repo // "packages" // package // version in
@@ -110,7 +95,10 @@ let check_cached_binary_archive ~version ~repo ~package =
           Printf.eprintf "error: url.src not found\n%!";
           exit 2
         | Some url ->
-          match wget ~url ~md5 with
+
+          let temp_dir = OpambinGlobals.opambin_switch_temp_dir () in
+          let output = temp_dir // md5 in
+          match OpambinMisc.wget ~url ~output with
           | None ->
             Printf.eprintf "Error: could not download archive at %S\n%!" url;
             exit 2

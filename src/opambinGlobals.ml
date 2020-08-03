@@ -11,7 +11,7 @@
 open EzFile.OP
 
 let command = "opam-bin"
-let version = "0.8.2"
+let version = "0.9.0"
 let about =
   Printf.sprintf "%s %s by OCamlPro SAS <contact@ocamlpro.com>"
     command version
@@ -47,6 +47,7 @@ let opambin_patches_temp_dir = opambin_dir // "patches.tmp"
 
 let opam_config_file = opam_dir // "config"
 let opam_config_file_backup = opam_config_file ^ ".1"
+let opam_opambin_repo = "local-bin"
 
 let opam_switch_prefix =
   lazy (

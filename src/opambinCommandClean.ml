@@ -16,7 +16,7 @@ let clean_log () =
   Sys.remove OpambinGlobals.opambin_log ;
   ()
 
-let clean_all () =
+let clean_store () =
   List.iter (fun dir ->
       Printf.eprintf "Cleaning %s\n%!" dir;
       OpambinMisc.call [| "rm"; "-rf" ; dir |];
@@ -26,9 +26,13 @@ let clean_all () =
       OpambinGlobals.opambin_store_repo_packages_dir ;
       OpambinGlobals.opambin_store_archives_dir ;
     ];
-  clean_log ();
-  (* flush the copy of the repo that opam keeps *)
   OpambinMisc.call [| "opam"; "update" |];
+  ()
+
+let clean_all () =
+  clean_log ();
+  clean_store ();
+  (* flush the copy of the repo that opam keeps *)
   ()
 
 let action args =
@@ -38,6 +42,7 @@ let action args =
     List.iter (function
         | "all" -> clean_all ()
         | "log" -> clean_log ()
+        | "store" -> clean_store ()
         | s ->
           Printf.eprintf "Unexpected argument %S.\n%!" s;
           exit 2) args
@@ -49,7 +54,7 @@ let cmd =
   cmd_action = (fun () -> action !anon_args) ;
   cmd_args = [
     [], Arg.Anons (fun list -> anon_args := list),
-    Ezcmd.info "What to clean (`all` or `log`)";
+    Ezcmd.info "What to clean (`all`, `log` or `store`)";
   ];
   cmd_man = [];
   cmd_doc = "clear all packages and archives from the cache and store";

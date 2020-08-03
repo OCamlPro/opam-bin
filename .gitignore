@@ -2,3 +2,4 @@
 /opam-bin
 _build
 .merlin
+/test/root

@@ -71,7 +71,7 @@ let install_hooks () =
 
 let install_repos () =
 
-  add_repo ~repo:"local-bin"
+  add_repo ~repo:OpambinGlobals.opam_opambin_repo
     ~url:( Printf.sprintf "file://%s"
              OpambinGlobals.opambin_store_repo_dir )
 
@@ -81,23 +81,49 @@ let install_patches () =
     (* nothing to do *)
     ()
   else
-  if EzString.starts_with patches_url ~prefix:"git@"
-  || EzString.starts_with patches_url ~prefix:"https://"
-  || EzString.starts_with patches_url ~prefix:"http://"
-  then
     let opambin_patches_dir = OpambinGlobals.opambin_patches_dir in
-    OpambinMisc.call [| "rm"; "-rf"; opambin_patches_dir ^ ".tmp" |];
-    OpambinMisc.call
-      [| "git"; "clone" ; patches_url ; opambin_patches_dir ^ ".tmp" |];
-    OpambinMisc.call [| "rm"; "-rf"; opambin_patches_dir |];
-    OpambinMisc.call
-      [| "mv"; opambin_patches_dir ^ ".tmp"; opambin_patches_dir |]
-  else
-    begin
-      Printf.eprintf
-        "Error: patches_url '%s' should either be local (file://) or git (git@, http[s]://)\n%!" patches_url;
-      exit 2
-    end
+    let tmp_dir = opambin_patches_dir ^ ".tmp" in
+
+    if EzString.starts_with patches_url ~prefix:"git@" then begin
+      OpambinMisc.call [| "rm"; "-rf"; tmp_dir |];
+      OpambinMisc.call [| "git"; "clone" ; patches_url ; tmp_dir |];
+      OpambinMisc.call [| "rm"; "-rf"; opambin_patches_dir |];
+      OpambinMisc.call [| "mv"; tmp_dir; opambin_patches_dir |]
+    end else
+
+    if EzString.starts_with patches_url ~prefix:"https://"
+    || EzString.starts_with patches_url ~prefix:"http://" then begin
+        let output = OpambinGlobals.opambin_dir // "relocation-patches.tar.gz" in
+        match OpambinMisc.wget ~url:patches_url ~output with
+        | None ->
+          Printf.kprintf failwith "Could not retrieve archive at %s" patches_url
+        | Some output ->
+
+          OpambinMisc.call [| "rm"; "-rf"; tmp_dir |];
+          EzFile.make_dir ~p:true tmp_dir ;
+
+          Unix.chdir tmp_dir ;
+          OpambinMisc.call [| "tar" ; "zxf" ; output |] ;
+          Unix.chdir OpambinGlobals.curdir;
+
+          let patches_subdir = tmp_dir // "patches" in
+          if not ( Sys.file_exists patches_subdir ) then
+            Printf.kprintf failwith
+              "archive %s does not contain 'patches/' subdir" patches_url;
+
+          OpambinMisc.call [| "rm"; "-rf"; opambin_patches_dir |];
+          EzFile.make_dir ~p:true opambin_patches_dir;
+          Sys.rename patches_subdir (opambin_patches_dir // "patches");
+          OpambinMisc.call [| "rm"; "-rf"; tmp_dir |];
+          Sys.remove output
+
+      end
+    else
+      begin
+        Printf.eprintf
+          "Error: patches_url '%s' should either be local (file://) or git (git@, http[s]://)\n%!" patches_url;
+        exit 2
+      end
 
 
 let action args =
