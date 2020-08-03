@@ -43,6 +43,9 @@ let action args =
   OpambinMisc.make_cache_dir ();
   match args with
   | name :: _version :: _depends :: [] ->
+    let marker_dir = OpambinGlobals.opambin_switch_temp_dir () in
+    if not ( Sys.file_exists marker_dir ) then
+      EzFile.make_dir marker_dir;
     List.iter (fun (marker, backup) ->
         if Sys.file_exists marker then
           Sys.rename marker ( backup ~name )
