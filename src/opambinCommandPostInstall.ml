@@ -177,6 +177,39 @@ let error_on_missing =
   | exception _ -> false
   | _ -> true
 
+let write_bin_stub ~name ~version ~new_version ~repo_dir =
+  let bin_name = name ^ "+bin" in
+  let nv = Printf.sprintf "%s.%s" bin_name version in
+  let package_dir = repo_dir // "packages" // bin_name // nv in
+  EzFile.make_dir ~p:true package_dir;
+  let s = Printf.sprintf {|
+opam-version: "2.0"
+name: %S
+maintainer: "%s"
+description: "This package is an alias for %s binary package"
+depends: [
+   %S {= %S }
+]
+%s
+|}
+      bin_name
+      OpambinGlobals.command
+      name
+      name new_version
+      (if bin_name = "ocaml+bin" then
+         "flags: compiler"
+       else
+         "")
+  in
+  EzFile.write_file ( package_dir // "opam" ) s;
+
+
+  let package_files_dir = package_dir // "files" in
+  EzFile.make_dir ~p:true package_files_dir ;
+  EzFile.write_file ( package_files_dir //
+                      OpambinGlobals.package_info )
+    ( Printf.sprintf "depend:%s:%s\n" name new_version )
+
 let commit ~name ~version ~depends files =
   if
     not !!OpambinConfig.create_enabled
@@ -431,32 +464,8 @@ let commit ~name ~version ~depends files =
 
         EzFile.write_file ( package_dir // "opam" ) s;
 
-        begin
-          let bin_name = name ^ "+bin" in
-          let nv = Printf.sprintf "%s.%s" bin_name version in
-          let package_dir =
-            OpambinGlobals.opambin_store_repo_packages_dir // bin_name // nv in
-          EzFile.make_dir ~p:true package_dir;
-          let s = Printf.sprintf {|
-opam-version: "2.0"
-name: %S
-maintainer: "%s"
-description: "This package is an alias for %s binary package"
-depends: [
-   %S {= %S }
-]
-|}
-              bin_name
-              OpambinGlobals.command
-              name
-              name new_version in
-          EzFile.write_file ( package_dir // "opam" ) s;
-          let package_files_dir = package_dir // "files" in
-          EzFile.make_dir ~p:true package_files_dir ;
-          EzFile.write_file ( package_files_dir //
-                              OpambinGlobals.package_info )
-            ( Printf.sprintf "depend:%s:%s\n" name new_version )
-        end;
+        write_bin_stub ~name ~version ~new_version
+          ~repo_dir:OpambinGlobals.opambin_store_repo_dir;
 
         let oc = open_out ( package_files_dir //
                             OpambinGlobals.package_info ) in

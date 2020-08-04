@@ -95,7 +95,7 @@ changing these files, you can use::
 to generate a new
 :code:`~/.opam/plugins/opam-bin/store/repo/index.html` file and check
 the result.
-  
+
 Using a Binary Repository Only
 ------------------------------
 
@@ -105,9 +105,6 @@ Once a repository with binary packages has been published,
 For example::
 
   export OPAMROOT=$HOME/opam-root
-  opam init --bare -n https://www.origin-labs.com/opam-bin/debian10.4-amd64/repo
+  opam init --bare -n https://www.origin-labs.com/opam-bin/debian10.4-amd64/4.10.0
   opam switch create alt-ergo --empty
   opam install alt-ergo -y
-
-
-

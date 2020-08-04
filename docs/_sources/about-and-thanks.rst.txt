@@ -17,6 +17,7 @@ About
 
   * Raja BOUJBEL <raja.boujbel@ocamlpro.com>
   * Louis GESBERT <louis.gesbert@ocamlpro.com>
+  * Thomas BLANC <thomas.blanc@ocamlpro.com>
 
 Thanks
 ------
@@ -33,4 +34,3 @@ Funding
 We are looking for funding to support this project on the long
 term. If you want to help us, contact us at `contact@ocamlpro.com
 <contact@ocamlpro.com>`__.
-

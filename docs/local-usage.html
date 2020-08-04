@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Local Usage &mdash; opam-bin z-2020-08-01-use-patches-only
- (e9c9199
-) (2020/08/02 20:18) documentation</title>
+ (2d2e3f1
+) (2020/08/04 21:39) documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
               <div class="version">
                 z-2020-08-01-use-patches-only
- (e9c9199
+ (2d2e3f1
 )
               </div>
             
@@ -263,8 +263,16 @@ will generate binary packages:</p>
 </div>
 <p>Let’s retry in another switch, to check if <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> correctly
 install the binary packages:</p>
-<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="n">test</span><span class="o">-</span><span class="n">reloc</span> <span class="mi">4</span><span class="o">.</span><span class="mi">07</span><span class="o">.</span><span class="mi">1</span>
-<span class="n">opam</span> <span class="n">install</span> <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span><span class="o">+</span><span class="n">bin</span> <span class="o">-</span><span class="n">y</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">opam</span> <span class="n">update</span>
+<span class="o">$</span> <span class="n">opam</span> <span class="n">switch</span> <span class="kt">list</span><span class="o">-</span><span class="n">available</span>
+<span class="n">ocaml</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="n">compiler</span> <span class="mi">4</span><span class="o">.</span><span class="mi">07</span><span class="o">.</span><span class="mi">1</span><span class="o">+</span><span class="n">bin</span><span class="o">+</span><span class="mi">9</span><span class="n">dc450ca</span><span class="o">+</span><span class="mi">237</span><span class="n">a0dc7</span>
+<span class="o">$</span> <span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="n">test</span><span class="o">-</span><span class="n">reloc</span> <span class="mi">4</span><span class="o">.</span><span class="mi">07</span><span class="o">.</span><span class="mi">1</span><span class="o">+</span><span class="n">bin</span><span class="o">+</span><span class="mi">9</span><span class="n">dc450ca</span><span class="o">+</span><span class="mi">237</span><span class="n">a0dc7</span>
+<span class="o">$</span> <span class="n">opam</span> <span class="n">install</span> <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span><span class="o">+</span><span class="n">bin</span> <span class="o">-</span><span class="n">y</span>
+</pre></div>
+</div>
+<p>Another solution is to start from an empty switch:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="n">test</span><span class="o">-</span><span class="n">reloc</span> <span class="o">--</span><span class="n">empty</span>
+<span class="o">$</span> <span class="n">opam</span> <span class="n">install</span> <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span><span class="o">+</span><span class="n">bin</span> <span class="o">-</span><span class="n">y</span>
 </pre></div>
 </div>
 <p>We can also search in the generated binary archives for specific files:</p>

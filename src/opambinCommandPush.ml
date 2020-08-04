@@ -11,6 +11,92 @@
 open Ezcmd.TYPES
 open EzConfig.OP
 open EzFile.OP
+module StringMap = EzCompat.StringMap
+
+type info = {
+  depends : string list ;
+  nbytes : int ;
+  nfiles : int ;
+}
+
+type package = {
+  package : string ;
+  version : string ;
+  has_install : bool ;
+  source : ( string * int ) option ;
+  info : info option ;
+}
+
+let map_of_packages repo_dir =
+  let map = ref StringMap.empty in
+
+  OpambinMisc.iter_repos ~cont:ignore
+    [ repo_dir ]
+    (fun ~repo ~package ~version ->
+       let version_dir = repo // "packages" // package // version in
+       let opam = OpamParser.file ( version_dir // "opam" ) in
+       let has_install = ref false in
+       let source = ref None in
+       List.iter OpamParserTypes.(function
+           | Variable ( _, "install", _ ) -> has_install := true
+           | Section (_,  { section_kind = "url" ; section_items ; _ }) ->
+             List.iter (function
+                 | Variable ( _, "src", String (_, src) ) ->
+                   let archive_size =
+                     let st = Unix.lstat ( repo_dir //
+                                           "../archives" //
+                                           ( version ^ "-bin.tar.gz" ) )
+                     in
+                     st.Unix.st_size
+                   in
+                   source := Some ( src, archive_size )
+                 | _ -> ()
+               ) section_items
+           | _ -> ()
+         ) opam.file_contents ;
+
+       let info =
+         let info_file =  version_dir // "files" // "bin-package.info" in
+         if Sys.file_exists info_file then begin
+
+           let deps = ref [] in
+           let nbytes = ref 0 in
+           let nfiles = ref 0 in
+           EzFile.iter_lines (fun line ->
+               match EzString.split line ':' with
+               | "depend" :: name :: versions ->
+                 deps := (Printf.sprintf "%s.%s"
+                            name ( String.concat ":" versions ) ) :: !deps
+               | [ "total" ; n ; "nbytes" ] -> nbytes := int_of_string n
+               | [ "total" ; n ; "nfiles" ] -> nfiles := int_of_string n
+               | _ -> ()
+             ) ( version_dir // "files" // "bin-package.info" );
+           let depends = List.sort compare !deps in
+           Some {
+             depends ;
+             nbytes = !nbytes ;
+             nfiles = !nfiles
+           }
+         end else
+           None
+       in
+       let (_, version_only ) = EzString.cut_at version '.' in
+       let p = {
+         package ;
+         version =  version_only;
+         info ;
+         has_install = !has_install ;
+         source = !source ;
+       } in
+       let submap = match StringMap.find package !map with
+         | exception Not_found -> StringMap.empty
+         | submap -> submap
+       in
+       let submap = StringMap.add version_only p submap in
+       map := StringMap.add package submap !map ;
+       false
+    );
+  !map
 
 let string_of_size nbytes =
   let nbytes = float_of_int nbytes in
@@ -19,12 +105,18 @@ let string_of_size nbytes =
   else
     Printf.sprintf "%.2f kB" ( nbytes /. 1_024.)
 
-let generate_html_index () =
+let generate_html_index repo_dir =
   let b = Buffer.create 10_000 in
-  if Sys.file_exists OpambinGlobals.opambin_header_html then
-    Buffer.add_string b ( EzFile.read_file OpambinGlobals.opambin_header_html )
-  else begin
-    let s = Printf.sprintf {|
+  let header_html = repo_dir // "_site/header.html" in
+
+  begin
+    if Sys.file_exists header_html then
+      Buffer.add_string b ( EzFile.read_file header_html )
+    else
+    if Sys.file_exists OpambinGlobals.opambin_header_html then
+      Buffer.add_string b ( EzFile.read_file OpambinGlobals.opambin_header_html )
+    else begin
+      let s = Printf.sprintf {|
 <!DOCTYPE html>
 <head>
  <meta charset="utf-8">
@@ -42,12 +134,14 @@ opam switch create alt-ergo 4.07.1 --packages alt-ergo
 <h2>Available Packages:</h2>
 <ul>
 |} !!OpambinConfig.title
-        !!OpambinConfig.title
-        !!OpambinConfig.base_url
-    in
-    EzFile.write_file ( OpambinGlobals.opambin_header_html ^ ".template" ) s;
-    Buffer.add_string b s
+          !!OpambinConfig.title
+          !!OpambinConfig.base_url
+      in
+      EzFile.write_file ( OpambinGlobals.opambin_header_html ^ ".template" ) s;
+      Buffer.add_string b s
+    end;
   end;
+
   let current_package = ref None in
   let new_package p =
     if !current_package <> p then begin
@@ -68,7 +162,9 @@ opam switch create alt-ergo 4.07.1 --packages alt-ergo
       end
     end
   in
-  OpambinMisc.iter_repos ~cont:ignore ~opam_repos:[||]
+
+  OpambinMisc.iter_repos ~cont:ignore
+    [ repo_dir ]
     (fun ~repo ~package ~version ->
        new_package (Some package);
        let version_dir = repo // "packages" // package // version in
@@ -91,8 +187,9 @@ opam switch create alt-ergo 4.07.1 --packages alt-ergo
          | Some src ->
 
            let archive_size =
-             let st = Unix.lstat ( OpambinGlobals.opambin_store_archives_dir
-                                   // ( version ^ "-bin.tar.gz" ) )
+             let st = Unix.lstat ( repo_dir //
+                                   "../archives" //
+                                   ( version ^ "-bin.tar.gz" ) )
              in
              st.Unix.st_size
            in
@@ -145,67 +242,260 @@ opam switch create alt-ergo 4.07.1 --packages alt-ergo
        false
     );
   new_package None;
-  Printf.bprintf b {|
- </ul>
-</body>
-|};
-
-  if Sys.file_exists OpambinGlobals.opambin_trailer_html then
-    Buffer.add_string b ( EzFile.read_file OpambinGlobals.opambin_trailer_html )
-  else begin
-    let s = Printf.sprintf {|
+  begin
+    let trailer_html = repo_dir // "_site/trailer.html" in
+    if Sys.file_exists trailer_html then
+      Buffer.add_string b ( EzFile.read_file trailer_html )
+    else
+    if Sys.file_exists OpambinGlobals.opambin_trailer_html then
+      Buffer.add_string b ( EzFile.read_file OpambinGlobals.opambin_trailer_html )
+    else begin
+      let s = Printf.sprintf {|
+    </ul>
       <hr>
 <p>
         Generated by <code>opam-bin</code>, &copy; Copyright 2020, OCamlPro SAS &amp; Origin Labs SAS. &lt;contact@ocamlpro.com&gt;
     </p>
+</body>
 |}
-    in
-    Buffer.add_string b s ;
-    EzFile.write_file ( OpambinGlobals.opambin_trailer_html ^ ".template") s;
-  end ;
-  Buffer.contents b
+      in
+      Buffer.add_string b s ;
+      EzFile.write_file ( OpambinGlobals.opambin_trailer_html ^ ".template") s;
+    end ;
+  end;
 
-let generate_files () =
-  Unix.chdir OpambinGlobals.opambin_store_repo_dir;
+  let html = Buffer.contents b in
+  EzFile.write_file ( repo_dir // "index.html" ) html
+
+let generate_files repo_dir =
+  Unix.chdir repo_dir;
   OpambinMisc.call [| "opam" ; "admin" ; "index" |];
   Unix.chdir OpambinGlobals.curdir ;
 
-  let html = generate_html_index () in
-  EzFile.write_file
-    ( OpambinGlobals.opambin_store_repo_dir // "index.html" ) html
+  generate_html_index repo_dir
 
-let action ~merge ~local_only =
-  if !local_only then
-    generate_files ()
-  else
-    match !!OpambinConfig.rsync_url with
-    | None ->
-      Printf.eprintf
-        "Error: you must define the remote url with `%s config --rsync-url`\n%!"
-        OpambinGlobals.command ;
-      exit 2
-    | Some rsync_url ->
+let cut_at_string ~sep s =
+  let seplen = String.length sep in
+  if seplen = 0 then failwith "cut_at_string: empty sep argument";
+  let len = String.length s in
+  let c = sep.[0] in
+  let rec iter pos =
+    if pos + seplen > len then
+      ( s, "" )
+    else
+      match String.index_from s pos c with
+      | exception Not_found -> ( s, "" )
+      | pos ->
+        iter_found pos 1
 
-      if not !merge then generate_files ();
+  and iter_found pos i =
+    if i = seplen then
+      ( String.sub s 0 pos, String.sub s (pos+seplen) (len-pos-seplen) )
+    else
+    if sep.[i] = s.[pos+i] then
+      iter_found pos (i+1)
+    else
+      iter (pos+1)
+  in
+  iter 0
 
-      let args = [ "rsync"; "-auv" ; "--progress" ] in
-      let args = if !merge then args else args @ [ "--delete" ] in
-      let args = args @ [
-          OpambinGlobals.opambin_store_dir // "." ;
-          rsync_url
-        ] in
-      Printf.eprintf "Calling '%s'\n%!"
-        (String.concat " " args);
-      OpambinMisc.call (Array.of_list args);
-      Printf.eprintf "Done.\n%!";
-      ()
+let () =
+  List.iter (fun (s, sep, res) ->
+      assert ( cut_at_string s ~sep = res )
+    ) [
+    "bonjour a tous", "a", ( "bonjour ", " tous" );
+    "bonjour a tous", " a ", ( "bonjour", "tous" );
+    "bonjour a tous", " a", ( "bonjour", " tous" );
+    "bonjour a tous", "ou", ( "bonj", "r a tous" )
+  ]
+
+let extract_packages s delete =
+  let (repo, prefix) = EzString.cut_at s ':' in
+  let src_dir = OpambinGlobals.opambin_store_repo_dir in
+  let dst_dir = OpambinGlobals.opambin_store_dir // repo in
+  let map = map_of_packages src_dir in
+  let package, prefix_version = EzString.cut_at prefix '.' in
+
+  let needed = ref [] in
+  let map = StringMap.map (fun submap ->
+      StringMap.map (fun p ->
+          if p.package = package then
+            if EzString.starts_with p.version ~prefix:prefix_version then
+              needed := ( p.package, p.version ) :: !needed ;
+          ( ref `ToCheck, p )
+        ) submap
+    ) map
+  in
+
+  let rec iter_needed ( package, version ) =
+    let submap = StringMap.find package map in
+    let ( ok, p ) = StringMap.find version submap in
+    match !ok with
+    | `ToCheck ->
+      ok := `Needed;
+      iter_needed (p.package, p.version)
+    | `Needed -> ()
+    | _ -> assert false
+  in
+  List.iter iter_needed !needed ;
+
+  StringMap.iter (fun package submap ->
+
+      let has_needed = ref None in
+      StringMap.iter (fun _version ( ok, p ) ->
+          match !ok with
+          | `Needed -> has_needed := Some p
+          | _ -> ()
+        ) submap ;
+
+      match !has_needed with
+      | None -> ()
+      | Some pp ->
+        StringMap.iter (fun _version ( ok, p ) ->
+            if p != pp then
+              match !ok with
+              | `Needed ->
+                Printf.kprintf failwith
+                  "Packages %s.%s and %s.%s are both needed but conflicting"
+                  package pp.version package p.version
+              | _ ->
+                ok := `Conflict
+          ) submap
+    ) map ;
+
+  let rec check_deps ( ok, p ) =
+    let res =
+      match p.info with
+      | None -> `Ok
+      | Some info ->
+        let deps = info.depends in
+        if
+          List.for_all (fun nv ->
+              let ( n, v ) = EzString.cut_at nv '.' in
+              let ( ok, p ) =
+                match StringMap.find n map with
+                | exception Not_found ->
+                  Printf.kprintf failwith
+                    "%s: %s not found in map"
+                    nv n
+                | submap ->
+                  match StringMap.find v submap with
+                  | exception Not_found ->
+                    Printf.kprintf failwith
+                      "%s: %s not found in submap for %s"
+                      nv v n
+                  | v -> v
+              in
+              match !ok with
+              | `Ok -> true
+              | `Conflict -> false
+              | `Needed -> true
+              | `ToCheck ->
+                check_deps ( ok, p );
+                match !ok with
+                | `Ok -> true
+                | `Conflict -> false
+                | _ -> assert false
+            ) deps
+        then
+          `Ok
+        else
+          `Conflict
+    in
+    ok := res
+  in
+  StringMap.iter (fun _package submap ->
+      StringMap.iter (fun _version ( ok, p ) ->
+          match !ok with
+          | `Needed -> ()
+          | `ToCheck -> check_deps ( ok, p )
+          | `Conflict -> ()
+          | `Ok -> ()
+        ) submap
+    ) map;
+
+  EzFile.make_dir ~p:true dst_dir ;
+  if delete then
+    OpambinMisc.call [| "rm"; "-rf"; dst_dir // "packages" |];
+  StringMap.iter (fun package submap ->
+      if EzString.ends_with package ~suffix:"+bin" then
+        ()
+      else
+        StringMap.iter (fun _version ( ok, p ) ->
+            match !ok with
+            | `Needed
+            | `Ok ->
+              let nv = Printf.sprintf "%s.%s" package p.version in
+              let package_dir = dst_dir // "packages" // package // nv in
+              EzFile.make_dir ~p:true package_dir ;
+              OpambinMisc.call [|
+                "rsync"; "-auv"; "--delete" ;
+                src_dir // "packages" // package // nv // "." ;
+                package_dir
+              |];
+              let (old_version, _ ) = cut_at_string p.version ~sep:"+bin" in
+              OpambinCommandPostInstall.write_bin_stub
+                ~name:p.package ~version:old_version
+                ~new_version:p.version
+                ~repo_dir:dst_dir
+            | `Conflict -> ()
+            | `ToCheck -> assert false
+          ) submap
+    ) map;
+
+  generate_files dst_dir ;
+  ()
+
+let generate_all_files () =
+  let files = Sys.readdir OpambinGlobals.opambin_store_dir in
+  Array.iter (fun file ->
+      let file = OpambinGlobals.opambin_store_dir // file in
+      if Sys.is_directory file
+         && Sys.file_exists ( file // "repo" )
+         && Sys.file_exists ( file // "packages" )
+      then
+        generate_files file
+    ) files
+
+let action ~merge ~local_only ~extract ~delete () =
+  match !extract with
+  | Some s ->
+    extract_packages s !delete
+  | None ->
+    if !local_only then
+      generate_all_files ()
+    else
+      match !!OpambinConfig.rsync_url with
+      | None ->
+        Printf.eprintf
+          "Error: you must define the remote url with `%s config \
+           --rsync-url`\n%!"
+          OpambinGlobals.command ;
+        exit 2
+      | Some rsync_url ->
+
+        if not !merge then generate_all_files () ;
+
+        let args = [ "rsync"; "-auv" ; "--progress" ] in
+        let args = if !merge then args else args @ [ "--delete" ] in
+        let args = args @ [
+            OpambinGlobals.opambin_store_dir // "." ;
+            rsync_url
+          ] in
+        Printf.eprintf "Calling '%s'\n%!"
+          (String.concat " " args);
+        OpambinMisc.call (Array.of_list args);
+        Printf.eprintf "Done.\n%!";
+        ()
 
 let cmd =
+  let extract = ref None in
   let merge = ref false in
   let local_only = ref false in
+  let delete = ref false in
   {
     cmd_name = "push" ;
-    cmd_action = (fun () -> action ~merge ~local_only) ;
+    cmd_action = action ~merge ~local_only ~extract ~delete ;
     cmd_args = [
 
       [ "merge" ], Arg.Set merge,
@@ -217,6 +507,13 @@ let cmd =
       Ezcmd.info "Generate index.tar.gz and index.html without \
                   upstreaming (for testing purpose)";
 
+      [ "extract" ] , Arg.String (fun s -> extract := Some s),
+      Ezcmd.info "NAME:PACKAGE Extract all packages compatible with \
+                  PACKAGE from stores/repo to stores/NAME. PACKAGE is \
+                  a prefix, such as ocaml.4.07.";
+
+      [ "delete" ] , Arg.Set delete,
+      Ezcmd.info "Delete previous packages with --extract";
     ];
     cmd_man = [];
     cmd_doc = "push binary packages to the remote server";
