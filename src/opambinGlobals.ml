@@ -11,7 +11,7 @@
 open EzFile.OP
 
 let command = "opam-bin"
-let version = "0.9.1"
+let version = "0.9.2"
 let about =
   Printf.sprintf "%s %s by OCamlPro SAS <contact@ocamlpro.com>"
     command version

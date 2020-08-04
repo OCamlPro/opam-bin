@@ -20,7 +20,9 @@ let cmd_name = "search"
 
 let iter f =
   let tested_set = ref StringSet.empty in
-  OpambinMisc.iter_repos ~cont:ignore (fun ~repo ~package ~version ->
+  OpambinMisc.iter_repos ~cont:ignore
+    (  OpambinMisc.all_repos () )
+    (fun ~repo ~package ~version ->
       (* OpambinMisc.global_log "searching %s" version; *)
       if StringSet.mem version !tested_set then
         false

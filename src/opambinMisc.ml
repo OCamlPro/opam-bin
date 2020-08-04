@@ -200,21 +200,22 @@ let () =
   ]
 *)
 
-(* stops if [f] returns true and returns true *)
-let iter_repos ?name ?opam_repos ~cont f =
+let opam_repos () =
   let repos =
-    match opam_repos with
-    | Some repos -> repos
-    | None ->
-      try
-        Sys.readdir OpambinGlobals.opam_repo_dir
-      with _ -> [||]
+    try
+      Sys.readdir OpambinGlobals.opam_repo_dir
+    with _ -> [||]
   in
-  let repos = Array.to_list @@
-    Array.map (fun file ->
-        OpambinGlobals.opam_repo_dir // file) repos
-  in
-  let repos = OpambinGlobals.opambin_store_repo_dir :: repos in
+  Array.to_list @@
+  Array.map (fun file ->
+      OpambinGlobals.opam_repo_dir // file) repos
+
+let all_repos () =
+  OpambinGlobals.opambin_store_repo_dir :: opam_repos ()
+
+
+(* stops if [f] returns true and returns true *)
+let iter_repos ?name repos ~cont f =
   (*
   global_log "Searching repositories in:\n  %s"
     ( String.concat "\n  " repos);

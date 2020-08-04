@@ -240,7 +240,9 @@ let cached_binary_archive ~name ~version ~depends =
     else
       let version_prefix = Printf.sprintf "%s.%s+bin+%s+"
           name version source_md5 in
-      if OpambinMisc.iter_repos ~cont:(fun x -> x) (fun ~repo ~package ~version ->
+      if OpambinMisc.iter_repos ~cont:(fun x -> x)
+          ( OpambinMisc.all_repos () )
+          (fun ~repo ~package ~version ->
           if EzString.starts_with version ~prefix:version_prefix then begin
             check_cached_binary_archive ~package ~repo ~version
           end else

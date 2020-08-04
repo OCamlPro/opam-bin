@@ -89,8 +89,16 @@ gives the following output::
 Let's retry in another switch, to check if :code:`opam-bin` correctly
 install the binary packages::
 
-  opam switch create test-reloc 4.07.1
-  opam install alt-ergo+bin -y
+  $ opam update
+  $ opam switch list-available
+  ocaml-base-compiler 4.07.1+bin+9dc450ca+237a0dc7
+  $ opam switch create test-reloc 4.07.1+bin+9dc450ca+237a0dc7
+  $ opam install alt-ergo+bin -y
+
+Another solution is to start from an empty switch::
+
+  $ opam switch create test-reloc --empty
+  $ opam install alt-ergo+bin -y
 
 We can also search in the generated binary archives for specific files::
 
