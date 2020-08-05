@@ -71,6 +71,15 @@ let install_hooks () =
 
 let install_repos () =
 
+  EzFile.make_dir ~p:true OpambinGlobals.opambin_store_repo_packages_dir;
+  EzFile.write_file ( OpambinGlobals.opambin_store_repo_dir // "repo" )
+    {|
+opam-version: "2.0"
+archive-mirrors: "../../cache"
+|};
+  EzFile.write_file ( OpambinGlobals.opambin_store_repo_dir // "version" )
+    "0.9.0";
+
   add_repo ~repo:OpambinGlobals.opam_opambin_repo
     ~url:( Printf.sprintf "file://%s"
              OpambinGlobals.opambin_store_repo_dir )
@@ -133,14 +142,6 @@ let action args =
   OpambinConfig.save ();
 
   EzFile.make_dir ~p:true OpambinGlobals.opambin_cache_dir;
-  EzFile.make_dir ~p:true OpambinGlobals.opambin_store_repo_packages_dir;
-  EzFile.write_file ( OpambinGlobals.opambin_store_repo_dir // "repo" )
-    {|
-opam-version: "2.0"
-archive-mirrors: "../../cache"
-|};
-  EzFile.write_file ( OpambinGlobals.opambin_store_repo_dir // "version" )
-    "0.9.0";
 
   match args with
   | [] ->
