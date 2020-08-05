@@ -9,6 +9,7 @@
 (**************************************************************************)
 
 open Ezcmd.TYPES
+open EzFile.OP
 
 let cmd_name = "clean"
 
@@ -26,6 +27,15 @@ let clean_store () =
       OpambinGlobals.opambin_store_repo_packages_dir ;
       OpambinGlobals.opambin_store_archives_dir ;
     ];
+  let store_dir = OpambinGlobals.opambin_store_dir in
+  let files = Sys.readdir store_dir in
+  Array.iter (fun file ->
+      let packages_dir = store_dir // file // "packages" in
+      if Sys.file_exists packages_dir then begin
+        Printf.eprintf "Cleaning %s\n%!" packages_dir;
+        OpambinMisc.call [| "rm" ; "-rf"; packages_dir |];
+      end
+    ) files;
   OpambinMisc.call [| "opam"; "update" |];
   ()
 

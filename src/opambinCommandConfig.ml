@@ -14,6 +14,7 @@ open EzFile.OP
 
 let need_saving = ref false
 let need_refactoring = ref false
+let need_install_patches = ref false
 
 let refactor () =
   Printf.eprintf "Refactoring...\n%!";
@@ -51,6 +52,8 @@ let action () =
     EzFile.make_dir ~p:true OpambinGlobals.opambin_dir ;
     OpambinConfig.save ();
     if !need_refactoring then refactor ();
+    if !need_install_patches then
+      OpambinCommandInstall.install_patches ();
   end else begin
     let open EzConfig.LowLevel in
     Printf.printf "Current options (from %s):\n"
@@ -114,6 +117,7 @@ let cmd = {
     [ "patches-url" ], Arg.String (fun s ->
         OpambinConfig.patches_url =:= s ;
         need_saving := true ;
+        need_install_patches := true;
       ),
     Ezcmd.info @@
     Printf.sprintf
