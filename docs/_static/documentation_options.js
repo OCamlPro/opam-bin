@@ -1,6 +1,6 @@
 var DOCUMENTATION_OPTIONS = {
     URL_ROOT: document.getElementById("documentation_options").getAttribute('data-url_root'),
-    VERSION: 'z-2020-08-01-use-patches-only (78ed6f0) (2020/08/05 12:28)',
+    VERSION: 'z-2020-08-01-use-patches-only (e46ad74) (2020/08/07 14:07)',
     LANGUAGE: 'None',
     COLLAPSE_INDEX: false,
     FILE_SUFFIX: '.html',
