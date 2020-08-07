@@ -9,24 +9,21 @@ About
 `OCamlPro SAS <https://www.ocamlpro.com>`__ and
 `Origin Labs SAS <https://www.origin-labs.com>`__ by:
 
-* Code:
+* Author:
 
   * Fabrice LE FESSANT <fabrice.le_fessant@origin-labs.com>
 
-* Expertise:
+* with help from:
 
-  * Raja BOUJBEL <raja.boujbel@ocamlpro.com>
-  * Louis GESBERT <louis.gesbert@ocamlpro.com>
   * Thomas BLANC <thomas.blanc@ocamlpro.com>
 
 Thanks
 ------
 
-We would like to warmly thanks some of our customers without whom this
-project would not have been possible:
-
-* `Jane Street Capital <https://www.janestreet.com/>`__
-* `Adacore SAS <https://www.adacore.com/>`__
+* Raja BOUJBEL <raja.boujbel@ocamlpro.com>
+* Louis GESBERT <louis.gesbert@ocamlpro.com>
+* Johannes KANIG <kanig@adacore.com>
+* Boris YAKOBOWSKI <yakobowski@adacore.com>
 
 Funding
 -------

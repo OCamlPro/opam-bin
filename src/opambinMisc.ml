@@ -164,7 +164,7 @@ let current_switch () =
   let opam_switch_prefix = OpambinGlobals.opam_switch_prefix () in
   let switch = Filename.basename opam_switch_prefix in
   if String.lowercase switch = "_opam" then
-    opam_switch_prefix
+    Filename.dirname opam_switch_prefix
   else switch
 
 let not_this_switch () =
