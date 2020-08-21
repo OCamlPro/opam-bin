@@ -14,29 +14,29 @@ open EzFile.OP
 let cmd_name = "clean"
 
 let clean_log () =
-  Sys.remove OpambinGlobals.opambin_log ;
+  Sys.remove Globals.opambin_log ;
   ()
 
 let clean_store () =
   List.iter (fun dir ->
       Printf.eprintf "Cleaning %s\n%!" dir;
-      OpambinMisc.call [| "rm"; "-rf" ; dir |];
+      Misc.call [| "rm"; "-rf" ; dir |];
       EzFile.make_dir ~p:true dir ;
     )
-    [ OpambinGlobals.opambin_cache_dir ;
-      OpambinGlobals.opambin_store_repo_packages_dir ;
-      OpambinGlobals.opambin_store_archives_dir ;
+    [ Globals.opambin_cache_dir ;
+      Globals.opambin_store_repo_packages_dir ;
+      Globals.opambin_store_archives_dir ;
     ];
-  let store_dir = OpambinGlobals.opambin_store_dir in
+  let store_dir = Globals.opambin_store_dir in
   let files = Sys.readdir store_dir in
   Array.iter (fun file ->
       let packages_dir = store_dir // file // "packages" in
       if Sys.file_exists packages_dir then begin
         Printf.eprintf "Cleaning %s\n%!" packages_dir;
-        OpambinMisc.call [| "rm" ; "-rf"; packages_dir |];
+        Misc.call [| "rm" ; "-rf"; packages_dir |];
       end
     ) files;
-  OpambinMisc.call [| "opam"; "update" |];
+  Misc.call [| "opam"; "update" |];
   ()
 
 let clean_all () =

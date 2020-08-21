@@ -10,7 +10,12 @@ doc: "https://ocamlpro.github.io/opam-bin/doc"
 bug-reports: "https://github.com/ocamlpro/opam-bin/issues"
 depends: [
   "dune" {>= "2.0"}
-  "opam-bin-lib" {= "0.9.4"}
+  "ocplib-json-typed" {>= "0.7.0"}
+  "ezjsonm" {>= "1.0.0"}
+  "ez-cmdliner" {>= "0.1.0"}
+  "ez-config" {>= "0.1.0"}
+  "re" {>= "1.0"}
+  "opam-file-format" {>= "0.0"}
 ]
 build: [
   ["dune" "subst"] {pinned}

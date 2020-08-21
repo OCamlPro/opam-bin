@@ -27,10 +27,10 @@ let cmd_name = "post-install"
 let parse_opam_file file_name =
   if Sys.file_exists file_name then begin
     let opam = OpamParser.file file_name in
-    OpambinMisc.global_log "%s read" opam.file_name;
+    Misc.global_log "%s read" opam.file_name;
     opam.file_contents
   end else begin
-    OpambinMisc.global_log "%s does not exist" file_name;
+    Misc.global_log "%s does not exist" file_name;
     []
   end
 
@@ -65,7 +65,7 @@ let iter_value_list v f =
     | Option (_, String (_, name), option) -> f name option
     | _
       ->
-      OpambinMisc.global_log "warning: unexpected depend value %s"
+      Misc.global_log "warning: unexpected depend value %s"
         ( OpamPrinter.value v)
   in
   match v with
@@ -108,7 +108,7 @@ let digest_sources () =
   in
   iter ".";
   let s = Buffer.contents b in
-  (*  OpambinMisc.global_log "buffer: %s" s ; *)
+  (*  Misc.global_log "buffer: %s" s ; *)
   EzFile.write_file
     ( Printf.sprintf "/tmp/buffer.%d" (Unix.getpid ()) ) s;
   digest s
@@ -116,8 +116,8 @@ let digest_sources () =
 let compute_hash ?source_md5 ~name ~version ~depends () =
   let missing_versions = ref [] in
   let packages_dir =
-    OpambinGlobals.opambin_switch_packages_dir () in
-  OpambinMisc.global_log "depends: %S" depends;
+    Globals.opambin_switch_packages_dir () in
+  Misc.global_log "depends: %S" depends;
   let depends = EzString.split depends ' ' in
   let dependset = ref EzCompat.StringSet.empty in
   let depends = List.map (fun nv ->
@@ -140,36 +140,36 @@ let compute_hash ?source_md5 ~name ~version ~depends () =
   let depends_nv = List.map (fun ( name, version ) ->
       Printf.sprintf "%s.%s" name version
     ) depends in
-  let switch = OpambinMisc.current_switch () in
-  let temp_dir = OpambinGlobals.opambin_switch_temp_dir () in
+  let switch = Misc.current_switch () in
+  let temp_dir = Globals.opambin_switch_temp_dir () in
   EzFile.make_dir ~p:true temp_dir ;
   let ( source_md5, opam_file ) = match source_md5 with
     | Some source_md5 ->
-      source_md5, OpambinGlobals.backup_opam ~name
+      source_md5, Globals.backup_opam ~name
     | None ->
       let digest_sources = digest_sources () in
 
-      let opam_file = OpambinGlobals.marker_opam in
+      let opam_file = Globals.marker_opam in
       let oc = Unix.openfile opam_file
           [ Unix.O_CREAT; Unix.O_WRONLY ; Unix.O_TRUNC ] 0o644 in
       let nv = Printf.sprintf "%s.%s" name version in
-      OpambinMisc.call ~stdout:oc
+      Misc.call ~stdout:oc
         [| "opam" ; "show" ; nv ; "--raw" ; "--safe" ; "--switch" ; switch |];
       Unix.close oc;
       let opam_content = EzFile.read_file opam_file in
-      OpambinMisc.global_log "File (%s):\n%s" name opam_content;
+      Misc.global_log "File (%s):\n%s" name opam_content;
       let digest_opam = digest opam_content in
-      OpambinMisc.global_log "Opam (%s): %s" name digest_opam;
+      Misc.global_log "Opam (%s): %s" name digest_opam;
 
       let package_uid = digest ( digest_opam ^ digest_sources ) in
 
-      OpambinMisc.global_log "package_uid(%s): %s" name package_uid;
+      Misc.global_log "package_uid(%s): %s" name package_uid;
       let s = Printf.sprintf "%s.%s|%s|%s"
           name version package_uid (String.concat "," depends_nv) in
-      OpambinMisc.global_log "source(%s) : %s" name s ;
+      Misc.global_log "source(%s) : %s" name s ;
       short ( digest s ), opam_file
   in
-  OpambinMisc.global_log "source_md5 (%s): %s" name source_md5;
+  Misc.global_log "source_md5 (%s): %s" name source_md5;
   ( source_md5, depends, !dependset, !missing_versions, opam_file )
 
 let error_on_missing =
@@ -193,7 +193,7 @@ depends: [
 %s
 |}
       bin_name
-      OpambinGlobals.command
+      Globals.command
       name
       name new_version
       (if bin_name = "ocaml+bin" then
@@ -207,39 +207,39 @@ depends: [
   let package_files_dir = package_dir // "files" in
   EzFile.make_dir ~p:true package_files_dir ;
   EzFile.write_file ( package_files_dir //
-                      OpambinGlobals.package_info )
+                      Globals.package_info )
     ( Printf.sprintf "depend:%s:%s\n" name new_version )
 
 let commit ~name ~version ~depends files =
   if
-    not !!OpambinConfig.create_enabled
-    || Sys.file_exists ( OpambinGlobals.backup_skip ~name )
+    not !!Config.create_enabled
+    || Sys.file_exists ( Globals.backup_skip ~name )
   then
-    OpambinMisc.global_log "package %s: create disabled" name
+    Misc.global_log "package %s: create disabled" name
   else
-  if Sys.file_exists OpambinGlobals.marker_cached then
-    OpambinMisc.global_log "package %s: installed a cached binary" name
+  if Sys.file_exists Globals.marker_cached then
+    Misc.global_log "package %s: installed a cached binary" name
   else
-    let opam_switch_prefix = OpambinGlobals.opam_switch_prefix () in
+    let opam_switch_prefix = Globals.opam_switch_prefix () in
     let packages_dir =
-      OpambinGlobals.opambin_switch_packages_dir () in
+      Globals.opambin_switch_packages_dir () in
     if Sys.file_exists ( packages_dir // name ) then
-      OpambinMisc.global_log "package %s: already a binary archive..." name
+      Misc.global_log "package %s: already a binary archive..." name
     else
-      let temp_dir = OpambinGlobals.opambin_switch_temp_dir () in
-      OpambinMisc.global_log "package %s is not a binary archive" name ;
-      OpambinMisc.global_log "creating binary archive...";
+      let temp_dir = Globals.opambin_switch_temp_dir () in
+      Misc.global_log "package %s is not a binary archive" name ;
+      Misc.global_log "creating binary archive...";
       EzFile.make_dir ~p:true temp_dir ;
       let source_md5 =
-        EzFile.read_file ( OpambinGlobals.backup_source ~name ) in
+        EzFile.read_file ( Globals.backup_source ~name ) in
       let ( source_md5, depends, dependset, missing_versions, opam_file ) =
         compute_hash ~source_md5 ~name ~version ~depends () in
       if missing_versions <> [] then begin
-        OpambinMisc.global_log
+        Misc.global_log
           "Error in %s: cannot load binary versions from %s\n%!"
-          OpambinGlobals.command
+          Globals.command
           (String.concat " " missing_versions);
-        OpambinMisc.global_log
+        Misc.global_log
           " => binary archive disabled for %s.%s" name version;
         if error_on_missing then begin
           Printf.eprintf "Error: OPAM_BIN_FORCE set, but missing binary dep.\n%!";
@@ -249,14 +249,14 @@ let commit ~name ~version ~depends files =
       else
         let binary_archive = temp_dir // name ^ "-bin.tar.gz" in
         Unix.chdir opam_switch_prefix;
-        OpambinMisc.tar_zcf ~prefix:"prefix" binary_archive files;
-        Unix.chdir OpambinGlobals.curdir;
-        OpambinMisc.global_log "create binary archive DONE";
+        Misc.tar_zcf ~prefix:"prefix" binary_archive files;
+        Unix.chdir Globals.curdir;
+        Misc.global_log "create binary archive DONE";
 
         let bin_md5 =
           digest ( EzFile.read_file binary_archive )
         in
-        OpambinMisc.global_log "bin md5 = %s" bin_md5;
+        Misc.global_log "bin md5 = %s" bin_md5;
 
         let final_md5 = Printf.sprintf "%s+%s"
             source_md5 ( short bin_md5 ) in
@@ -268,44 +268,44 @@ let commit ~name ~version ~depends files =
 
         let file_contents = parse_opam_file opam_file in
 
-        EzFile.make_dir ~p:true OpambinGlobals.opambin_store_archives_dir;
+        EzFile.make_dir ~p:true Globals.opambin_store_archives_dir;
         let final_binary_archive_basename =
           Printf.sprintf "%s.%s-bin.tar.gz" name new_version
         in
         let final_binary_archive =
-          OpambinGlobals.opambin_store_archives_dir // final_binary_archive_basename
+          Globals.opambin_store_archives_dir // final_binary_archive_basename
         in
         Sys.rename binary_archive final_binary_archive;
 
         let cache_dir =
-          OpambinGlobals.opambin_cache_dir //
+          Globals.opambin_cache_dir //
           "md5" // String.sub bin_md5 0 2 in
         let cached_archive = cache_dir // bin_md5 in
         if not ( Sys.file_exists cached_archive ) then begin
           EzFile.make_dir ~p:true cache_dir;
-          OpambinMisc.call [| "cp";  final_binary_archive ; cached_archive |];
+          Misc.call [| "cp";  final_binary_archive ; cached_archive |];
         end;
 
         let nv = Printf.sprintf "%s.%s" name new_version in
         let package_dir =
-          OpambinGlobals.opambin_store_repo_packages_dir // name // nv in
+          Globals.opambin_store_repo_packages_dir // name // nv in
         EzFile.make_dir ~p:true package_dir;
         let package_files_dir = package_dir // "files" in
         EzFile.make_dir ~p:true package_files_dir;
         let oc = open_out ( package_files_dir //
-                            OpambinGlobals.package_version ) in
+                            Globals.package_version ) in
         output_string oc new_version;
         close_out oc;
 
         let config_file =
-          OpambinGlobals.opam_switch_internal_config_dir ()
+          Globals.opam_switch_internal_config_dir ()
           // ( name ^ ".config" )
         in
         let has_config_file =
           if Sys.file_exists config_file then begin
             let s = EzFile.read_file config_file in
             EzFile.write_file ( package_files_dir //
-                                OpambinGlobals.package_config ) s;
+                                Globals.package_config ) s;
             true
           end
           else
@@ -358,7 +358,7 @@ let commit ~name ~version ~depends files =
                       opam_depopts := Some value ;
                       acc
                     | _ ->
-                      OpambinMisc.global_log
+                      Misc.global_log
                         "discarding unknown field %S" name;
                       acc
                   end
@@ -395,7 +395,7 @@ let commit ~name ~version ~depends files =
              always be the last step because wrap-install checks for
              etc/opam-bin/packages/NAME to stop installation commands. *)
           let file_contents =
-            OpambinMisc.opam_variable "install"
+            Misc.opam_variable "install"
               {|
 [
   [  "mkdir" "-p" "%%{prefix}%%/etc/%s/packages" ]
@@ -404,19 +404,19 @@ let commit ~name ~version ~depends files =
   [  "mv" "%%{prefix}%%/%s" "%%{prefix}%%/etc/%s/packages/%s" ]
 ]
 |}
-              OpambinGlobals.command
-              OpambinGlobals.package_info
+              Globals.command
+              Globals.package_info
               (if has_config_file then
                  Printf.sprintf {|
   [  "mv" "%%{prefix}%%/%s" "%s.config" ]
 |}
-                   OpambinGlobals.package_config name
+                   Globals.package_config name
                else "")
-              OpambinGlobals.package_version OpambinGlobals.command name
+              Globals.package_version Globals.command name
             :: file_contents
           in
           let file_contents =
-            OpambinMisc.opam_variable "depends"
+            Misc.opam_variable "depends"
               "[ %s %s ]"
               (String.concat " "
                  (List.map (fun (name, version) ->
@@ -433,13 +433,13 @@ let commit ~name ~version ~depends files =
             if files = [] then
               file_contents
             else
-              OpambinMisc.opam_section "url" [
-                OpambinMisc.opam_variable
+              Misc.opam_section "url" [
+                Misc.opam_variable
                   "src"
                   "%S"
-                  (!!OpambinConfig.base_url
+                  (!!Config.base_url
                    // "archives" // final_binary_archive_basename);
-                OpambinMisc.opam_variable
+                Misc.opam_variable
                   "checksum"
                   {| [ "md5=%s" ] |} bin_md5
               ] :: file_contents
@@ -449,7 +449,7 @@ let commit ~name ~version ~depends files =
             if !conflicts = [] then
               file_contents
             else
-              OpambinMisc.opam_variable "conflicts"
+              Misc.opam_variable "conflicts"
                 "[ %s ]"
                 ( String.concat " "
                     ( List.map (fun s ->
@@ -465,10 +465,10 @@ let commit ~name ~version ~depends files =
         EzFile.write_file ( package_dir // "opam" ) s;
 
         write_bin_stub ~name ~version ~new_version
-          ~repo_dir:OpambinGlobals.opambin_store_repo_dir;
+          ~repo_dir:Globals.opambin_store_repo_dir;
 
         let oc = open_out ( package_files_dir //
-                            OpambinGlobals.package_info ) in
+                            Globals.package_info ) in
         List.iter (fun (name, version) ->
             Printf.fprintf oc "depend:%s:%s\n" name version
           ) depends ;
@@ -492,27 +492,27 @@ let commit ~name ~version ~depends files =
                 )
                 file
           ) files ;
-        Unix.chdir OpambinGlobals.curdir;
+        Unix.chdir Globals.curdir;
 
         Printf.fprintf oc "total:%05d:nfiles\n" (List.length files) ;
         Printf.fprintf oc "total:%09d:nbytes\n" !total_nbytes ;
         close_out oc;
 
-        OpambinMisc.global_log "Binary package for %s.%s created successfully"
+        Misc.global_log "Binary package for %s.%s created successfully"
           name version
 
 
 let action args =
-  OpambinMisc.global_log "CMD (at %s): %s\n%!"
-    OpambinGlobals.curdir
+  Misc.global_log "CMD (at %s): %s\n%!"
+    Globals.curdir
     ( String.concat "\n    " ( cmd_name :: args) ) ;
-  OpambinMisc.make_cache_dir ();
+  Misc.make_cache_dir ();
   match args with
   | name :: version :: depends :: files ->
     commit ~name ~version ~depends files
   | _ ->
     Printf.eprintf
-      "Unexpected args: usage is '%s %s name version depends files...'\n%!" OpambinGlobals.command cmd_name;
+      "Unexpected args: usage is '%s %s name version depends files...'\n%!" Globals.command cmd_name;
     exit 2
 
 let cmd =

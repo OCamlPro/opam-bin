@@ -15,115 +15,115 @@ open EzConfig.OP
 let cmd_name = "install"
 
 let add_repo ~repo ~url =
-  if Sys.file_exists (OpambinGlobals.opam_repo_dir // repo ) then
-    OpambinMisc.call
+  if Sys.file_exists (Globals.opam_repo_dir // repo ) then
+    Misc.call
       [| "opam"; "remote" ; "set-url" ; repo;
          "--all"; "--set-default"; url |]
   else
-    OpambinMisc.call
+    Misc.call
       [| "opam"; "remote" ; "add" ; repo ;
          "--all"; "--set-default"; url |]
 
 let install_exe () =
   let s = FileString.read_file Sys.executable_name in
-  EzFile.write_file OpambinGlobals.opambin_bin s;
-  Unix.chmod  OpambinGlobals.opambin_bin 0o755;
-  Printf.eprintf "Executable copied as %s\n%!" OpambinGlobals.opambin_bin;
-  EzFile.make_dir ~p:true OpambinGlobals.opam_plugins_bin_dir ;
-  OpambinMisc.call [|
+  EzFile.write_file Globals.opambin_bin s;
+  Unix.chmod  Globals.opambin_bin 0o755;
+  Printf.eprintf "Executable copied as %s\n%!" Globals.opambin_bin;
+  EzFile.make_dir ~p:true Globals.opam_plugins_bin_dir ;
+  Misc.call [|
     "ln"; "-sf" ;
-    ".." // OpambinGlobals.command // OpambinGlobals.command_exe ;
-    OpambinGlobals.opam_plugins_bin_dir // OpambinGlobals.command
+    ".." // Globals.command // Globals.command_exe ;
+    Globals.opam_plugins_bin_dir // Globals.command
   |]
 
 let install_hooks () =
 
-  OpambinMisc.change_opam_config (fun file_contents ->
+  Misc.change_opam_config (fun file_contents ->
       let file_contents =
-        match OpambinCommandUninstall.remove_opam_hooks file_contents with
+        match CommandUninstall.remove_opam_hooks file_contents with
         | None -> file_contents
         | Some file_contents -> file_contents
       in
-      Printf.eprintf "Adding %s hooks\n%!" OpambinGlobals.command;
+      Printf.eprintf "Adding %s hooks\n%!" Globals.command;
       Some (
         List.rev @@
-        OpambinMisc.opam_variable "pre-build-commands"
+        Misc.opam_variable "pre-build-commands"
           {| ["%s" "pre-build" name version depends] |}
-          OpambinGlobals.opambin_bin ::
-        OpambinMisc.opam_variable "wrap-build-commands"
+          Globals.opambin_bin ::
+        Misc.opam_variable "wrap-build-commands"
           {| ["%s" "wrap-build" name version depends "--"] |}
-          OpambinGlobals.opambin_bin ::
-        OpambinMisc.opam_variable "pre-install-commands"
+          Globals.opambin_bin ::
+        Misc.opam_variable "pre-install-commands"
           {| ["%s" "pre-install" name version depends] |}
-          OpambinGlobals.opambin_bin ::
-        OpambinMisc.opam_variable "wrap-install-commands"
+          Globals.opambin_bin ::
+        Misc.opam_variable "wrap-install-commands"
           {| ["%s" "wrap-install" name version depends "--"] |}
-          OpambinGlobals.opambin_bin ::
-        OpambinMisc.opam_variable "post-install-commands"
+          Globals.opambin_bin ::
+        Misc.opam_variable "post-install-commands"
           {| ["%s" "post-install" name version depends installed-files] { error-code = 0} |}
-          OpambinGlobals.opambin_bin  ::
-        OpambinMisc.opam_variable "pre-remove-commands"
+          Globals.opambin_bin  ::
+        Misc.opam_variable "pre-remove-commands"
           {| ["%s" "pre-remove" name version depends] |}
-          OpambinGlobals.opambin_bin ::
+          Globals.opambin_bin ::
         List.rev file_contents
       )
     )
 
 let install_repos () =
 
-  EzFile.make_dir ~p:true OpambinGlobals.opambin_store_repo_packages_dir;
-  EzFile.write_file ( OpambinGlobals.opambin_store_repo_dir // "repo" )
+  EzFile.make_dir ~p:true Globals.opambin_store_repo_packages_dir;
+  EzFile.write_file ( Globals.opambin_store_repo_dir // "repo" )
     {|
 opam-version: "2.0"
 archive-mirrors: "../../cache"
 |};
-  EzFile.write_file ( OpambinGlobals.opambin_store_repo_dir // "version" )
+  EzFile.write_file ( Globals.opambin_store_repo_dir // "version" )
     "0.9.0";
 
-  add_repo ~repo:OpambinGlobals.opam_opambin_repo
+  add_repo ~repo:Globals.opam_opambin_repo
     ~url:( Printf.sprintf "file://%s"
-             OpambinGlobals.opambin_store_repo_dir )
+             Globals.opambin_store_repo_dir )
 
 let install_patches () =
-  let patches_url = !!OpambinConfig.patches_url in
+  let patches_url = !!Config.patches_url in
   if EzString.starts_with patches_url ~prefix:"file://" then
     (* nothing to do *)
     ()
   else
-    let opambin_patches_dir = OpambinGlobals.opambin_patches_dir in
+    let opambin_patches_dir = Globals.opambin_patches_dir in
     let tmp_dir = opambin_patches_dir ^ ".tmp" in
 
     if EzString.starts_with patches_url ~prefix:"git@" then begin
-      OpambinMisc.call [| "rm"; "-rf"; tmp_dir |];
-      OpambinMisc.call [| "git"; "clone" ; patches_url ; tmp_dir |];
-      OpambinMisc.call [| "rm"; "-rf"; opambin_patches_dir |];
-      OpambinMisc.call [| "mv"; tmp_dir; opambin_patches_dir |]
+      Misc.call [| "rm"; "-rf"; tmp_dir |];
+      Misc.call [| "git"; "clone" ; patches_url ; tmp_dir |];
+      Misc.call [| "rm"; "-rf"; opambin_patches_dir |];
+      Misc.call [| "mv"; tmp_dir; opambin_patches_dir |]
     end else
 
     if EzString.starts_with patches_url ~prefix:"https://"
     || EzString.starts_with patches_url ~prefix:"http://" then begin
-        let output = OpambinGlobals.opambin_dir // "relocation-patches.tar.gz" in
-        match OpambinMisc.wget ~url:patches_url ~output with
+        let output = Globals.opambin_dir // "relocation-patches.tar.gz" in
+        match Misc.wget ~url:patches_url ~output with
         | None ->
           Printf.kprintf failwith "Could not retrieve archive at %s" patches_url
         | Some output ->
 
-          OpambinMisc.call [| "rm"; "-rf"; tmp_dir |];
+          Misc.call [| "rm"; "-rf"; tmp_dir |];
           EzFile.make_dir ~p:true tmp_dir ;
 
           Unix.chdir tmp_dir ;
-          OpambinMisc.call [| "tar" ; "zxf" ; output |] ;
-          Unix.chdir OpambinGlobals.curdir;
+          Misc.call [| "tar" ; "zxf" ; output |] ;
+          Unix.chdir Globals.curdir;
 
           let patches_subdir = tmp_dir // "patches" in
           if not ( Sys.file_exists patches_subdir ) then
             Printf.kprintf failwith
               "archive %s does not contain 'patches/' subdir" patches_url;
 
-          OpambinMisc.call [| "rm"; "-rf"; opambin_patches_dir |];
+          Misc.call [| "rm"; "-rf"; opambin_patches_dir |];
           EzFile.make_dir ~p:true opambin_patches_dir;
           Sys.rename patches_subdir (opambin_patches_dir // "patches");
-          OpambinMisc.call [| "rm"; "-rf"; tmp_dir |];
+          Misc.call [| "rm"; "-rf"; tmp_dir |];
           Sys.remove output
 
       end
@@ -136,12 +136,12 @@ let install_patches () =
 
 
 let action args =
-  Printf.eprintf "%s\n\n%!" OpambinGlobals.about ;
+  Printf.eprintf "%s\n\n%!" Globals.about ;
 
-  EzFile.make_dir ~p:true OpambinGlobals.opambin_dir ;
-  OpambinConfig.save ();
+  EzFile.make_dir ~p:true Globals.opambin_dir ;
+  Config.save ();
 
-  EzFile.make_dir ~p:true OpambinGlobals.opambin_cache_dir;
+  EzFile.make_dir ~p:true Globals.opambin_cache_dir;
 
   match args with
   | [] ->

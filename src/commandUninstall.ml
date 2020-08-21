@@ -49,7 +49,7 @@ let remove_opam_hooks file_contents =
   iter file_contents false []
 
 let action () =
-  OpambinMisc.change_opam_config (fun file_contents ->
+  Misc.change_opam_config (fun file_contents ->
       let file_contents = match remove_opam_hooks file_contents with
           None -> file_contents
         | Some file_contents -> file_contents
@@ -57,12 +57,12 @@ let action () =
       Printf.eprintf "Restoring sandboxing hooks\n%!";
       Some (
         List.rev @@
-        OpambinMisc.opam_variable "wrap-build-commands"
+        Misc.opam_variable "wrap-build-commands"
           "%s"
           {|
   ["%{hooks}%/sandbox.sh" "build"] {os = "linux" | os = "macos"}
 |} ::
-        OpambinMisc.opam_variable "wrap-install-commands"
+        Misc.opam_variable "wrap-install-commands"
           "%s"
           {|
   ["%{hooks}%/sandbox.sh" "build"] {os = "linux" | os = "macos"}
@@ -77,7 +77,7 @@ let cmd = Arg.{
   cmd_action = action ;
   cmd_args = [
     [ "restore" ], Unit (fun () ->
-        OpambinMisc.restore_opam_config ();
+        Misc.restore_opam_config ();
         exit 0;
       ), Ezcmd.info "Restore the previous opam config file before install/uninstall";
   ];

@@ -1,6 +1,7 @@
 (lang dune 2.0)
 (name opam-bin)
 (allow_approximate_merlin)
+(version 0.9.4)
 
 (generate_opam_files true)
 
@@ -11,7 +12,7 @@
 (maintainers "Fabrice Le Fessant <fabrice.le_fessant@ocamlpro.com>")
 
 (package
- (name opam-bin)
+ (name opam-bin-lib)
  (synopsis "Cache binary files locally or remotely")
  (documentation "https://ocamlpro.github.io/opam-bin/doc")
  (depends
@@ -21,5 +22,14 @@
   (ez-config (>= 0.1.0))
   (re (>= 1.0))
   (opam-file-format (>= 0.0))
+  )
+  )
+
+(package
+ (name opam-bin)
+ (synopsis "Cache binary files locally or remotely")
+ (documentation "https://ocamlpro.github.io/opam-bin/doc")
+ (depends
+   (opam-bin-lib (= 0.9.4))
   )
   )

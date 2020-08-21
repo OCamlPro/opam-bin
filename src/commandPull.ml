@@ -16,22 +16,22 @@ let cmd_name = "pull"
 
 let action () =
 
-  match !!OpambinConfig.rsync_url with
+  match !!Config.rsync_url with
   | None ->
     Printf.eprintf
       "Error: you must define the remote url with `%s config --rsync-url`\n%!"
-      OpambinGlobals.command ;
+      Globals.command ;
     exit 2
   | Some rsync_url ->
 
     let args = [ "rsync"; "-auv" ; "--progress" ] in
     let args = args @ [
         rsync_url // ".";
-        OpambinGlobals.opambin_store_dir // "." ;
+        Globals.opambin_store_dir // "." ;
       ] in
     Printf.eprintf "Calling '%s'\n%!"
       (String.concat " " args);
-    OpambinMisc.call (Array.of_list args);
+    Misc.call (Array.of_list args);
     Printf.eprintf "Done.\n%!";
     ()
 

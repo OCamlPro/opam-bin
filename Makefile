@@ -1,6 +1,6 @@
 all:
 	dune build
-	cp -f _build/default/src/opambin.exe opam-bin
+	cp -f _build/default/main/opambin.exe opam-bin
 
 build-deps:
 	opam install --deps-only .

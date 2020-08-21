@@ -12,9 +12,9 @@
 ;    opambinCommandPostInstall.ml : post-install hook
 ; opambin.ml : main
 
-(executable
+(library
  (name opambin)
- (public_name opam-bin)
+ (public_name opam-bin-lib)
  (libraries
         opam-file-format ez-cmdliner ez-file ez-config)
 )

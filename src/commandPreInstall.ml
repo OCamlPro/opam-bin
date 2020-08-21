@@ -38,60 +38,60 @@ let cmd_name = "pre-install"
    install. *)
 
 let action args =
-  OpambinMisc.global_log "CMD: %s\n%!"
+  Misc.global_log "CMD: %s\n%!"
     ( String.concat "\n    " ( cmd_name :: args) ) ;
-  OpambinMisc.make_cache_dir ();
+  Misc.make_cache_dir ();
   match args with
   | name :: _version :: _depends :: [] ->
-    let marker_dir = OpambinGlobals.opambin_switch_temp_dir () in
+    let marker_dir = Globals.opambin_switch_temp_dir () in
     if not ( Sys.file_exists marker_dir ) then
       EzFile.make_dir marker_dir;
     List.iter (fun (marker, backup) ->
         if Sys.file_exists marker then
           Sys.rename marker ( backup ~name )
       ) [
-      OpambinGlobals.marker_skip , OpambinGlobals.backup_skip;
-      OpambinGlobals.marker_source , OpambinGlobals.backup_source;
-      OpambinGlobals.marker_opam , OpambinGlobals.backup_opam;
-      OpambinGlobals.marker_patch ,OpambinGlobals.backup_patch;
+      Globals.marker_skip , Globals.backup_skip;
+      Globals.marker_source , Globals.backup_source;
+      Globals.marker_opam , Globals.backup_opam;
+      Globals.marker_patch ,Globals.backup_patch;
     ];
 
-    if Sys.file_exists ( OpambinGlobals.backup_source ~name )
-    || Sys.file_exists ( OpambinGlobals.backup_skip ~name )
+    if Sys.file_exists ( Globals.backup_source ~name )
+    || Sys.file_exists ( Globals.backup_skip ~name )
     then
       ()
     else
-    if Sys.file_exists OpambinGlobals.marker_cached then begin
-      Unix.chdir OpambinGlobals.marker_cached;
-      if Sys.file_exists OpambinGlobals.package_version then
+    if Sys.file_exists Globals.marker_cached then begin
+      Unix.chdir Globals.marker_cached;
+      if Sys.file_exists Globals.package_version then
         let files = Sys.readdir "." in
         Array.iter (fun file ->
-            if file = OpambinGlobals.package_version then begin
+            if file = Globals.package_version then begin
               let packages_dir =
-                OpambinGlobals.opambin_switch_packages_dir () in
+                Globals.opambin_switch_packages_dir () in
               EzFile.make_dir ~p:true packages_dir;
               Sys.rename file ( packages_dir // name )
             end
             else
-            if file =  OpambinGlobals.package_config then begin
-              let config_dir = OpambinGlobals.opam_switch_internal_config_dir
+            if file =  Globals.package_config then begin
+              let config_dir = Globals.opam_switch_internal_config_dir
                   () in
               EzFile.make_dir ~p:true config_dir ;
               Sys.rename file ( config_dir // Printf.sprintf "%s.config" name )
             end else
-            if file = OpambinGlobals.package_info then
-              Sys.remove OpambinGlobals.package_info
+            if file = Globals.package_info then
+              Sys.remove Globals.package_info
             else
               let pwd = Unix.getcwd () in
               Unix.chdir file ;
-              OpambinMisc.call [| "cp" ; "-aT" ; "." ;
-                                  OpambinGlobals.opam_switch_dir () |];
+              Misc.call [| "cp" ; "-aT" ; "." ;
+                                  Globals.opam_switch_dir () |];
               Unix.chdir pwd
           ) files
     end
   | _ ->
     Printf.eprintf
-      "Unexpected args: usage is '%s %s name version depends cmd...'\n%!" OpambinGlobals.command cmd_name;
+      "Unexpected args: usage is '%s %s name version depends cmd...'\n%!" Globals.command cmd_name;
     exit 2
 
 let cmd =
