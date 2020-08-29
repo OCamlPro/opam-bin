@@ -1,6 +1,6 @@
+
 (executable
- (name opambin)
+ (name main)
  (public_name opam-bin)
  (package opam-bin)
- (libraries opam-bin-lib)
-)
+ (libraries opam-bin_lib))
