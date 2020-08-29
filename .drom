@@ -5,7 +5,7 @@ a524586d82e40e8e82759803845c6464 .github/workflows/workflow.yml
 d41d8cd98f00b204e9800998ecf8427e .ocamlformat
 43bf2a4fa874ca34a8c11efbda9a2077 CHANGES.md
 acd57b0ba2e7855a4486012bf0cecd0f LICENSE.md
-ef524170464c07214421673d63211322 Makefile
+eaf0d4c16b30c352504ce91a8910fa77 Makefile
 5758b7976af7ece8c852d64a55138d82 README.md
 7284c6887ce603609be020dd4c47789a docs/doc/index.html
 9b0783ebd25de8ebbb99bb7d004c10cf docs/sphinx/index.html

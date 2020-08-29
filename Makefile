@@ -13,7 +13,7 @@ build-deps:
 	opam install --deps-only ./opam-bin.opam
 
 sphinx:
-	sphinx-build sphinx docs/sphinx
+	sphinx-build sphinx docs
 
 doc:
 	dune build @doc
