@@ -10,7 +10,7 @@ min-edition = "4.03.0"
 mode = "binary"
 name = "opam-bin"
 synopsis = "The opam-bin tool is a simple framework to use `opam` with binary packages"
-version = "0.1.0"
+version = "0.9.4"
 
 # keys that you could also define:
 # archive = "...archive..."
@@ -26,7 +26,7 @@ opam-binary is a simple framework to use `opam` with binary packages.
 """
 
 [drom]
-skip = "sphinx/_static/css/fixes.css sphinx/index.rst sphinx/conf.py docs/.nojekyll docs/index.html src/main.ml main/main.ml"
+skip = "sphinx/_static/css/fixes.css sphinx/index.rst sphinx/conf.py docs/.nojekyll docs/index.html src/main.ml main/main.ml CHANGES.md"
 
 [dependencies]
 ez_cmdliner = "0.1.0"

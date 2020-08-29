@@ -3,7 +3,7 @@
 (name opam-bin)
 (allow_approximate_merlin)
 (generate_opam_files false)
-(version 0.1.0)
+(version 0.9.4)
 
 (package
  (name opam-bin_lib)
