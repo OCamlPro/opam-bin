@@ -30,7 +30,7 @@ type package = {
 let map_of_packages repo_dir =
   let map = ref StringMap.empty in
 
-  OpambinMisc.iter_repos ~cont:ignore
+  Misc.iter_repos ~cont:ignore
     [ repo_dir ]
     (fun ~repo ~package ~version ->
        let version_dir = repo // "packages" // package // version in
@@ -113,8 +113,8 @@ let generate_html_index repo_dir =
     if Sys.file_exists header_html then
       Buffer.add_string b ( EzFile.read_file header_html )
     else
-    if Sys.file_exists OpambinGlobals.opambin_header_html then
-      Buffer.add_string b ( EzFile.read_file OpambinGlobals.opambin_header_html )
+    if Sys.file_exists Globals.opambin_header_html then
+      Buffer.add_string b ( EzFile.read_file Globals.opambin_header_html )
     else begin
       let s = Printf.sprintf {|
 <!DOCTYPE html>
@@ -133,11 +133,11 @@ opam switch create alt-ergo 4.07.1 --packages alt-ergo
 </pre>
 <h2>Available Packages:</h2>
 <ul>
-|} !!OpambinConfig.title
-          !!OpambinConfig.title
-          !!OpambinConfig.base_url
+|} !!Config.title
+          !!Config.title
+          !!Config.base_url
       in
-      EzFile.write_file ( OpambinGlobals.opambin_header_html ^ ".template" ) s;
+      EzFile.write_file ( Globals.opambin_header_html ^ ".template" ) s;
       Buffer.add_string b s
     end;
   end;
@@ -163,7 +163,7 @@ opam switch create alt-ergo 4.07.1 --packages alt-ergo
     end
   in
 
-  OpambinMisc.iter_repos ~cont:ignore
+  Misc.iter_repos ~cont:ignore
     [ repo_dir ]
     (fun ~repo ~package ~version ->
        new_package (Some package);
@@ -247,8 +247,8 @@ opam switch create alt-ergo 4.07.1 --packages alt-ergo
     if Sys.file_exists trailer_html then
       Buffer.add_string b ( EzFile.read_file trailer_html )
     else
-    if Sys.file_exists OpambinGlobals.opambin_trailer_html then
-      Buffer.add_string b ( EzFile.read_file OpambinGlobals.opambin_trailer_html )
+    if Sys.file_exists Globals.opambin_trailer_html then
+      Buffer.add_string b ( EzFile.read_file Globals.opambin_trailer_html )
     else begin
       let s = Printf.sprintf {|
     </ul>
@@ -260,7 +260,7 @@ opam switch create alt-ergo 4.07.1 --packages alt-ergo
 |}
       in
       Buffer.add_string b s ;
-      EzFile.write_file ( OpambinGlobals.opambin_trailer_html ^ ".template") s;
+      EzFile.write_file ( Globals.opambin_trailer_html ^ ".template") s;
     end ;
   end;
 
@@ -269,8 +269,8 @@ opam switch create alt-ergo 4.07.1 --packages alt-ergo
 
 let generate_files repo_dir =
   Unix.chdir repo_dir;
-  OpambinMisc.call [| "opam" ; "admin" ; "index" |];
-  Unix.chdir OpambinGlobals.curdir ;
+  Misc.call [| "opam" ; "admin" ; "index" |];
+  Unix.chdir Globals.curdir ;
 
   generate_html_index repo_dir
 
@@ -311,8 +311,8 @@ let () =
 
 let extract_packages s delete =
   let (repo, prefix) = EzString.cut_at s ':' in
-  let src_dir = OpambinGlobals.opambin_store_repo_dir in
-  let dst_dir = OpambinGlobals.opambin_store_dir // repo in
+  let src_dir = Globals.opambin_store_repo_dir in
+  let dst_dir = Globals.opambin_store_dir // repo in
   let map = map_of_packages src_dir in
   let package, prefix_version = EzString.cut_at prefix '.' in
 
@@ -416,7 +416,7 @@ let extract_packages s delete =
 
   EzFile.make_dir ~p:true dst_dir ;
   if delete then
-    OpambinMisc.call [| "rm"; "-rf"; dst_dir // "packages" |];
+    Misc.call [| "rm"; "-rf"; dst_dir // "packages" |];
   StringMap.iter (fun package submap ->
       if EzString.ends_with package ~suffix:"+bin" then
         ()
@@ -428,13 +428,13 @@ let extract_packages s delete =
               let nv = Printf.sprintf "%s.%s" package p.version in
               let package_dir = dst_dir // "packages" // package // nv in
               EzFile.make_dir ~p:true package_dir ;
-              OpambinMisc.call [|
+              Misc.call [|
                 "rsync"; "-auv"; "--delete" ;
                 src_dir // "packages" // package // nv // "." ;
                 package_dir
               |];
               let (old_version, _ ) = cut_at_string p.version ~sep:"+bin" in
-              OpambinCommandPostInstall.write_bin_stub
+              CommandPostInstall.write_bin_stub
                 ~name:p.package ~version:old_version
                 ~new_version:p.version
                 ~repo_dir:dst_dir
@@ -447,9 +447,9 @@ let extract_packages s delete =
   ()
 
 let generate_all_files () =
-  let files = Sys.readdir OpambinGlobals.opambin_store_dir in
+  let files = Sys.readdir Globals.opambin_store_dir in
   Array.iter (fun file ->
-      let file = OpambinGlobals.opambin_store_dir // file in
+      let file = Globals.opambin_store_dir // file in
       if Sys.is_directory file
          && Sys.file_exists ( file // "repo" )
          && Sys.file_exists ( file // "packages" )
@@ -465,12 +465,12 @@ let action ~merge ~local_only ~extract ~delete () =
     if !local_only then
       generate_all_files ()
     else
-      match !!OpambinConfig.rsync_url with
+      match !!Config.rsync_url with
       | None ->
         Printf.eprintf
           "Error: you must define the remote url with `%s config \
            --rsync-url`\n%!"
-          OpambinGlobals.command ;
+          Globals.command ;
         exit 2
       | Some rsync_url ->
 
@@ -479,12 +479,12 @@ let action ~merge ~local_only ~extract ~delete () =
         let args = [ "rsync"; "-auv" ; "--progress" ] in
         let args = if !merge then args else args @ [ "--delete" ] in
         let args = args @ [
-            OpambinGlobals.opambin_store_dir // "." ;
+            Globals.opambin_store_dir // "." ;
             rsync_url
           ] in
         Printf.eprintf "Calling '%s'\n%!"
           (String.concat " " args);
-        OpambinMisc.call (Array.of_list args);
+        Misc.call (Array.of_list args);
         Printf.eprintf "Done.\n%!";
         ()
 

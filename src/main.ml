@@ -9,38 +9,38 @@
 (**************************************************************************)
 
 let commands = [
-  OpambinCommandConfig.cmd ;
-  OpambinCommandInstall.cmd ;
-  OpambinCommandUninstall.cmd ;
-  OpambinCommandPush.cmd ;
-  OpambinCommandPull.cmd ;
-  OpambinCommandClean.cmd ;
-  OpambinCommandList.cmd ;
-  OpambinCommandSearch.cmd ;
+  CommandConfig.cmd ;
+  CommandInstall.cmd ;
+  CommandUninstall.cmd ;
+  CommandPush.cmd ;
+  CommandPull.cmd ;
+  CommandClean.cmd ;
+  CommandList.cmd ;
+  CommandSearch.cmd ;
 
-  OpambinCommandPreBuild.cmd ;
-  OpambinCommandWrapBuild.cmd ;
-  OpambinCommandPreInstall.cmd ;
-  OpambinCommandWrapInstall.cmd ;
-  OpambinCommandPostInstall.cmd ;
-  OpambinCommandPreRemove.cmd ;
+  CommandPreBuild.cmd ;
+  CommandWrapBuild.cmd ;
+  CommandPreInstall.cmd ;
+  CommandWrapInstall.cmd ;
+  CommandPostInstall.cmd ;
+  CommandPreRemove.cmd ;
 ]
 
 
-let () =
+let main () =
   Printexc.record_backtrace true;
   match Sys.argv with
   | [| _ ; "--version" |] ->
-    Printf.printf "%s\n%!" OpambinGlobals.version
+    Printf.printf "%s\n%!" Globals.version
   | [| _ ; "--about" |] ->
-    Printf.printf "%s\n%!" OpambinGlobals.about
+    Printf.printf "%s\n%!" Globals.about
   | _ ->
-(*    OpambinMisc.global_log "args: %s"
+(*    Misc.global_log "args: %s"
       (String.concat " " (Array.to_list Sys.argv)); *)
     try
       Ezcmd.main_with_subcommands
-        ~name:OpambinGlobals.command
-        ~version:OpambinGlobals.version
+        ~name:Globals.command
+        ~version:Globals.version
         ~doc:"Create binary archives of OPAM source packages"
         ~man:[]
         commands
@@ -49,5 +49,5 @@ let () =
       let bt = Printexc.get_backtrace () in
       let error = Printexc.to_string exn in
       Printf.eprintf "fatal exception %s\n%s\n%!" error bt ;
-      OpambinMisc.global_log "fatal exception %s\n%s" error bt;
+      Misc.global_log "fatal exception %s\n%s" error bt;
       exit 2

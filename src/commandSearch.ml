@@ -20,16 +20,16 @@ let cmd_name = "search"
 
 let iter f =
   let tested_set = ref StringSet.empty in
-  OpambinMisc.iter_repos ~cont:ignore
-    (  OpambinMisc.all_repos () )
+  Misc.iter_repos ~cont:ignore
+    (  Misc.all_repos () )
     (fun ~repo ~package ~version ->
-      (* OpambinMisc.global_log "searching %s" version; *)
+      (* Misc.global_log "searching %s" version; *)
       if StringSet.mem version !tested_set then
         false
       else
         let file =
           ( repo // "packages" // package // version // "files" //
-            OpambinGlobals.package_info )
+            Globals.package_info )
         in
         tested_set := StringSet.add version !tested_set ;
         (*      Printf.eprintf "     Searching %s\n%!" file ; *)

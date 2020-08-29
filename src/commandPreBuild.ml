@@ -23,10 +23,10 @@ let check_cache_file ~cache ~md5 =
   if Sys.file_exists file then Some file else None
 
 let find_archive_in_cache ~repo ~md5 =
-  match check_cache_file ~cache:OpambinGlobals.opam_cache_dir ~md5 with
+  match check_cache_file ~cache:Globals.opam_cache_dir ~md5 with
   | Some file -> Some file
   | None ->
-    match check_cache_file ~cache:OpambinGlobals.opambin_cache_dir ~md5 with
+    match check_cache_file ~cache:Globals.opambin_cache_dir ~md5 with
     | Some file -> Some file
     | None ->
       ignore repo;
@@ -62,7 +62,7 @@ archive-mirrors: "../../cache"
       None
 
 let check_cached_binary_archive ~version ~repo ~package =
-  OpambinMisc.global_log "found binary package in repo %s" repo;
+  Misc.global_log "found binary package in repo %s" repo;
   let package_dir = repo // "packages" // package // version in
   let src = ref None in
   let md5 = ref None in
@@ -83,7 +83,7 @@ let check_cached_binary_archive ~version ~repo ~package =
   let binary_archive =
     match !md5 with
     | None ->
-      OpambinMisc.global_log "url.checksum.md5 not found";
+      Misc.global_log "url.checksum.md5 not found";
       None
     | Some md5 ->
       match find_archive_in_cache ~repo ~md5 with
@@ -96,9 +96,9 @@ let check_cached_binary_archive ~version ~repo ~package =
           exit 2
         | Some url ->
 
-          let temp_dir = OpambinGlobals.opambin_switch_temp_dir () in
+          let temp_dir = Globals.opambin_switch_temp_dir () in
           let output = temp_dir // md5 in
-          match OpambinMisc.wget ~url ~output with
+          match Misc.wget ~url ~output with
           | None ->
             Printf.eprintf "Error: could not download archive at %S\n%!" url;
             exit 2
@@ -106,34 +106,34 @@ let check_cached_binary_archive ~version ~repo ~package =
             let digest = Digest.file binary_archive in
             assert ( Digest.to_hex digest = md5 );
             let cache_dir =
-              OpambinGlobals.opam_cache_dir //
+              Globals.opam_cache_dir //
               "md5" // String.sub md5 0 2 in
             let cached_file = cache_dir // md5 in
             EzFile.make_dir ~p:true cache_dir;
             Sys.rename binary_archive cached_file ;
             Some cached_file
   in
-  EzFile.make_dir OpambinGlobals.marker_cached ;
+  EzFile.make_dir Globals.marker_cached ;
   let install_file = package ^ ".install" in
   if Sys.file_exists install_file then
     Sys.remove install_file ;
-  Unix.chdir OpambinGlobals.marker_cached ;
+  Unix.chdir Globals.marker_cached ;
   let package_files = package_dir // "files" in
   let s = EzFile.read_file
-      ( package_files // OpambinGlobals.package_version ) in
-  EzFile.write_file OpambinGlobals.package_version s ;
+      ( package_files // Globals.package_version ) in
+  EzFile.write_file Globals.package_version s ;
   begin
     match EzFile.read_file
-            ( package_files // OpambinGlobals.package_config ) with
+            ( package_files // Globals.package_config ) with
     | exception _ -> ()
     | s ->
-      EzFile.write_file OpambinGlobals.package_config s
+      EzFile.write_file Globals.package_config s
   end;
   begin
     match binary_archive with
     | None -> ()
     | Some binary_archive ->
-      OpambinMisc.call [| "tar" ; "zxf" ; binary_archive |] ;
+      Misc.call [| "tar" ; "zxf" ; binary_archive |] ;
   end;
   true
 
@@ -161,10 +161,10 @@ let has_equal_suffix v =
 let maybe_apply_patch ~name ~version =
   let keep_version = version in
   let patches_dir =
-    let patches_url = !!OpambinConfig.patches_url in
+    let patches_url = !!Config.patches_url in
     match chop_prefix patches_url ~prefix:"file://" with
     | Some s -> s
-    | None -> OpambinGlobals.opambin_patches_dir
+    | None -> Globals.opambin_patches_dir
   in
   if not ( Sys.file_exists patches_dir ) then
     Printf.kprintf failwith
@@ -190,7 +190,7 @@ Error: patches dir '%s' does not exist.\n
       | Some package -> iter_package package
       | None ->
         let versions = Array.of_list !versions in
-        Array.sort OpamVersionCompare.compare versions ;
+        Array.sort VersionCompare.compare versions ;
         let rec iter version versions current =
           match versions with
           | [] -> current
@@ -201,7 +201,7 @@ Error: patches dir '%s' does not exist.\n
               else
                 iter version versions current
             else
-            if OpamVersionCompare.compare version v >= 0 then
+            if VersionCompare.compare version v >= 0 then
               iter version versions (Some v)
             else current
         in
@@ -215,13 +215,13 @@ Error: patches dir '%s' does not exist.\n
           false
         | Some version ->
           let patch = package_dir // version ^ ".patch" in
-          OpambinMisc.global_log "Using patch %s for %s.%s"
+          Misc.global_log "Using patch %s for %s.%s"
             patch name keep_version ;
-          OpambinMisc.call [| "cp" ; "-f";
-                              patch ; OpambinGlobals.marker_patch |];
-          OpambinMisc.call [| "patch" ; "-p1"; "-i"; patch |] ;
+          Misc.call [| "cp" ; "-f";
+                              patch ; Globals.marker_patch |];
+          Misc.call [| "patch" ; "-p1"; "-i"; patch |] ;
           if Sys.file_exists "reloc-patch.sh" then
-            OpambinMisc.call [| "sh"; "./reloc_patch.sh" |];
+            Misc.call [| "sh"; "./reloc_patch.sh" |];
           true
     else
       true
@@ -233,15 +233,15 @@ let cached_binary_archive ~name ~version ~depends =
     `NotRelocatable
   else
     let ( source_md5, _depends, _dependset, missing_versions, _opam_file ) =
-      OpambinCommandPostInstall.compute_hash
+      CommandPostInstall.compute_hash
         ~name ~version ~depends () in
     if missing_versions <> [] then
       `MissingVersions missing_versions
     else
       let version_prefix = Printf.sprintf "%s.%s+bin+%s+"
           name version source_md5 in
-      if OpambinMisc.iter_repos ~cont:(fun x -> x)
-          ( OpambinMisc.all_repos () )
+      if Misc.iter_repos ~cont:(fun x -> x)
+          ( Misc.all_repos () )
           (fun ~repo ~package ~version ->
           if EzString.starts_with version ~prefix:version_prefix then begin
             check_cached_binary_archive ~package ~repo ~version
@@ -250,7 +250,7 @@ let cached_binary_archive ~name ~version ~depends =
         ) then
         `BinaryArchiveFound
       else begin
-        OpambinMisc.global_log "Could not find cached binary package %s"
+        Misc.global_log "Could not find cached binary package %s"
           version_prefix ;
         `NoBinaryArchiveFound source_md5
       end
@@ -266,48 +266,48 @@ let error_on_non_reloc =
   | _ -> true
 
 let action args =
-  OpambinMisc.global_log "CMD: %s"
+  Misc.global_log "CMD: %s"
     ( String.concat "\n    " ( cmd_name :: args) ) ;
   match args with
   | name :: version :: depends :: [] ->
-    let marker_skip = OpambinGlobals.marker_skip in
-    if not !!OpambinConfig.enabled
-    || OpambinMisc.not_this_switch () then begin
-      OpambinMisc.global_log "opam-bin is disabled";
+    let marker_skip = Globals.marker_skip in
+    if not !!Config.enabled
+    || Misc.not_this_switch () then begin
+      Misc.global_log "opam-bin is disabled";
       EzFile.write_file marker_skip
         "opam-bin is disabled";
     end else
-      let marker_source = OpambinGlobals.marker_source in
-      let marker_opam = OpambinGlobals.marker_opam in
-      let marker_patch = OpambinGlobals.marker_patch in
+      let marker_source = Globals.marker_source in
+      let marker_opam = Globals.marker_opam in
+      let marker_patch = Globals.marker_patch in
       if Sys.file_exists marker_source then begin
-        OpambinMisc.global_log "removing marker_source";
+        Misc.global_log "removing marker_source";
         Sys.remove marker_source ;
       end;
       if Sys.file_exists marker_opam then begin
-        OpambinMisc.global_log "removing marker_opam";
+        Misc.global_log "removing marker_opam";
         Sys.remove marker_opam ;
       end;
       if Sys.file_exists marker_patch then begin
-        OpambinMisc.global_log "removing marker_patch";
+        Misc.global_log "removing marker_patch";
         Sys.remove marker_patch ;
       end;
-      if Sys.file_exists OpambinGlobals.marker_cached then begin
-        OpambinMisc.global_log "%s should not already exist!"
-          OpambinGlobals.marker_cached;
+      if Sys.file_exists Globals.marker_cached then begin
+        Misc.global_log "%s should not already exist!"
+          Globals.marker_cached;
         exit 2
       end else
-      if Sys.file_exists OpambinGlobals.package_version then begin
-        OpambinMisc.global_log "already a binary package";
+      if Sys.file_exists Globals.package_version then begin
+        Misc.global_log "already a binary package";
         EzFile.write_file marker_source "already-a-binary-package";
       end else begin
-        OpambinMisc.global_log "checking for cached archive";
+        Misc.global_log "checking for cached archive";
         match cached_binary_archive ~name ~version ~depends with
         | `BinaryArchiveFound ->
-          OpambinMisc.global_log "found a binary archive in cache";
+          Misc.global_log "found a binary archive in cache";
           (* this should have created a marker_cached/ directory *)
         | `NoBinaryArchiveFound source_md5 ->
-          OpambinMisc.global_log "no binary archive found.";
+          Misc.global_log "no binary archive found.";
           if error_on_compile then begin
             Printf.eprintf
               "Error: opam-bin is configured to prevent compilation.\n%!";
@@ -328,9 +328,9 @@ let action args =
             "Missing relocation patch for unrelocatable package"
       end
   | _ ->
-    OpambinMisc.global_log "unexpected arg.";
+    Misc.global_log "unexpected arg.";
     Printf.eprintf
-      "Unexpected args: usage is '%s %s name version depends cmd...'\n%!" OpambinGlobals.command cmd_name ;
+      "Unexpected args: usage is '%s %s name version depends cmd...'\n%!" Globals.command cmd_name ;
     exit 2
 
 

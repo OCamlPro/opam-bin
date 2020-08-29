@@ -37,10 +37,10 @@ let log file fmt =
         (Printf.sprintf "%s: %s\n" (date()) s)) fmt
 
 let global_log fmt =
-  log OpambinGlobals.opambin_log fmt
+  log Globals.opambin_log fmt
 
 let make_cache_dir () =
-  EzFile.make_dir ~p:true OpambinGlobals.opambin_cache_dir
+  EzFile.make_dir ~p:true Globals.opambin_cache_dir
 
 let call ?(stdout = Unix.stdout) args =
   global_log "calling '%s'"
@@ -121,31 +121,31 @@ let rotate file rotation =
 let backup_opam_config_done = ref false
 let backup_opam_config () =
   if not !backup_opam_config_done then begin
-    rotate OpambinGlobals.opam_config_file backup_rotation;
+    rotate Globals.opam_config_file backup_rotation;
     Printf.eprintf "%s backuped under %s\n%!"
-      OpambinGlobals.opam_config_file
-      OpambinGlobals.opam_config_file_backup;
+      Globals.opam_config_file
+      Globals.opam_config_file_backup;
     backup_opam_config_done := true;
   end
 
 let restore_opam_config () =
-  rotate OpambinGlobals.opam_config_file restore_rotation;
+  rotate Globals.opam_config_file restore_rotation;
   Printf.eprintf "%s restored from %s\n%!"
-    OpambinGlobals.opam_config_file
-    OpambinGlobals.opam_config_file_backup
+    Globals.opam_config_file
+    Globals.opam_config_file_backup
 
 let change_opam_config f =
   let { OpamParserTypes.file_contents ; _ } =
-    OpamParser.file OpambinGlobals.opam_config_file in
+    OpamParser.file Globals.opam_config_file in
   match f file_contents with
   | None -> ()
   | Some file_contents ->
     backup_opam_config ();
     let s = OpamPrinter.opamfile
         { file_name = ""; file_contents } in
-    EzFile.write_file OpambinGlobals.opam_config_file s;
+    EzFile.write_file Globals.opam_config_file s;
     Printf.eprintf "%s backuped and modified\n%!"
-      OpambinGlobals.opam_config_file
+      Globals.opam_config_file
 
 let opam_variable name fmt =
   Printf.kprintf (fun s ->
@@ -161,27 +161,27 @@ let opam_section ?name kind list =
                               section_items = list })
 
 let current_switch () =
-  let opam_switch_prefix = OpambinGlobals.opam_switch_prefix () in
+  let opam_switch_prefix = Globals.opam_switch_prefix () in
   let switch = Filename.basename opam_switch_prefix in
   if String.lowercase switch = "_opam" then
     Filename.dirname opam_switch_prefix
   else switch
 
 let not_this_switch () =
-  if  !!OpambinConfig.all_switches then
+  if  !!Config.all_switches then
     let switch = current_switch () in
     List.exists (fun s ->
         let core = Re.Glob.glob s in
         let re = Re.compile core in
         Re.execp re switch
-      ) !!OpambinConfig.protected_switches
+      ) !!Config.protected_switches
   else
     let switch = current_switch () in
     List.for_all (fun s ->
         let core = Re.Glob.glob s in
         let re = Re.compile core in
         not ( Re.execp re switch )
-      ) !!OpambinConfig.switches
+      ) !!Config.switches
 
 (*
 let () =
@@ -203,15 +203,15 @@ let () =
 let opam_repos () =
   let repos =
     try
-      Sys.readdir OpambinGlobals.opam_repo_dir
+      Sys.readdir Globals.opam_repo_dir
     with _ -> [||]
   in
   Array.to_list @@
   Array.map (fun file ->
-      OpambinGlobals.opam_repo_dir // file) repos
+      Globals.opam_repo_dir // file) repos
 
 let all_repos () =
-  OpambinGlobals.opambin_store_repo_dir :: opam_repos ()
+  Globals.opambin_store_repo_dir :: opam_repos ()
 
 
 (* stops if [f] returns true and returns true *)
@@ -271,7 +271,7 @@ let iter_repos ?name repos ~cont f =
   iter_repos repos |> cont
 
 let write_marker marker content =
-  let dir = OpambinGlobals.opambin_switch_temp_dir () in
+  let dir = Globals.opambin_switch_temp_dir () in
   if not ( Sys.file_exists dir ) then EzFile.make_dir ~p:true dir;
   global_log "writing marker %s" marker;
   EzFile.write_file marker content

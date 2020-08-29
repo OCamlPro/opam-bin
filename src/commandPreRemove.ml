@@ -8,37 +8,31 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open EzCompat
 open Ezcmd.TYPES
+open EzFile.OP
 
-(*
-TODO:
-* Check if the archive already exists
-  * if 'bin-package.version' exists, we are in a binary archive,
-      execute all commands.
-  * otherwise, check if a binary archive exists.
-     If no, create an empty
-       `bin-package.version` file to force execution of all commands.
-     If yes, create a directory package.cached/ containing that archive,
-       bin-package.version and bin-package.config.
-     In wrap-install, perform the installation of the archive.
-*)
-
-let cmd_name = "wrap-build"
+let cmd_name = "pre-remove"
 
 let action args =
-  OpambinMisc.global_log "CMD: %s\n%!"
+  Misc.global_log "CMD: %s"
     ( String.concat "\n    " ( cmd_name :: args) ) ;
-  OpambinMisc.make_cache_dir ();
   match args with
-  | _name :: _version :: _depends :: cmd ->
-    if Sys.file_exists OpambinGlobals.marker_source
-    || Sys.file_exists OpambinGlobals.marker_skip
-    then
-      OpambinMisc.call (Array.of_list cmd)
+  | name :: _version :: _depends :: [] ->
+    List.iter (fun file_name ->
+        try
+          Sys.remove file_name
+        with _ -> ()
+      ) [
+      Globals.opambin_switch_packages_dir () // name ;
+      Globals.backup_marker ~name ".source" ;
+      Globals.backup_marker ~name ".skip" ;
+      Globals.backup_marker ~name ".opam" ;
+      Globals.backup_marker ~name ".patch" ;
+    ]
   | _ ->
     Printf.eprintf
-      "Unexpected args: usage is '%s %s name version depends cmd...'\n%!" OpambinGlobals.command cmd_name ;
+      "Unexpected args: usage is '%s pre-remove name version uid depends'\n%!"
+      Globals.command ;
     exit 2
 
 let cmd =
@@ -51,5 +45,5 @@ let cmd =
     Ezcmd.info "args"
   ];
   cmd_man = [];
-  cmd_doc = "(opam hook) Exec or not build commands";
+  cmd_doc = "(opam hook) Remove binary install artefacts";
 }

@@ -31,18 +31,18 @@ let cmd_name = "wrap-install"
  *)
 
 let action args =
-  OpambinMisc.global_log "CMD: %s\n%!"
+  Misc.global_log "CMD: %s\n%!"
     ( String.concat "\n    " ( cmd_name :: args) ) ;
-  OpambinMisc.make_cache_dir ();
+  Misc.make_cache_dir ();
   match args with
   | name :: _version :: _depends :: cmd ->
-    if Sys.file_exists ( OpambinGlobals.backup_source ~name )
-    || Sys.file_exists ( OpambinGlobals.backup_skip ~name )
+    if Sys.file_exists ( Globals.backup_source ~name )
+    || Sys.file_exists ( Globals.backup_skip ~name )
     then
-      OpambinMisc.call (Array.of_list cmd)
+      Misc.call (Array.of_list cmd)
   | _ ->
     Printf.eprintf
-      "Unexpected args: usage is '%s %s name version depends cmd...'\n%!" OpambinGlobals.command cmd_name;
+      "Unexpected args: usage is '%s %s name version depends cmd...'\n%!" Globals.command cmd_name;
     exit 2
 
 let cmd =

@@ -1,5 +1,8 @@
-*~
+
 /opam-bin
+*~
 _build
 .merlin
-/test/root
+/_drom
+/_opam
+/_build

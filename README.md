@@ -1,7 +1,13 @@
-Opam-Binary
-===========
+
+[![Actions Status](https://github.com/ocamlpro/opam-bin/workflows/Main%20Workflow/badge.svg)](https://github.com/ocamlpro/opam-bin/actions)
+[![Release](https://img.shields.io/github/release/ocamlpro/opam-bin.svg)](https://github.com/ocamlpro/opam-bin/releases)
+
+# opam-bin
 
 opam-binary is a simple framework to use `opam` with binary packages.
 
-See the documentation here: https://ocamlpro.github.io/opam-bin/
-(or build it with `make html`)
+
+* Website: https://ocamlpro.github.io/opam-bin
+* General Documentation: https://ocamlpro.github.io/opam-bin/sphinx
+* API Documentation: https://ocamlpro.github.io/opam-bin/doc
+* Sources: https://github.com/ocamlpro/opam-bin
