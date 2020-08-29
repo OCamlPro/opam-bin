@@ -23,3 +23,4 @@ eb522bc1bb6523b514040c8801bf5f79 sphinx/index.rst
 f8b522b1c2653ff991f046aa7f86b1ad sphinx/install.rst
 8a344a420918b6b6f4dc40b944076c23 sphinx/license.rst
 6d45dedb4c0d4b269d8bac9f8132b1ac src/dune
+ebcb1dfb01b071d2250cb24bfbb67516 src/version.ml

@@ -31,7 +31,7 @@ let main () =
   Printexc.record_backtrace true;
   match Sys.argv with
   | [| _ ; "--version" |] ->
-    Printf.printf "%s\n%!" Globals.version
+    Printf.printf "%s\n%!" Version.version
   | [| _ ; "--about" |] ->
     Printf.printf "%s\n%!" Globals.about
   | _ ->
@@ -40,7 +40,7 @@ let main () =
     try
       Ezcmd.main_with_subcommands
         ~name:Globals.command
-        ~version:Globals.version
+        ~version:Version.version
         ~doc:"Create binary archives of OPAM source packages"
         ~man:[]
         commands
