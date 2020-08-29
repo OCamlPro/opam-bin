@@ -2,7 +2,7 @@
 # Do not modify or add to the `skip` field of `drom.toml`.
 opam-version: "2.0"
 name: "opam-bin"
-version: "0.1.0"
+version: "0.9.4"
 license: "LGPL-2.1-with-OCaml-exception"
 synopsis:
   "The opam-bin tool is a simple framework to use `opam` with binary packages"

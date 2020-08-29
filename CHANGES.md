@@ -1,4 +1,8 @@
 
-## v0.1.0 ( 2020-08-29 )
+## v0.9.4 ( 2020-??-?? )
 
-* Initial commit
+* Use `drom` to manage the project
+
+## v0.9.3 ( 2020-08-05 )
+
+* Initial version
