@@ -144,12 +144,25 @@ let cmd = {
     Ezcmd.info
       "opposite of --enable-create";
 
+    [ "enable-share" ], Arg.Unit (fun () ->
+        Config.share_enabled =:= true ;
+        need_saving := true;
+      ),
+    Ezcmd.info
+      "share binary and source files between switches";
+
+    [ "disable-share" ], Arg.Unit (fun () ->
+        Config.share_enabled =:= false ;
+        need_saving := true;
+      ),
+    Ezcmd.info
+      "opposite of --enable-share";
+
     [ "enable" ], Arg.Unit (fun () ->
         Config.enabled =:= true ;
         need_saving := true;
       ),
-    Ezcmd.info
-      "enable binary packages";
+    Ezcmd.info "enable binary packages";
 
     [ "disable" ], Arg.Unit (fun () ->
         Config.enabled =:= false ;

@@ -102,31 +102,32 @@ let install_patches () =
 
     if EzString.starts_with patches_url ~prefix:"https://"
     || EzString.starts_with patches_url ~prefix:"http://" then begin
-        let output = Globals.opambin_dir // "relocation-patches.tar.gz" in
-        match Misc.wget ~url:patches_url ~output with
-        | None ->
-          Printf.kprintf failwith "Could not retrieve archive at %s" patches_url
-        | Some output ->
+      let output = Globals.opambin_dir // "relocation-patches.tar.gz" in
+      Printf.eprintf "Downloading patches...\n%!";
+      match Misc.wget ~url:patches_url ~output with
+      | None ->
+        Printf.kprintf failwith "Could not retrieve archive at %s" patches_url
+      | Some output ->
 
-          Misc.call [| "rm"; "-rf"; tmp_dir |];
-          EzFile.make_dir ~p:true tmp_dir ;
+        Misc.call [| "rm"; "-rf"; tmp_dir |];
+        EzFile.make_dir ~p:true tmp_dir ;
 
-          Unix.chdir tmp_dir ;
-          Misc.call [| "tar" ; "zxf" ; output |] ;
-          Unix.chdir Globals.curdir;
+        Unix.chdir tmp_dir ;
+        Misc.call [| "tar" ; "zxf" ; output |] ;
+        Unix.chdir Globals.curdir;
 
-          let patches_subdir = tmp_dir // "patches" in
-          if not ( Sys.file_exists patches_subdir ) then
-            Printf.kprintf failwith
-              "archive %s does not contain 'patches/' subdir" patches_url;
+        let patches_subdir = tmp_dir // "patches" in
+        if not ( Sys.file_exists patches_subdir ) then
+          Printf.kprintf failwith
+            "archive %s does not contain 'patches/' subdir" patches_url;
 
-          Misc.call [| "rm"; "-rf"; opambin_patches_dir |];
-          EzFile.make_dir ~p:true opambin_patches_dir;
-          Sys.rename patches_subdir (opambin_patches_dir // "patches");
-          Misc.call [| "rm"; "-rf"; tmp_dir |];
-          Sys.remove output
+        Misc.call [| "rm"; "-rf"; opambin_patches_dir |];
+        EzFile.make_dir ~p:true opambin_patches_dir;
+        Sys.rename patches_subdir (opambin_patches_dir // "patches");
+        Misc.call [| "rm"; "-rf"; tmp_dir |];
+        Sys.remove output
 
-      end
+    end
     else
       begin
         Printf.eprintf

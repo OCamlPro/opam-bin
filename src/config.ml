@@ -77,6 +77,12 @@ let create_enabled = EzConfig.create_option config
     EzConfig.bool_option
     true
 
+let share_enabled = EzConfig.create_option config
+    [ "share_enabled" ]
+    [ "Whether we share binary files between switches (default: disabled)" ]
+    EzConfig.bool_option
+    false
+
 let all_switches = EzConfig.create_option config
     [ "all_switches" ]
     [ "Whether we use a binary package for all switches. The config variable" ;
