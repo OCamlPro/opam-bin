@@ -24,6 +24,7 @@ let commands = [
   CommandWrapInstall.cmd ;
   CommandPostInstall.cmd ;
   CommandPreRemove.cmd ;
+  CommandShare.cmd ;
 ]
 
 

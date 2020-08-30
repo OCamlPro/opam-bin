@@ -35,6 +35,7 @@ let opambin_dir = opam_plugins_dir // command
 let opambin_bin = opambin_dir // command_exe
 let opambin_log = opambin_dir // command_log
 let opambin_store_dir = opambin_dir // "store"
+let opambin_share_dir = opambin_dir // "share"
 let opambin_cache_dir = opambin_dir // "cache"
 let opambin_header_html = opambin_dir // "header.html"
 let opambin_trailer_html = opambin_dir // "trailer.html"
