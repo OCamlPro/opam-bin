@@ -1,5 +1,5 @@
 
-## v0.9.4 ( 2020-??-?? )
+## v0.9.4 ( 2020-08-31 )
 
 * Use `drom` to manage the project
   * configure sphinx-target field to target docs/ directly
