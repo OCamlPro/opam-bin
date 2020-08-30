@@ -31,5 +31,5 @@ build: [
   ]
 ]
 depends: [
-  "opam-bin_lib" {= version}
+  "opam_bin_lib" {= version}
 ]
