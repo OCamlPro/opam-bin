@@ -1,6 +1,5 @@
 
 
-
 <!DOCTYPE html>
 <html class="writer-html4" lang="en" >
 <head>
@@ -8,9 +7,9 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; opam-bin z-2020-08-18-opam-bin-new
+  <title>How to install &mdash; opam-bin z-2020-08-18-opam-bin-new
  (073b7d0
-) (2020/08/29 11:05) documentation</title>
+) (2020/08/29 11:03) documentation</title>
   
 
   
@@ -38,7 +37,8 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-    <link rel="index" title="Index" href="#" />
+    <link rel="author" title="About these documents" href="about.html" />
+    <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
 </head>
 
@@ -101,7 +101,6 @@
 <li class="toctree-l1"><a class="reference internal" href="repositories.html">Contributed Binary Repositories</a></li>
 <li class="toctree-l1"><a class="reference internal" href="f-a-q.html">Frequently Asked Questions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="about-and-thanks.html">About, Thanks and Funding</a></li>
-<li class="toctree-l1"><a class="reference internal" href="license.html">Copyright and License</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/ocamlpro/opam-bin">Devel and Issues on Github</a></li>
 </ul>
 
@@ -149,12 +148,14 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Index</li>
+      <li>How to install</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
+            <a href="_sources/install.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -166,11 +167,47 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-
-<h1 id="index">Index</h1>
-
-<div class="genindex-jumpbox">
- 
+  <div class="section" id="how-to-install">
+<h1>How to install<a class="headerlink" href="#how-to-install" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="install-with-opam">
+<h2>Install with <code class="code docutils literal notranslate"><span class="pre">opam</span></code><a class="headerlink" href="#install-with-opam" title="Permalink to this headline">¶</a></h2>
+<p>If <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> is available in your opam repository, you can just call:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span> <span class="n">install</span> <span class="n">opam</span><span class="o">-</span><span class="n">bin</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="build-and-install-with-dune">
+<h2>Build and install with <code class="code docutils literal notranslate"><span class="pre">dune</span></code><a class="headerlink" href="#build-and-install-with-dune" title="Permalink to this headline">¶</a></h2>
+<p>Checkout the sources of <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> in a directory.</p>
+<p>You need a switch with at least version <code class="code docutils literal notranslate"><span class="pre">4.03.0</span></code> of OCaml,
+you can for example create it with:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span>
+</pre></div>
+</div>
+<p>Then, you need to install all the dependencies:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span> <span class="n">install</span> <span class="o">--</span><span class="n">deps</span><span class="o">-</span><span class="n">only</span> <span class="o">.</span>
+</pre></div>
+</div>
+<p>Finally, you can build the package and install it:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">eval</span> <span class="o">${</span><span class="n">opam</span> <span class="n">env</span><span class="o">}</span>
+<span class="n">dune</span> <span class="n">build</span>
+<span class="n">dune</span> <span class="n">install</span>
+</pre></div>
+</div>
+<p>Note that a <code class="code docutils literal notranslate"><span class="pre">Makefile</span></code> is provided, it contains the following
+targets:</p>
+<ul class="simple">
+<li><code class="code docutils literal notranslate"><span class="pre">build</span></code>: build the code</li>
+<li><code class="code docutils literal notranslate"><span class="pre">install</span></code>: install the generated files</li>
+<li><code class="code docutils literal notranslate"><span class="pre">build-deps</span></code>: install opam dependencies</li>
+<li><code class="code docutils literal notranslate"><span class="pre">sphinx</span></code>: build sphinx documentation (from the <code class="code docutils literal notranslate"><span class="pre">sphinx/</span></code> directory)</li>
+<li><code class="code docutils literal notranslate"><span class="pre">dev-deps</span></code>: build development dependencies, in particular
+<code class="code docutils literal notranslate"><span class="pre">ocamlformat</span></code>, <code class="code docutils literal notranslate"><span class="pre">odoc</span></code> and <code class="code docutils literal notranslate"><span class="pre">merlin</span></code></li>
+<li><code class="code docutils literal notranslate"><span class="pre">doc</span></code>: build documentation with <code class="code docutils literal notranslate"><span class="pre">odoc</span></code></li>
+<li><code class="code docutils literal notranslate"><span class="pre">fmt</span></code>: format the code using <code class="code docutils literal notranslate"><span class="pre">ocamlformat</span></code></li>
+<li><code class="code docutils literal notranslate"><span class="pre">test</span></code>: run tests</li>
+</ul>
+</div>
 </div>
 
 

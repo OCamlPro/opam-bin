@@ -11,10 +11,9 @@
 open EzFile.OP
 
 let command = "opam-bin"
-let version = "0.9.4"
 let about =
   Printf.sprintf "%s %s by OCamlPro SAS <contact@ocamlpro.com>"
-    command version
+    command Version.version
 
 let home_dir = try Sys.getenv "HOME" with Not_found ->
   Printf.eprintf "Error: HOME variable not defined\n%!";

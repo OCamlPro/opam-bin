@@ -22,6 +22,7 @@ the source package manager of OCaml.
    repositories
    f-a-q
    about-and-thanks
+   license
    Devel and Issues on Github <https://github.com/ocamlpro/opam-bin>
 
 Indices and tables
