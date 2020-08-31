@@ -3,4 +3,4 @@
  (name main)
  (public_name opam-bin)
  (package opam-bin)
- (libraries opam-bin_lib))
+ (libraries opam_bin_lib))

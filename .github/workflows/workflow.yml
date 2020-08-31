@@ -47,7 +47,7 @@ jobs:
 
       - run: opam exec -- ocaml .github/workflows/ci.ml pin
 
-      - run: opam install ./opam-bin_lib.opam --deps-only --with-test
+      - run: opam install ./opam_bin_lib.opam --deps-only --with-test
 
       - run: opam exec -- make all
 

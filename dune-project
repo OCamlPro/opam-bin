@@ -6,7 +6,7 @@
 (version 0.9.4)
 
 (package
- (name opam-bin_lib)
+ (name opam_bin_lib)
  (synopsis "The opam-bin tool is a simple framework to use `opam` with binary packages (library)")
  (description "opam-binary is a simple framework to use `opam` with binary packages.\n")
  (depends
@@ -24,4 +24,4 @@
  (synopsis "The opam-bin tool is a simple framework to use `opam` with binary packages")
  (description "opam-binary is a simple framework to use `opam` with binary packages.
 ")
- (depends (opam-bin_lib (= version))))
+ (depends (opam_bin_lib (= version))))
