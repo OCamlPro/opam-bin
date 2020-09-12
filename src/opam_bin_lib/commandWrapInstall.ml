@@ -8,7 +8,6 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open EzCompat
 open Ezcmd.TYPES
 
 let cmd_name = "wrap-install"
@@ -31,8 +30,7 @@ let cmd_name = "wrap-install"
  *)
 
 let action args =
-  Misc.global_log "CMD: %s\n%!"
-    ( String.concat "\n    " ( cmd_name :: args) ) ;
+  Misc.log_cmd cmd_name args ;
   Misc.make_cache_dir ();
   match args with
   | name :: _version :: _depends :: cmd ->

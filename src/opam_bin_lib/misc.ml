@@ -39,6 +39,21 @@ let log file fmt =
 let global_log fmt =
   log Globals.opambin_log fmt
 
+let log_err file fmt =
+  Printf.kprintf (fun s ->
+      Printf.eprintf "%s\n%!" s;
+      append_text_file file
+        (Printf.sprintf "%s: %s\n" (date()) s)) fmt
+
+let global_log_err fmt =
+  log_err Globals.opambin_log fmt
+
+let log_cmd cmd_name args =
+  global_log "============================================================";
+  global_log "in %s"Globals.curdir;
+  global_log "cmd: '%s'"
+    ( String.concat "' '" ( cmd_name :: args) )
+
 let make_cache_dir () =
   EzFile.make_dir ~p:true Globals.opambin_cache_dir
 

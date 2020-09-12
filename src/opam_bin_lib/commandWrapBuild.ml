@@ -8,7 +8,6 @@
 (*                                                                        *)
 (**************************************************************************)
 
-open EzCompat
 open Ezcmd.TYPES
 
 (*
@@ -27,8 +26,7 @@ TODO:
 let cmd_name = "wrap-build"
 
 let action args =
-  Misc.global_log "CMD: %s\n%!"
-    ( String.concat "\n    " ( cmd_name :: args) ) ;
+  Misc.log_cmd cmd_name args ;
   Misc.make_cache_dir ();
   match args with
   | _name :: _version :: _depends :: cmd ->

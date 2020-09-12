@@ -8,6 +8,6 @@ opam-binary is a simple framework to use `opam` with binary packages.
 
 
 * Website: https://ocamlpro.github.io/opam-bin
-* General Documentation: https://ocamlpro.github.io/opam-bin/sphinx
+* General Documentation: https://ocamlpro.github.io/opam-bin
 * API Documentation: https://ocamlpro.github.io/opam-bin/doc
 * Sources: https://github.com/ocamlpro/opam-bin
