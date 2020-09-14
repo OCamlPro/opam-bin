@@ -16,6 +16,8 @@ let cmd_name = "clean"
 let clean_log () =
   if Sys.file_exists Globals.opambin_log then
     Sys.remove Globals.opambin_log ;
+  if Sys.file_exists Globals.opambin_info then
+    Sys.remove Globals.opambin_info ;
   ()
 
 let clean_store () =

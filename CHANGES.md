@@ -1,4 +1,9 @@
 
+## v0.9.5 ( 2020-09-14 )
+
+* Fix a bug preventing creation of binary packages when sharing is disabled
+* Add command 'opam-bin info' with a summary of opam-bin actions
+
 ## v0.9.4 ( 2020-08-31 )
 
 * Use `drom` to manage the project
