@@ -26,6 +26,7 @@ let opam_dir = try
 
 let command_exe = command ^ ".exe"
 let command_log = command ^ ".log"
+let command_info = command ^ ".info"
 
 let opam_cache_dir = opam_dir // "download-cache"
 let opam_repo_dir = opam_dir // "repo"
@@ -33,6 +34,7 @@ let opam_plugins_dir = opam_dir // "plugins"
 let opam_plugins_bin_dir = opam_plugins_dir // "bin"
 let opambin_dir = opam_plugins_dir // command
 let opambin_bin = opambin_dir // command_exe
+let opambin_info = opambin_dir // command_info
 let opambin_log = opambin_dir // command_log
 let opambin_store_dir = opambin_dir // "store"
 let opambin_share_dir = opambin_dir // "share"

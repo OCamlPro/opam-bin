@@ -36,6 +36,17 @@ let log file fmt =
       append_text_file file
         (Printf.sprintf "%s: %s\n" (date()) s)) fmt
 
+let info ~name ~version fmt =
+  Printf.kprintf (fun s ->
+      let s =
+        if String.length s > 78 then
+          String.sub s 0 75 ^ "..."
+        else
+          s
+      in
+      append_text_file Globals.opambin_info
+        (Printf.sprintf "%s: %s.%s %s\n" (date()) name version s)) fmt
+
 let global_log fmt =
   log Globals.opambin_log fmt
 

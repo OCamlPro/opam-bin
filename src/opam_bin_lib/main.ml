@@ -16,6 +16,7 @@ let commands = [
   CommandPull.cmd ;
   CommandClean.cmd ;
   CommandList.cmd ;
+  CommandInfo.cmd ;
   CommandSearch.cmd ;
 
   CommandPreBuild.cmd ;

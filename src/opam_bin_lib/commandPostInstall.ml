@@ -211,192 +211,194 @@ depends: [
     ( Printf.sprintf "depend:%s:%s\n" name new_version )
 
 let commit ~name ~version ~depends files =
-  if
-    not !!Config.create_enabled
-    || Sys.file_exists ( Globals.backup_skip ~name )
-  then
-    Misc.global_log "package %s: create disabled" name
+  if not !!Config.create_enabled then
+    Misc.info ~name ~version "create-package disabled"
   else
-  if Sys.file_exists Globals.marker_cached then
-    Misc.global_log "package %s: installed a cached binary" name
-  else
-    let opam_switch_prefix = Globals.opam_switch_prefix () in
-    let packages_dir =
-      Globals.opambin_switch_packages_dir () in
-    if Sys.file_exists ( packages_dir // name ) then
-      Misc.global_log "package %s: already a binary archive..." name
+    let backup_skip = Globals.backup_skip ~name in
+    if Sys.file_exists backup_skip then
+      Misc.info ~name ~version "%s" (EzFile.read_file backup_skip)
     else
-      let temp_dir = Globals.opambin_switch_temp_dir () in
-      Misc.global_log "package %s is not a binary archive" name ;
-      Misc.global_log "creating binary archive...";
-      EzFile.make_dir ~p:true temp_dir ;
-      let source_md5 =
-        EzFile.read_file ( Globals.backup_source ~name ) in
-      let ( source_md5, depends, dependset, missing_versions, opam_file ) =
-        compute_hash ~source_md5 ~name ~version ~depends () in
-      if missing_versions <> [] then begin
-        Misc.global_log
-          "Error in %s: cannot load binary versions from %s\n%!"
-          Globals.command
-          (String.concat " " missing_versions);
-        Misc.global_log
-          " => binary archive disabled for %s.%s" name version;
-        if error_on_missing then begin
-          Printf.eprintf "Error: OPAM_BIN_FORCE set, but missing binary dep.\n%!";
-          exit 2
-        end
-      end
+    if Sys.file_exists Globals.marker_cached then
+      Misc.info ~name ~version "binary package installed from cache"
+    else
+      let opam_switch_prefix = Globals.opam_switch_prefix () in
+      let packages_dir =
+        Globals.opambin_switch_packages_dir () in
+      if Sys.file_exists ( packages_dir // name ) then
+        Misc.info ~name ~version "already a binary package"
       else
-        let binary_archive = temp_dir // name ^ "-bin.tar.gz" in
-        Unix.chdir opam_switch_prefix;
-        Misc.tar_zcf ~prefix:"prefix" binary_archive files;
-        Unix.chdir Globals.curdir;
-        Misc.global_log "create binary archive DONE";
-
-        let bin_md5 =
-          digest ( EzFile.read_file binary_archive )
-        in
-        Misc.global_log "bin md5 = %s" bin_md5;
-
-        let final_md5 = Printf.sprintf "%s+%s"
-            source_md5 ( short bin_md5 ) in
-        let new_version = Printf.sprintf "%s+bin+%s" version final_md5 in
-        EzFile.make_dir ~p:true packages_dir ;
-        let oc = open_out ( packages_dir // name ) in
-        output_string oc new_version ;
-        close_out oc;
-
-        let file_contents = parse_opam_file opam_file in
-
-        EzFile.make_dir ~p:true Globals.opambin_store_archives_dir;
-        let final_binary_archive_basename =
-          Printf.sprintf "%s.%s-bin.tar.gz" name new_version
-        in
-        let final_binary_archive =
-          Globals.opambin_store_archives_dir // final_binary_archive_basename
-        in
-        Sys.rename binary_archive final_binary_archive;
-
-        let cache_dir =
-          Globals.opambin_cache_dir //
-          "md5" // String.sub bin_md5 0 2 in
-        let cached_archive = cache_dir // bin_md5 in
-        if not ( Sys.file_exists cached_archive ) then begin
-          EzFile.make_dir ~p:true cache_dir;
-          Misc.call [| "cp";  final_binary_archive ; cached_archive |];
-        end;
-
-        let nv = Printf.sprintf "%s.%s" name new_version in
-        let package_dir =
-          Globals.opambin_store_repo_packages_dir // name // nv in
-        EzFile.make_dir ~p:true package_dir;
-        let package_files_dir = package_dir // "files" in
-        EzFile.make_dir ~p:true package_files_dir;
-        let oc = open_out ( package_files_dir //
-                            Globals.package_version ) in
-        output_string oc new_version;
-        close_out oc;
-
-        let config_file =
-          Globals.opam_switch_internal_config_dir ()
-          // ( name ^ ".config" )
-        in
-        let has_config_file =
-          if Sys.file_exists config_file then begin
-            let s = EzFile.read_file config_file in
-            EzFile.write_file ( package_files_dir //
-                                Globals.package_config ) s;
-            true
+        let temp_dir = Globals.opambin_switch_temp_dir () in
+        Misc.global_log "package %s is not a binary archive" name ;
+        Misc.global_log "creating binary archive...";
+        EzFile.make_dir ~p:true temp_dir ;
+        let source_md5 =
+          EzFile.read_file ( Globals.backup_source ~name ) in
+        let ( source_md5, depends, dependset, missing_versions, opam_file ) =
+          compute_hash ~source_md5 ~name ~version ~depends () in
+        if missing_versions <> [] then begin
+          Misc.global_log
+            "Error in %s: cannot load binary versions from %s\n%!"
+            Globals.command
+            (String.concat " " missing_versions);
+          Misc.global_log
+            " => binary archive disabled for %s.%s" name version;
+          Misc.info ~name ~version "missing binary deps";
+          if error_on_missing then begin
+            Printf.eprintf "Error: OPAM_BIN_FORCE set, but missing binary dep.\n%!";
+            exit 2
           end
-          else
-            false
-        in
+        end
+        else
+          let binary_archive = temp_dir // name ^ "-bin.tar.gz" in
+          Unix.chdir opam_switch_prefix;
+          Misc.tar_zcf ~prefix:"prefix" binary_archive files;
+          Unix.chdir Globals.curdir;
+          Misc.global_log "create binary archive DONE";
 
-        let opam =
-          let post_depends = ref [] in
-          let conflicts = ref [] in
-          let opam_depends = ref None in
-          let opam_depopts = ref None in
-          let file_contents =
-            List.fold_left (fun acc v ->
-                match v with
-                | Variable (_, name, value) -> begin
-                    match name with
+          let bin_md5 =
+            digest ( EzFile.read_file binary_archive )
+          in
+          Misc.global_log "bin md5 = %s" bin_md5;
 
-                    (* keep *)
-                    | "name"
-                    | "maintainer"
-                    | "authors"
-                    | "opam-version"
-                    | "synopsis"
-                    | "description"
-                    | "homepage"
-                    | "bug-reports"
-                    | "license"
-                    | "tags" (* ?? *)
-                    | "dev-repo"
-                    | "post-messages"
-                    | "doc"
-                    | "setenv"
-                    | "conflict-class"
-                    | "flags"
-                    | "depexts"
-                      -> v :: acc
+          let final_md5 = Printf.sprintf "%s+%s"
+              source_md5 ( short bin_md5 ) in
+          let new_version = Printf.sprintf "%s+bin+%s" version final_md5 in
+          EzFile.make_dir ~p:true packages_dir ;
+          let oc = open_out ( packages_dir // name ) in
+          output_string oc new_version ;
+          close_out oc;
 
-                    (* discard *)
-                    | "version"
-                    | "build"
-                    | "install"
-                    | "remove"
-                    | "extra-files"
-                      ->
-                      acc
-                    | "depends" ->
-                      opam_depends := Some value ;
-                      acc
-                    | "depopts" ->
-                      opam_depopts := Some value ;
-                      acc
-                    | _ ->
-                      Misc.global_log
-                        "discarding unknown field %S" name;
-                      acc
-                  end
-                | _ -> acc
-              ) [] file_contents in
+          let file_contents = parse_opam_file opam_file in
 
-          let build_depends =
-            match !opam_depends with
-            | None -> StringSet.empty
-            | Some value ->
-              let buildset = ref StringSet.empty in
-              iter_value_list value
-                ( add_post_depend ~dependset ~buildset post_depends);
-              !buildset
+          EzFile.make_dir ~p:true Globals.opambin_store_archives_dir;
+          let final_binary_archive_basename =
+            Printf.sprintf "%s.%s-bin.tar.gz" name new_version
+          in
+          let final_binary_archive =
+            Globals.opambin_store_archives_dir // final_binary_archive_basename
+          in
+          Sys.rename binary_archive final_binary_archive;
+
+          let cache_dir =
+            Globals.opambin_cache_dir //
+            "md5" // String.sub bin_md5 0 2 in
+          let cached_archive = cache_dir // bin_md5 in
+          if not ( Sys.file_exists cached_archive ) then begin
+            EzFile.make_dir ~p:true cache_dir;
+            Misc.call [| "cp";  final_binary_archive ; cached_archive |];
+          end;
+
+          let nv = Printf.sprintf "%s.%s" name new_version in
+          let package_dir =
+            Globals.opambin_store_repo_packages_dir // name // nv in
+          EzFile.make_dir ~p:true package_dir;
+          let package_files_dir = package_dir // "files" in
+          EzFile.make_dir ~p:true package_files_dir;
+          let oc = open_out ( package_files_dir //
+                              Globals.package_version ) in
+          output_string oc new_version;
+          close_out oc;
+
+          let config_file =
+            Globals.opam_switch_internal_config_dir ()
+            // ( name ^ ".config" )
+          in
+          let has_config_file =
+            if Sys.file_exists config_file then begin
+              let s = EzFile.read_file config_file in
+              EzFile.write_file ( package_files_dir //
+                                  Globals.package_config ) s;
+              true
+            end
+            else
+              false
           in
 
-          let actual_depends =
-            match !opam_depopts with
-            | None ->
-              let actual_depends = ref [] in
-              List.iter (fun (name, version) ->
-                  if not ( StringSet.mem name build_depends ) then
-                    actual_depends := ( name, version ) :: !actual_depends
-                ) depends;
-              !actual_depends
-            | Some value ->
-              iter_value_list value
-                ( add_conflict dependset conflicts);
-              depends
-          in
+          let opam =
+            let post_depends = ref [] in
+            let conflicts = ref [] in
+            let opam_depends = ref None in
+            let opam_depopts = ref None in
+            let file_contents =
+              List.fold_left (fun acc v ->
+                  match v with
+                  | Variable (_, name, value) -> begin
+                      match name with
 
-          (* We need to keep `package.version` here because it is used by
-             wrap-build to check if it is a binary archive. It should
-             always be the last step because wrap-install checks for
-             etc/opam-bin/packages/NAME to stop installation commands. *)
-          let file_contents =
-            Misc.opam_variable "install"
-              {|
+                      (* keep *)
+                      | "name"
+                      | "maintainer"
+                      | "authors"
+                      | "opam-version"
+                      | "synopsis"
+                      | "description"
+                      | "homepage"
+                      | "bug-reports"
+                      | "license"
+                      | "tags" (* ?? *)
+                      | "dev-repo"
+                      | "post-messages"
+                      | "doc"
+                      | "setenv"
+                      | "conflict-class"
+                      | "flags"
+                      | "depexts"
+                        -> v :: acc
+
+                      (* discard *)
+                      | "version"
+                      | "build"
+                      | "install"
+                      | "remove"
+                      | "extra-files"
+                        ->
+                          acc
+                      | "depends" ->
+                          opam_depends := Some value ;
+                          acc
+                      | "depopts" ->
+                          opam_depopts := Some value ;
+                          acc
+                      | _ ->
+                          Misc.global_log
+                            "discarding unknown field %S" name;
+                          acc
+                    end
+                  | _ -> acc
+                ) [] file_contents in
+
+            let build_depends =
+              match !opam_depends with
+              | None -> StringSet.empty
+              | Some value ->
+                  let buildset = ref StringSet.empty in
+                  iter_value_list value
+                    ( add_post_depend ~dependset ~buildset post_depends);
+                  !buildset
+            in
+
+            let actual_depends =
+              match !opam_depopts with
+              | None ->
+                  let actual_depends = ref [] in
+                  List.iter (fun (name, version) ->
+                      if not ( StringSet.mem name build_depends ) then
+                        actual_depends := ( name, version ) :: !actual_depends
+                    ) depends;
+                  !actual_depends
+              | Some value ->
+                  iter_value_list value
+                    ( add_conflict dependset conflicts);
+                  depends
+            in
+
+            (* We need to keep `package.version` here because it is used by
+               wrap-build to check if it is a binary archive. It should
+               always be the last step because wrap-install checks for
+               etc/opam-bin/packages/NAME to stop installation commands. *)
+            let file_contents =
+              Misc.opam_variable "install"
+                {|
 [
   [  "mkdir" "-p" "%%{prefix}%%/etc/%s/packages" ]
   [  "rm" "-f" "%s" ]
@@ -404,102 +406,102 @@ let commit ~name ~version ~depends files =
   [  "mv" "%%{prefix}%%/%s" "%%{prefix}%%/etc/%s/packages/%s" ]
 ]
 |}
-              Globals.command
-              Globals.package_info
-              (if has_config_file then
-                 Printf.sprintf {|
+                Globals.command
+                Globals.package_info
+                (if has_config_file then
+                   Printf.sprintf {|
   [  "mv" "%%{prefix}%%/%s" "%s.config" ]
 |}
-                   Globals.package_config name
-               else "")
-              Globals.package_version Globals.command name
-            :: file_contents
-          in
-          let file_contents =
-            Misc.opam_variable "depends"
-              "[ %s %s ]"
-              (String.concat " "
-                 (List.map (fun (name, version) ->
-                      Printf.sprintf "%S {= %S }" name version
-                    ) actual_depends))
-              (String.concat " "
-                 (List.map (fun name ->
-                      Printf.sprintf "%S { post }" name
-                    ) !post_depends))
-            :: file_contents
-          in
-
-          let file_contents =
-            if files = [] then
-              file_contents
-            else
-              Misc.opam_section "url" [
-                Misc.opam_variable
-                  "src"
-                  "%S"
-                  (!!Config.base_url
-                   // "archives" // final_binary_archive_basename);
-                Misc.opam_variable
-                  "checksum"
-                  {| [ "md5=%s" ] |} bin_md5
-              ] :: file_contents
-          in
-
-          let file_contents =
-            if !conflicts = [] then
-              file_contents
-            else
-              Misc.opam_variable "conflicts"
-                "[ %s ]"
-                ( String.concat " "
-                    ( List.map (fun s ->
-                          Printf.sprintf "%S" s) !conflicts ))
+                     Globals.package_config name
+                 else "")
+                Globals.package_version Globals.command name
               :: file_contents
+            in
+            let file_contents =
+              Misc.opam_variable "depends"
+                "[ %s %s ]"
+                (String.concat " "
+                   (List.map (fun (name, version) ->
+                        Printf.sprintf "%S {= %S }" name version
+                      ) actual_depends))
+                (String.concat " "
+                   (List.map (fun name ->
+                        Printf.sprintf "%S { post }" name
+                      ) !post_depends))
+              :: file_contents
+            in
+
+            let file_contents =
+              if files = [] then
+                file_contents
+              else
+                Misc.opam_section "url" [
+                  Misc.opam_variable
+                    "src"
+                    "%S"
+                    (!!Config.base_url
+                     // "archives" // final_binary_archive_basename);
+                  Misc.opam_variable
+                    "checksum"
+                    {| [ "md5=%s" ] |} bin_md5
+                ] :: file_contents
+            in
+
+            let file_contents =
+              if !conflicts = [] then
+                file_contents
+              else
+                Misc.opam_variable "conflicts"
+                  "[ %s ]"
+                  ( String.concat " "
+                      ( List.map (fun s ->
+                            Printf.sprintf "%S" s) !conflicts ))
+                :: file_contents
+            in
+
+            let file_contents = List.rev file_contents in
+            { file_contents ; file_name = "" }
           in
+          let s = OpamPrinter.opamfile opam in
 
-          let file_contents = List.rev file_contents in
-          { file_contents ; file_name = "" }
-        in
-        let s = OpamPrinter.opamfile opam in
+          EzFile.write_file ( package_dir // "opam" ) s;
 
-        EzFile.write_file ( package_dir // "opam" ) s;
+          write_bin_stub ~name ~version ~new_version
+            ~repo_dir:Globals.opambin_store_repo_dir;
 
-        write_bin_stub ~name ~version ~new_version
-          ~repo_dir:Globals.opambin_store_repo_dir;
+          let oc = open_out ( package_files_dir //
+                              Globals.package_info ) in
+          List.iter (fun (name, version) ->
+              Printf.fprintf oc "depend:%s:%s\n" name version
+            ) depends ;
 
-        let oc = open_out ( package_files_dir //
-                            Globals.package_info ) in
-        List.iter (fun (name, version) ->
-            Printf.fprintf oc "depend:%s:%s\n" name version
-          ) depends ;
+          Unix.chdir opam_switch_prefix;
+          let total_nbytes = ref 0 in
+          List.iter (fun file ->
+              match Unix.lstat file with
+              | exception _ -> ()
+              | st ->
+                  Printf.fprintf oc "file:%09d:%s:%s\n"
+                    (let size = st.Unix.st_size in
+                     total_nbytes := !total_nbytes + size ;
+                     size
+                    )
+                    (match st.Unix.st_kind with
+                     | S_REG -> "reg"
+                     | S_DIR -> "dir"
+                     | S_LNK -> "lnk"
+                     | _ -> "oth"
+                    )
+                    file
+            ) files ;
+          Unix.chdir Globals.curdir;
 
-        Unix.chdir opam_switch_prefix;
-        let total_nbytes = ref 0 in
-        List.iter (fun file ->
-            match Unix.lstat file with
-            | exception _ -> ()
-            | st ->
-              Printf.fprintf oc "file:%09d:%s:%s\n"
-                (let size = st.Unix.st_size in
-                 total_nbytes := !total_nbytes + size ;
-                 size
-                )
-                (match st.Unix.st_kind with
-                 | S_REG -> "reg"
-                 | S_DIR -> "dir"
-                 | S_LNK -> "lnk"
-                 | _ -> "oth"
-                )
-                file
-          ) files ;
-        Unix.chdir Globals.curdir;
-
-        Printf.fprintf oc "total:%05d:nfiles\n" (List.length files) ;
-        Printf.fprintf oc "total:%09d:nbytes\n" !total_nbytes ;
-        close_out oc;
-
-        Misc.global_log "Binary package for %s.%s created successfully"
-          name version
+          Printf.fprintf oc "total:%05d:nfiles\n" (List.length files) ;
+          Printf.fprintf oc "total:%09d:nbytes\n" !total_nbytes ;
+          close_out oc;
+          Misc.info ~name ~version:new_version "binary package created";
+          Misc.global_log "Binary package for %s.%s created successfully"
+            name version
 
 
 let action args =
@@ -507,16 +509,18 @@ let action args =
   Misc.make_cache_dir ();
   match args with
   | name :: version :: depends :: files ->
-    if !!Config.enabled && !!Config.share_enabled then begin
-      let dir = Globals.opam_switch_prefix () in
-      let files = EzList.tail_map (fun file -> dir // file ) files in
-      Share.files files ;
-    end;
-    commit ~name ~version ~depends files
+      if !!Config.enabled then begin
+        if !!Config.share_enabled then begin
+          let dir = Globals.opam_switch_prefix () in
+          let files = EzList.tail_map (fun file -> dir // file ) files in
+          Share.files files ;
+        end;
+        commit ~name ~version ~depends files
+      end
   | _ ->
-    Printf.eprintf
-      "Unexpected args: usage is '%s %s name version depends files...'\n%!" Globals.command cmd_name;
-    exit 2
+      Printf.eprintf
+        "Unexpected args: usage is '%s %s name version depends files...'\n%!" Globals.command cmd_name;
+      exit 2
 
 let cmd =
   let args = ref [] in
