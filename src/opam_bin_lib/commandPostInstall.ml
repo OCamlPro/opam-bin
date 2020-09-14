@@ -503,16 +503,15 @@ let commit ~name ~version ~depends files =
 
 
 let action args =
-  Misc.global_log "CMD (at %s): %s\n%!"
-    Globals.curdir
-    ( String.concat "\n    " ( cmd_name :: args) ) ;
+  Misc.log_cmd cmd_name args;
   Misc.make_cache_dir ();
   match args with
   | name :: version :: depends :: files ->
-    if !!Config.enabled && !!Config.share_enabled then
+    if !!Config.enabled && !!Config.share_enabled then begin
       let dir = Globals.opam_switch_prefix () in
       let files = EzList.tail_map (fun file -> dir // file ) files in
       Share.files files ;
+    end;
     commit ~name ~version ~depends files
   | _ ->
     Printf.eprintf

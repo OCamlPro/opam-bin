@@ -14,7 +14,8 @@ open EzFile.OP
 let cmd_name = "clean"
 
 let clean_log () =
-  Sys.remove Globals.opambin_log ;
+  if Sys.file_exists Globals.opambin_log then
+    Sys.remove Globals.opambin_log ;
   ()
 
 let clean_store () =

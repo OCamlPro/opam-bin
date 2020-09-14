@@ -176,6 +176,7 @@ Error: patches dir '%s' does not exist.\n
     let package_dir = patches_dir // "patches" // package in
     if Sys.file_exists package_dir then
       let files = Sys.readdir package_dir in
+      Misc.global_log "package %s needs relocation" name;
       let versions = ref [] in
       let alias = ref None in
       Array.iter (fun file ->
@@ -187,7 +188,9 @@ Error: patches dir '%s' does not exist.\n
             | None -> ()
         ) files;
       match !alias with
-      | Some package -> iter_package package
+      | Some package ->
+          Misc.global_log "lookup patches for %s instead" package;
+          iter_package package
       | None ->
         let versions = Array.of_list !versions in
         Array.sort VersionCompare.compare versions ;
@@ -207,10 +210,10 @@ Error: patches dir '%s' does not exist.\n
         in
         match iter version (Array.to_list versions) None with
         | None ->
-          Printf.eprintf
+          Misc.global_log_err
             "Package %S is not relocatable, but no patch found for version %S.\n%!"
             name version;
-          Printf.eprintf
+          Misc.global_log_err
             "You may have to disable opam-bin to install that version.\n%!";
           false
         | Some version ->
@@ -266,8 +269,7 @@ let error_on_non_reloc =
   | _ -> true
 
 let action args =
-  Misc.global_log "CMD: %s"
-    ( String.concat "\n    " ( cmd_name :: args) ) ;
+  Misc.log_cmd cmd_name args ;
   match args with
   | name :: version :: depends :: [] ->
     let marker_skip = Globals.marker_skip in

@@ -26,6 +26,8 @@ let add_repo ~repo ~url =
 
 let install_exe () =
   let s = FileString.read_file Sys.executable_name in
+  if Sys.file_exists Globals.opambin_bin then
+    Sys.remove Globals.opambin_bin;
   EzFile.write_file Globals.opambin_bin s;
   Unix.chmod  Globals.opambin_bin 0o755;
   Printf.eprintf "Executable copied as %s\n%!" Globals.opambin_bin;
@@ -88,7 +90,7 @@ let install_patches () =
   let patches_url = !!Config.patches_url in
   if EzString.starts_with patches_url ~prefix:"file://" then
     (* nothing to do *)
-    ()
+    Printf.eprintf "Using %s for patches\n%!" patches_url
   else
     let opambin_patches_dir = Globals.opambin_patches_dir in
     let tmp_dir = opambin_patches_dir ^ ".tmp" in
@@ -172,6 +174,21 @@ let cmd =
       Ezcmd.info "No args = all, otherwise 'exe', 'hooks' and/or 'repos'";
 
     ];
-    cmd_man = [];
-    cmd_doc = "install in opam";
+    cmd_man = [
+      `S "DESCRIPTION" ;
+      `Blocks [
+        `P {|Here are the names of the actions performed by the command, that can be passed as arguments:|};
+        `I ("[exe]",
+            {|Install the current executable as an opam plugin, so that it is possible to use "opam bin" instead of "opam-bin" from anywhere;|});
+        `I ("[hooks]",
+            {|Modify the hooks of opam to call opam-bin everytime a package is installed;|});
+        `I ("[repos]",
+            {|Add the repository of generated binary packages as one of the default opam repository|});
+        `I ("[patches]", {|Download/upgrade the set of relocation patches|});
+      ];
+      `P {|Without argument, all the actions are performed.|}
+    ];
+    cmd_doc = {|
+installs opam-bin in opam and download the set of relocation patches.
+|}
   }

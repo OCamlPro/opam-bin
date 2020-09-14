@@ -14,8 +14,7 @@ open EzFile.OP
 let cmd_name = "pre-remove"
 
 let action args =
-  Misc.global_log "CMD: %s"
-    ( String.concat "\n    " ( cmd_name :: args) ) ;
+  Misc.log_cmd cmd_name args ;
   match args with
   | name :: _version :: _depends :: [] ->
     List.iter (fun file_name ->
