@@ -5,12 +5,13 @@ Installation
 Installation as a source package
 --------------------------------
 
-You will need :code:`opam` and a switch containing a recent version of
+You will need :code:`opam`, configured to use the official
+:code:`opam` repository, and a switch containing a recent version of
 OCaml.
 
 Then, you can use the following instructions::
 
-  opam remote add reloc git@github.com:OCamlPro/opam-bin-repository
+  opam update
   opam install opam-bin -y
 
 Once installation is successful, you can install it in your :code:`opam`
@@ -45,7 +46,7 @@ You can use the following instructions::
 
   git clone https://github.com/OCamlPro/opam-bin
   cd opam-bin
-  opam install --deps-only .
+  make build-deps
   make
 
 Once compilation is successful, you can install it in your :code:`opam`

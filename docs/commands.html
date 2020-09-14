@@ -7,9 +7,9 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Commands &mdash; opam-bin z-2020-08-29-use-drom
- (d97e44e
-) (2020/08/31 06:55) documentation</title>
+  <title>Commands &mdash; opam-bin master
+ (3314ca1
+) (2020/09/14 22:40) documentation</title>
   
 
   
@@ -64,8 +64,8 @@
             
             
               <div class="version">
-                z-2020-08-29-use-drom
- (d97e44e
+                master
+ (3314ca1
 )
               </div>
             
@@ -102,11 +102,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#opam-bin-clean">opam-bin clean</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opam-bin-config">opam-bin config</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opam-bin-help">opam-bin help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opam-bin-info">opam-bin info</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opam-bin-install">opam-bin install</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opam-bin-list">opam-bin list</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opam-bin-pull">opam-bin pull</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opam-bin-push">opam-bin push</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opam-bin-search">opam-bin search</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#opam-bin-share">opam-bin share</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opam-bin-uninstall">opam-bin uninstall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#opam-hooks">OPAM Hooks</a></li>
 </ul>
@@ -219,7 +221,8 @@ synchronize <code class="code docutils literal notranslate"><span class="pre">op
   <span class="n">patches_url</span> <span class="o">:</span> <span class="n">file</span><span class="o">:///</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="nc">GIT</span><span class="o">/</span><span class="n">relocation</span><span class="o">-</span><span class="n">patches</span>
   <span class="n">title</span> <span class="o">:</span> <span class="nc">Repository</span> <span class="k">of</span> <span class="nc">Binary</span> <span class="nc">Packages</span>
   <span class="n">enabled</span> <span class="o">:</span> <span class="bp">true</span>
-  <span class="n">create_enabled</span> <span class="o">:</span> <span class="bp">false</span>
+  <span class="n">create_enabled</span> <span class="o">:</span> <span class="bp">true</span>
+  <span class="n">share_enabled</span><span class="o">:</span> <span class="bp">false</span>
   <span class="n">all_switches</span> <span class="o">:</span> <span class="bp">true</span>
   <span class="n">version</span> <span class="o">:</span> <span class="mi">1</span>
   <span class="n">switches</span> <span class="o">:</span>
@@ -239,6 +242,12 @@ re-use cached ones.</p>
 <li><p class="first"><code class="code docutils literal notranslate"><span class="pre">--enable-create</span></code>/<code class="code docutils literal notranslate"><span class="pre">--disable-create</span></code>: can be used to
 enable/disable creation of new binary archives. When disabled,
 existing binary archives will still be used when possible</p>
+</li>
+<li><p class="first"><code class="code docutils literal notranslate"><span class="pre">--enable-share</span></code>/<code class="code docutils literal notranslate"><span class="pre">--disable-share</span></code>: can be used to
+enable/disable sharing of file between switches using hard links.
+<code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> uses an heuristic to decide which files should be
+shared. In particular, it will try not to share files that could be
+modified, like configuration files.</p>
 </li>
 <li><p class="first"><code class="code docutils literal notranslate"><span class="pre">--base-url</span> <span class="pre">URL</span></code>: the base url that will be used when creating
 opam files to specify from where the binary archive should be
@@ -266,6 +275,30 @@ directory (<code class="code docutils literal notranslate"><span class="pre">fil
 <div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">opam</span> <span class="n">bin</span> <span class="o">--</span><span class="n">help</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="opam-bin-info">
+<h2>opam-bin info<a class="headerlink" href="#opam-bin-info" title="Permalink to this headline">¶</a></h2>
+<p>Display information on binary packages that have been created by
+last <code class="code docutils literal notranslate"><span class="pre">opam</span></code> commands:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="o">./</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">info</span>
+<span class="nc">Info</span> <span class="n">on</span> <span class="n">binary</span> <span class="n">packages</span><span class="o">:</span>
+<span class="mi">2020</span><span class="o">/</span><span class="mi">09</span><span class="o">/</span><span class="mi">14</span><span class="o">:</span><span class="mi">18</span><span class="o">:</span><span class="mi">57</span><span class="o">:</span><span class="mi">25</span><span class="o">:</span> <span class="n">base</span><span class="o">-</span><span class="n">threads</span><span class="o">.</span><span class="n">base</span> <span class="n">binary</span> <span class="n">package</span> <span class="n">created</span>
+<span class="mi">2020</span><span class="o">/</span><span class="mi">09</span><span class="o">/</span><span class="mi">14</span><span class="o">:</span><span class="mi">18</span><span class="o">:</span><span class="mi">57</span><span class="o">:</span><span class="mi">25</span><span class="o">:</span> <span class="n">base</span><span class="o">-</span><span class="n">bigarray</span><span class="o">.</span><span class="n">base</span> <span class="n">binary</span> <span class="n">package</span> <span class="n">created</span>
+<span class="mi">2020</span><span class="o">/</span><span class="mi">09</span><span class="o">/</span><span class="mi">14</span><span class="o">:</span><span class="mi">18</span><span class="o">:</span><span class="mi">57</span><span class="o">:</span><span class="mi">25</span><span class="o">:</span> <span class="n">base</span><span class="o">-</span><span class="n">unix</span><span class="o">.</span><span class="n">base</span> <span class="n">binary</span> <span class="n">package</span> <span class="n">created</span>
+<span class="mi">2020</span><span class="o">/</span><span class="mi">09</span><span class="o">/</span><span class="mi">14</span><span class="o">:</span><span class="mi">18</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">37</span><span class="o">:</span> <span class="n">ocaml</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="n">compiler</span><span class="o">.</span><span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span> <span class="n">binary</span> <span class="n">package</span> <span class="n">created</span>
+<span class="mi">2020</span><span class="o">/</span><span class="mi">09</span><span class="o">/</span><span class="mi">14</span><span class="o">:</span><span class="mi">18</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">37</span><span class="o">:</span> <span class="n">ocaml</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="mi">1</span> <span class="n">binary</span> <span class="n">package</span> <span class="n">created</span>
+<span class="mi">2020</span><span class="o">/</span><span class="mi">09</span><span class="o">/</span><span class="mi">14</span><span class="o">:</span><span class="mi">18</span><span class="o">:</span><span class="mi">58</span><span class="o">:</span><span class="mi">37</span><span class="o">:</span> <span class="n">ocaml</span><span class="o">.</span><span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span> <span class="n">binary</span> <span class="n">package</span> <span class="n">created</span>
+<span class="mi">2020</span><span class="o">/</span><span class="mi">09</span><span class="o">/</span><span class="mi">14</span><span class="o">:</span><span class="mi">19</span><span class="o">:</span><span class="mi">02</span><span class="o">:</span><span class="mi">03</span><span class="o">:</span> <span class="n">base</span><span class="o">-</span><span class="n">threads</span><span class="o">.</span><span class="n">base</span> <span class="n">binary</span> <span class="n">package</span> <span class="n">installed</span> <span class="n">from</span> <span class="n">cache</span>
+<span class="mi">2020</span><span class="o">/</span><span class="mi">09</span><span class="o">/</span><span class="mi">14</span><span class="o">:</span><span class="mi">19</span><span class="o">:</span><span class="mi">02</span><span class="o">:</span><span class="mi">03</span><span class="o">:</span> <span class="n">base</span><span class="o">-</span><span class="n">bigarray</span><span class="o">.</span><span class="n">base</span> <span class="n">binary</span> <span class="n">package</span> <span class="n">installed</span> <span class="n">from</span> <span class="n">cache</span>
+<span class="mi">2020</span><span class="o">/</span><span class="mi">09</span><span class="o">/</span><span class="mi">14</span><span class="o">:</span><span class="mi">19</span><span class="o">:</span><span class="mi">02</span><span class="o">:</span><span class="mi">03</span><span class="o">:</span> <span class="n">base</span><span class="o">-</span><span class="n">unix</span><span class="o">.</span><span class="n">base</span> <span class="n">binary</span> <span class="n">package</span> <span class="n">installed</span> <span class="n">from</span> <span class="n">cache</span>
+<span class="mi">2020</span><span class="o">/</span><span class="mi">09</span><span class="o">/</span><span class="mi">14</span><span class="o">:</span><span class="mi">19</span><span class="o">:</span><span class="mi">02</span><span class="o">:</span><span class="mi">06</span><span class="o">:</span> <span class="n">ocaml</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="n">compiler</span><span class="o">.</span><span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span> <span class="n">binary</span> <span class="n">package</span> <span class="n">installed</span> <span class="n">from</span> <span class="n">cache</span>
+<span class="mi">2020</span><span class="o">/</span><span class="mi">09</span><span class="o">/</span><span class="mi">14</span><span class="o">:</span><span class="mi">19</span><span class="o">:</span><span class="mi">02</span><span class="o">:</span><span class="mi">06</span><span class="o">:</span> <span class="n">ocaml</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="mi">1</span> <span class="n">binary</span> <span class="n">package</span> <span class="n">installed</span> <span class="n">from</span> <span class="n">cache</span>
+<span class="mi">2020</span><span class="o">/</span><span class="mi">09</span><span class="o">/</span><span class="mi">14</span><span class="o">:</span><span class="mi">19</span><span class="o">:</span><span class="mi">02</span><span class="o">:</span><span class="mi">06</span><span class="o">:</span> <span class="n">ocaml</span><span class="o">.</span><span class="mi">4</span><span class="o">.</span><span class="mi">10</span><span class="o">.</span><span class="mi">0</span> <span class="n">binary</span> <span class="n">package</span> <span class="n">installed</span> <span class="n">from</span> <span class="n">cache</span>
+</pre></div>
+</div>
+<p>The <code class="code docutils literal notranslate"><span class="pre">--tail</span></code> argument can be used to monitor the log during calls
+to <code class="code docutils literal notranslate"><span class="pre">opam</span></code>. The file containing the information is called
+<code class="code docutils literal notranslate"><span class="pre">$OPAMROOT/plugins/opam-bin/opam-bin.info</span></code>.</p>
 </div>
 <div class="section" id="opam-bin-install">
 <h2>opam-bin install<a class="headerlink" href="#opam-bin-install" title="Permalink to this headline">¶</a></h2>
@@ -384,6 +417,20 @@ store, including the archives and all the repositories.</p>
 <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span><span class="o">-</span><span class="n">parsers</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">+</span><span class="n">bin</span><span class="o">+</span><span class="n">e7404faa</span><span class="o">+</span><span class="mi">00</span><span class="n">c3ebc6</span><span class="o">:</span><span class="n">total</span><span class="o">:</span><span class="mi">009382175</span><span class="o">:</span><span class="n">nbytes</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="opam-bin-share">
+<h2>opam-bin share<a class="headerlink" href="#opam-bin-share" title="Permalink to this headline">¶</a></h2>
+<p>Share files passed as arguments. Sharing is performed by replacing
+these files by hard links to identical files in the sharing cache
+located at <code class="code docutils literal notranslate"><span class="pre">$OPAMROOT/plugins/opam-bin/share/</span></code>.</p>
+<p>This command behaves identically to what happens when sharing is
+enabled in the configuration. It can be used to share an <code class="code docutils literal notranslate"><span class="pre">opam</span></code>
+switch that was created before activating the option.</p>
+<p>Sharing is only efficient to save disk space when binary packages are
+used. Otherwise, building from sources often generates different
+binary files, that cannot be shared.</p>
+<p>The <code class="code docutils literal notranslate"><span class="pre">--rec</span></code> option can be used to pass directories to the
+command, that will iterate on their content.</p>
 </div>
 <div class="section" id="opam-bin-uninstall">
 <h2>opam-bin uninstall<a class="headerlink" href="#opam-bin-uninstall" title="Permalink to this headline">¶</a></h2>

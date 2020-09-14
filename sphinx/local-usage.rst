@@ -117,7 +117,7 @@ Let's have a look have the configuration of :code:`opam-bin`::
 
 outputs something like::
 
-  Current options (from /home/lefessan/.opam/plugins/opam-bin/config):
+  Current options (from /home/user/.opam/plugins/opam-bin/config):
     base_url : /change-this-option
     rsync_url : None
     patches_url : git@github.com:OCamlPro/relocation-patches
