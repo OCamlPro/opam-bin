@@ -43,7 +43,8 @@ To display most options::
     patches_url : file:///home/user/GIT/relocation-patches
     title : Repository of Binary Packages
     enabled : true
-    create_enabled : false
+    create_enabled : true
+    share_enabled: false
     all_switches : true
     version : 1
     switches :
@@ -61,6 +62,11 @@ Here are some common arguments:
 * :code:`--enable-create`/:code:`--disable-create`: can be used to
   enable/disable creation of new binary archives. When disabled,
   existing binary archives will still be used when possible
+* :code:`--enable-share`/:code:`--disable-share`: can be used to
+  enable/disable sharing of file between switches using hard links.
+  :code:`opam-bin` uses an heuristic to decide which files should be
+  shared. In particular, it will try not to share files that could be
+  modified, like configuration files.
 * :code:`--base-url URL`: the base url that will be used when creating
   opam files to specify from where the binary archive should be
   downloaded. For example, if you specify :code:`https://x/y`, the
@@ -86,6 +92,31 @@ opam-bin help
 Display help about :code:`opam-bin` and its sub-commands::
 
   $ opam bin --help
+
+opam-bin info
+-------------
+
+Display information on binary packages that have been created by
+last :code:`opam` commands::
+
+  $ ./opam-bin info
+  Info on binary packages:
+  2020/09/14:18:57:25: base-threads.base binary package created
+  2020/09/14:18:57:25: base-bigarray.base binary package created
+  2020/09/14:18:57:25: base-unix.base binary package created
+  2020/09/14:18:58:37: ocaml-base-compiler.4.10.0 binary package created
+  2020/09/14:18:58:37: ocaml-config.1 binary package created
+  2020/09/14:18:58:37: ocaml.4.10.0 binary package created
+  2020/09/14:19:02:03: base-threads.base binary package installed from cache
+  2020/09/14:19:02:03: base-bigarray.base binary package installed from cache
+  2020/09/14:19:02:03: base-unix.base binary package installed from cache
+  2020/09/14:19:02:06: ocaml-base-compiler.4.10.0 binary package installed from cache
+  2020/09/14:19:02:06: ocaml-config.1 binary package installed from cache
+  2020/09/14:19:02:06: ocaml.4.10.0 binary package installed from cache
+
+The :code:`--tail` argument can be used to monitor the log during calls
+to :code:`opam`. The file containing the information is called
+:code:`$OPAMROOT/plugins/opam-bin/opam-bin.info`.
 
 opam-bin install
 ----------------
@@ -213,6 +244,23 @@ To locate the installed size of an archive::
   alt-ergo-parsers.2.3.2+bin+e7404faa+00c3ebc6:total:009382175:nbytes
 
 
+opam-bin share
+--------------
+
+Share files passed as arguments. Sharing is performed by replacing
+these files by hard links to identical files in the sharing cache
+located at :code:`$OPAMROOT/plugins/opam-bin/share/`.
+
+This command behaves identically to what happens when sharing is
+enabled in the configuration. It can be used to share an :code:`opam`
+switch that was created before activating the option.
+
+Sharing is only efficient to save disk space when binary packages are
+used. Otherwise, building from sources often generates different
+binary files, that cannot be shared.
+
+The :code:`--rec` option can be used to pass directories to the
+command, that will iterate on their content.
 
 opam-bin uninstall
 ------------------
