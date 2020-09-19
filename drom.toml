@@ -33,6 +33,7 @@ skip = "sphinx/_static/css/fixes.css sphinx/index.rst sphinx/conf.py docs/.nojek
 
 [dependencies]
 ez_cmdliner = "0.1.0"
+ez_file = "0.2.0"
 ez_config = "0.1.0"
 ezjsonm = "1.0.0"
 ocplib-json-typed = "0.7.0"

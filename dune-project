@@ -17,6 +17,7 @@
    (opam-file-format (and (>= 2.0.0) (< 3.0.0)))
    (ocplib-json-typed (and (>= 0.7.0) (< 1.0.0)))
    (ezjsonm (and (>= 1.0.0) (< 2.0.0)))
+   (ez_file (and (>= 0.2.0) (< 1.0.0)))
    (ez_config (and (>= 0.1.0) (< 1.0.0)))
    (ez_cmdliner (and (>= 0.1.0) (< 1.0.0)))
    ppx_inline_test
@@ -35,6 +36,7 @@
    (opam-file-format (and (>= 2.0.0) (< 3.0.0)))
    (ocplib-json-typed (and (>= 0.7.0) (< 1.0.0)))
    (ezjsonm (and (>= 1.0.0) (< 2.0.0)))
+   (ez_file (and (>= 0.2.0) (< 1.0.0)))
    (ez_config (and (>= 0.1.0) (< 1.0.0)))
    (ez_cmdliner (and (>= 0.1.0) (< 1.0.0)))
    ppx_inline_test

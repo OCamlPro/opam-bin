@@ -35,7 +35,8 @@ let refactor () =
       Section (pos, s)
     | v -> v
   in
-  let f ~basename:_ ~localpath:_ ~file =
+  let f path =
+    let file = Globals.opambin_store_repo_packages_dir // path in
     let opam = OpamParser.file file in
     let opam = { opam with
                  file_contents = List.map refactor opam.file_contents }
@@ -43,7 +44,7 @@ let refactor () =
     EzFile.write_file file (OpamPrinter.opamfile opam)
   in
   let select = EzFile.select ~deep:true ~glob:"opam" () in
-  EzFile.iter_dir ~select f Globals.opambin_store_repo_packages_dir
+  EzFile.iter_dir ~select ~f Globals.opambin_store_repo_packages_dir
 
 let action () =
   Printf.eprintf "%s\n%!" Globals.about ;
