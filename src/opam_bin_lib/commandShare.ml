@@ -8,14 +8,8 @@
 (*                                                                        *)
 (**************************************************************************)
 
-(*
-open EzCompat
-open EzFile.OP
-open EzConfig.OP
-open OpamParserTypes
-*)
-
 open Ezcmd.TYPES
+open EzFile.OP
 
 let cmd_name = "share"
 
@@ -47,8 +41,8 @@ let cmd =
                     | "log"
                     | "var" -> ()
                     | _ ->
-                      EzFile.iter_dir (fun ~basename:_ ~localpath:_ ~file  ->
-                          iter file
+                      EzFile.iter_dir ~f:(fun path ->
+                          iter ( file // path )
                         ) file
                   end
                 | _ -> ()

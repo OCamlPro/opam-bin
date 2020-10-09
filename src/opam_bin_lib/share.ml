@@ -23,49 +23,49 @@ let exit = Exit
 
 let check_sharable file =
   let basename = Filename.basename file in
-  match EzFile.last_extension basename with
-  | None -> begin
+  match EzFile.cut_extension basename with
+  | basename, "" -> begin
       match String.lowercase basename with
       | "license"
       | "changes"
       | "meta"
       | "opam"
       | "dune-package" ->
-        true
+          true
       | _ ->
-        match
-          let ic = open_in file in
-          let bytes = Bytes.create 256 in
-          let len = input ic bytes 0 256 in
-          for i = 0 to len -1 do
-            let c = int_of_char ( Bytes.get bytes i ) in
-            if c >= 128 then begin
-              close_in ic ;
-              raise exit
-            end
-          done;
-          close_in ic
-        with
-        | () ->
-          Printf.eprintf "check_sharable: false (no ext, no byte) for %s\n%!" file ;
-          false
-        | exception Exit -> true
+          match
+            let ic = open_in file in
+            let bytes = Bytes.create 256 in
+            let len = input ic bytes 0 256 in
+            for i = 0 to len -1 do
+              let c = int_of_char ( Bytes.get bytes i ) in
+              if c >= 128 then begin
+                close_in ic ;
+                raise exit
+              end
+            done;
+            close_in ic
+          with
+          | () ->
+              Printf.eprintf "check_sharable: false (no ext, no byte) for %s\n%!" file ;
+              false
+          | exception Exit -> true
     end
-  | Some ext -> match ext with
-    | "exe" | "byte" | "opt" | "native"
-    | "a" | "so" | "o"
-    | "cmi" | "cma" | "cmo" | "cmx" | "cmxs" | "cmxa"
-    | "cmt" | "cmti"
-    | "ml" | "mli"
-    | "html" | "md" | "mld"
-    | "png" | "pdf"
-    | "h"
-    | "js" | "css"
-    | "el" | "vim"
-    | "1" | "3o" | "5"
-    | "cache"
-      -> true
-    | _ ->
+  | _, (
+      "exe" | "byte" | "opt" | "native"
+      | "a" | "so" | "o"
+      | "cmi" | "cma" | "cmo" | "cmx" | "cmxs" | "cmxa"
+      | "cmt" | "cmti"
+      | "ml" | "mli"
+      | "html" | "md" | "mld"
+      | "png" | "pdf"
+      | "h"
+      | "js" | "css"
+      | "el" | "vim"
+      | "1" | "3o" | "5"
+      | "cache" )
+    -> true
+  | _, ext ->
       Printf.eprintf "check_sharable: false (ext %S) for %s\n%!" ext file ;
       false
 

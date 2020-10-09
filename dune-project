@@ -3,7 +3,7 @@
 (name opam-bin)
 (allow_approximate_merlin)
 (generate_opam_files false)
-(version 0.9.5)
+(version 0.9.6)
 (formatting (enabled_for ocaml reason))
 
 (package
@@ -11,12 +11,13 @@
  (synopsis "The opam-bin tool is a simple framework to use `opam` with binary packages")
  (description "opam-binary is a simple framework to use `opam` with binary packages.\n")
  (depends
-   (ocaml (>= 4.06.0))
+   (ocaml (>= 4.07.0))
    (opam_bin_lib (= version))
    (re ( >= 1.0 ))
    (opam-file-format (and (>= 2.0.0) (< 3.0.0)))
    (ocplib-json-typed (and (>= 0.7.0) (< 1.0.0)))
    (ezjsonm (and (>= 1.0.0) (< 2.0.0)))
+   (ez_file (and (>= 0.2.0) (< 1.0.0)))
    (ez_config (and (>= 0.1.0) (< 1.0.0)))
    (ez_cmdliner (and (>= 0.1.0) (< 1.0.0)))
    ppx_inline_test
@@ -30,11 +31,12 @@
  (synopsis "The opam-bin tool is a simple framework to use `opam` with binary packages")
  (description "opam-binary is a simple framework to use `opam` with binary packages.\n")
  (depends
-   (ocaml (>= 4.06.0))
+   (ocaml (>= 4.07.0))
    (re ( >= 1.0 ))
    (opam-file-format (and (>= 2.0.0) (< 3.0.0)))
    (ocplib-json-typed (and (>= 0.7.0) (< 1.0.0)))
    (ezjsonm (and (>= 1.0.0) (< 2.0.0)))
+   (ez_file (and (>= 0.2.0) (< 1.0.0)))
    (ez_config (and (>= 0.1.0) (< 1.0.0)))
    (ez_cmdliner (and (>= 0.1.0) (< 1.0.0)))
    ppx_inline_test

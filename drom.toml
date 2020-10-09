@@ -7,12 +7,12 @@ copyright = "OCamlPro SAS & Origin Labs SAS"
 edition = "4.10.0"
 github-organization = "ocamlpro"
 license = "LGPL2"
-min-edition = "4.06.0"
+min-edition = "4.07.0"
 mode = "binary"
 name = "opam-bin"
 sphinx-target = "docs"
 synopsis = "The opam-bin tool is a simple framework to use `opam` with binary packages"
-version = "0.9.5"
+version = "0.9.6"
 windows-ci = false
 
 # keys that you could also define:
@@ -33,6 +33,7 @@ skip = "sphinx/_static/css/fixes.css sphinx/index.rst sphinx/conf.py docs/.nojek
 
 [dependencies]
 ez_cmdliner = "0.1.0"
+ez_file = "0.2.0"
 ez_config = "0.1.0"
 ezjsonm = "1.0.0"
 ocplib-json-typed = "0.7.0"
