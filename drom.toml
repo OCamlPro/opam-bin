@@ -7,12 +7,12 @@ copyright = "OCamlPro SAS & Origin Labs SAS"
 edition = "4.10.0"
 github-organization = "ocamlpro"
 license = "LGPL2"
-min-edition = "4.06.0"
+min-edition = "4.07.0"
 mode = "binary"
 name = "opam-bin"
 sphinx-target = "docs"
 synopsis = "The opam-bin tool is a simple framework to use `opam` with binary packages"
-version = "0.9.5"
+version = "0.9.6"
 windows-ci = false
 
 # keys that you could also define:
