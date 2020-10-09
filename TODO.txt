@@ -1,0 +1,9 @@
+
+Besoins autour d'opam:
+* affichage par les hooks
+* accès au fichier opam utilisé pour les sources
+* choix des packages dans les repos en fonction d'un poids spécifié par le
+   repo lui-même au lieu d'utiliser l'ordre des repos
+   -> renommage des paquets en NAME.VERSION pointant vers
+        NAME+bin.VERSION+bin+HASH
+

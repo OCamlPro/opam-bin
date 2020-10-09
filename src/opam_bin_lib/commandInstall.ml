@@ -15,14 +15,9 @@ open EzConfig.OP
 let cmd_name = "install"
 
 let add_repo ~repo ~url =
-  if Sys.file_exists (Globals.opam_repo_dir // repo ) then
+  if not ( Sys.file_exists (Globals.opam_repo_dir // repo ) ) then
     Misc.call
-      [| "opam"; "remote" ; "set-url" ; repo;
-         "--all"; "--set-default"; url |]
-  else
-    Misc.call
-      [| "opam"; "remote" ; "add" ; repo ;
-         "--all"; "--set-default"; url |]
+      [| "opam"; "remote" ; "add" ; repo ; "--dont-select"; url |]
 
 let install_exe () =
   let s = FileString.read_file Sys.executable_name in
