@@ -76,34 +76,43 @@ let iter_value_list v f =
 let digest s = Digest.to_hex ( Digest.string s)
 let short s = String.sub s 0 8
 
+let exclude_from_sources =
+  match Sys.getenv "OPAM_BIN_EXCLUDE" with
+  | exception Not_found -> []
+  | s -> EzString.split s ','
+
 let digest_sources () =
   let b = Buffer.create 10_000 in
   let rec iter dir =
     let files = try Sys.readdir dir with exn ->
-      Printf.kprintf failwith "digest_sources: exception %s with Sys.readdir(%S)"
+      Printf.kprintf failwith
+        "digest_sources: exception %s with Sys.readdir(%S)"
         ( Printexc.to_string exn ) dir
     in
     Array.sort compare files ;
     Array.iter (fun file ->
-        let file = dir // file in
-        Buffer.add_string b file; Buffer.add_char b '\n';
-        match Unix.lstat file with
-        | exception exn ->
-          Printf.kprintf
-            failwith "digest_sources: exception %s with Unix.lstat(%S)"
-            ( Printexc.to_string exn ) dir
-        | st ->
-          let s =
-            match st.Unix.st_kind with
-            | S_REG -> "S_REG" ^ Digest.to_hex ( Digest.file file )
-            | S_LNK -> "S_LNK" ^  Unix.readlink file
-            | S_DIR -> iter file ; "S_DIR"
-            | S_CHR -> "S_CHR"
-            | S_BLK -> "S_BLK"
-            | S_FIFO -> "S_FIFO"
-            | S_SOCK -> "S_SOCK"
-          in
-          Buffer.add_string b s; Buffer.add_char b '\n';
+        if not (List.mem
+                  (String.lowercase file)
+                  exclude_from_sources) then
+          let file = dir // file in
+          Buffer.add_string b file; Buffer.add_char b '\n';
+          match Unix.lstat file with
+          | exception exn ->
+              Printf.kprintf
+                failwith "digest_sources: exception %s with Unix.lstat(%S)"
+                ( Printexc.to_string exn ) dir
+          | st ->
+              let s =
+                match st.Unix.st_kind with
+                | S_REG -> "S_REG" ^ Digest.to_hex ( Digest.file file )
+                | S_LNK -> "S_LNK" ^  Unix.readlink file
+                | S_DIR -> iter file ; "S_DIR"
+                | S_CHR -> "S_CHR"
+                | S_BLK -> "S_BLK"
+                | S_FIFO -> "S_FIFO"
+                | S_SOCK -> "S_SOCK"
+              in
+              Buffer.add_string b s; Buffer.add_char b '\n';
       ) files
   in
   iter ".";
