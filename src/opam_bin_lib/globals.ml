@@ -77,6 +77,8 @@ let opambin_switch_temp_dir () =
 let opambin_switch_packages_dir () =
   opam_switch_dir () // "etc" // command // "packages"
 
+let opambin_session_msg_file () =
+  opam_switch_internal_dir () // ( command ^ ".msg" )
 
 (* names of the files created in the package `files` sub-dir *)
 let package_version = "bin-package.version"

@@ -45,7 +45,11 @@ let info ~name ~version fmt =
           s
         in *)
       append_text_file Globals.opambin_info
-        (Printf.sprintf "%s: %s.%s %s\n" (date()) name version s)) fmt
+        (Printf.sprintf "%s: %s.%s %s\n" (date()) name version s);
+      let filename = Globals.opambin_session_msg_file () in
+      append_text_file filename
+        (Printf.sprintf "* %s.%s %s\n" name version s);
+    ) fmt
 
 let global_log fmt =
   log Globals.opambin_log fmt

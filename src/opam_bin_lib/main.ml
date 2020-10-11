@@ -19,11 +19,13 @@ let commands = [
   CommandInfo.cmd ;
   CommandSearch.cmd ;
 
+  CommandPreSession.cmd ;
   CommandPreBuild.cmd ;
   CommandWrapBuild.cmd ;
   CommandPreInstall.cmd ;
   CommandWrapInstall.cmd ;
   CommandPostInstall.cmd ;
+  CommandPostSession.cmd ;
   CommandPreRemove.cmd ;
   CommandShare.cmd ;
 ]
