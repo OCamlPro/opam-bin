@@ -78,7 +78,7 @@ let short s = String.sub s 0 8
 
 let exclude_from_sources =
   match Sys.getenv "OPAM_BIN_EXCLUDE" with
-  | exception Not_found -> []
+  | exception Not_found -> !!Config.exclude_dirs
   | s -> EzString.split s ','
 
 let digest_sources () =
@@ -136,12 +136,12 @@ let compute_hash ?source_md5 ~name ~version ~depends () =
           open_in file_name
         with
         | exception _ ->
-          missing_versions := file_name :: !missing_versions;
-          "UNKNOWN"
+            missing_versions := file_name :: !missing_versions;
+            "UNKNOWN"
         | ic ->
-          let version = input_line ic in
-          close_in ic;
-          version
+            let version = input_line ic in
+            close_in ic;
+            version
       in
       dependset := EzCompat.StringSet.add name !dependset;
       ( name, version )
@@ -154,29 +154,37 @@ let compute_hash ?source_md5 ~name ~version ~depends () =
   EzFile.make_dir ~p:true temp_dir ;
   let ( source_md5, opam_file ) = match source_md5 with
     | Some source_md5 ->
-      source_md5, Globals.backup_opam ~name
+        source_md5, Globals.backup_opam ~name
     | None ->
-      let digest_sources = digest_sources () in
+        let digest_sources = digest_sources () in
 
-      let opam_file = Globals.marker_opam in
-      let oc = Unix.openfile opam_file
-          [ Unix.O_CREAT; Unix.O_WRONLY ; Unix.O_TRUNC ] 0o644 in
-      let nv = Printf.sprintf "%s.%s" name version in
-      Misc.call ~stdout:oc
-        [| "opam" ; "show" ; nv ; "--raw" ; "--safe" ; "--switch" ; switch |];
-      Unix.close oc;
-      let opam_content = EzFile.read_file opam_file in
-      Misc.global_log "File (%s):\n%s" name opam_content;
-      let digest_opam = digest opam_content in
-      Misc.global_log "Opam (%s): %s" name digest_opam;
+        let opam_file = Globals.marker_opam in
+        let nv = Printf.sprintf "%s.%s" name version in
+        let opam_content =
+          let proposed_opam_filename = Sys.getcwd () ^ ".opam" in
+          if Sys.file_exists proposed_opam_filename then
+            let content = EzFile.read_file proposed_opam_filename in
+            EzFile.write_file opam_file content;
+            content
+          else
+            let oc = Unix.openfile opam_file
+                [ Unix.O_CREAT; Unix.O_WRONLY ; Unix.O_TRUNC ] 0o644 in
+            Misc.call ~stdout:oc
+              [| "opam" ; "show" ; nv ; "--raw" ; "--safe" ; "--switch" ; switch |];
+            Unix.close oc;
+            EzFile.read_file opam_file
+        in
+        Misc.global_log "File (%s):\n%s" name opam_content;
+        let digest_opam = digest opam_content in
+        Misc.global_log "Opam (%s): %s" name digest_opam;
 
-      let package_uid = digest ( digest_opam ^ digest_sources ) in
+        let package_uid = digest ( digest_opam ^ digest_sources ) in
 
-      Misc.global_log "package_uid(%s): %s" name package_uid;
-      let s = Printf.sprintf "%s.%s|%s|%s"
-          name version package_uid (String.concat "," depends_nv) in
-      Misc.global_log "source(%s) : %s" name s ;
-      short ( digest s ), opam_file
+        Misc.global_log "package_uid(%s): %s" name package_uid;
+        let s = Printf.sprintf "%s.%s|%s|%s"
+            name version package_uid (String.concat "," depends_nv) in
+        Misc.global_log "source(%s) : %s" name s ;
+        short ( digest s ), opam_file
   in
   Misc.global_log "source_md5 (%s): %s" name source_md5;
   ( source_md5, depends, !dependset, !missing_versions, opam_file )
@@ -260,7 +268,11 @@ let commit ~name ~version ~depends files =
         else
           let binary_archive = temp_dir // name ^ "-bin.tar.gz" in
           Unix.chdir opam_switch_prefix;
-          Misc.tar_zcf ~prefix:"prefix" binary_archive files;
+          let source_files =
+            (* remove directories, otherwise tar will add the content twice *)
+            List.filter (fun name -> not ( Sys.is_directory name) ) files
+          in
+          Misc.tar_zcf ~prefix:"prefix" binary_archive source_files;
           Unix.chdir Globals.curdir;
           Misc.global_log "create binary archive DONE";
 

@@ -17,40 +17,10 @@ wrap-install-commands:
   ["%{hooks}%/sandbox.sh" "install"] {os = "linux" | os = "macos"}
 *)
 
-let remove_opam_hooks file_contents =
-  let rec iter items found rev =
-    match items with
-    | [] ->
-      if found then begin
-        Printf.eprintf "Found hooks to remove\n%!";
-        Some ( List.rev rev )
-      end
-      else begin
-        Printf.eprintf "No hooks to remove\n%!";
-        None
-      end
-    | item :: items ->
-      match item with
-      | OpamParserTypes.Variable (_, name, _) ->
-        begin
-          match name with
-          | "pre-build-commands"
-          | "wrap-build-commands"
-          | "pre-install-commands"
-          | "wrap-install-commands"
-          | "post-install-commands"
-          | "pre-remove-commands"
-            -> iter items true rev
-          | _ -> iter items found ( item :: rev )
-        end
-      | _ ->
-        iter items found ( item :: rev )
-  in
-  iter file_contents false []
-
 let action () =
   Misc.change_opam_config (fun file_contents ->
-      let file_contents = match remove_opam_hooks file_contents with
+      let file_contents =
+        match CommandInstall.remove_opam_hooks file_contents with
           None -> file_contents
         | Some file_contents -> file_contents
       in

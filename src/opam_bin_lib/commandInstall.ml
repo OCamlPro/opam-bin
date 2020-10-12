@@ -33,36 +33,78 @@ let install_exe () =
     Globals.opam_plugins_bin_dir // Globals.command
   |]
 
+let hooks = [
+  "pre-session-commands",
+  Printf.sprintf {| ["%s" "pre-session"] |}
+    Globals.opambin_bin ;
+  "pre-build-commands",
+  Printf.sprintf
+    {| ["%s" "pre-build" name version depends] |}
+    Globals.opambin_bin ;
+  "wrap-build-commands",
+  Printf.sprintf {| ["%s" "wrap-build" name version depends "--"] |}
+    Globals.opambin_bin ;
+  "pre-install-commands",
+  Printf.sprintf {| ["%s" "pre-install" name version depends] |}
+    Globals.opambin_bin ;
+  "wrap-install-commands",
+  Printf.sprintf {| ["%s" "wrap-install" name version depends "--"] |}
+    Globals.opambin_bin ;
+  "post-install-commands",
+  Printf.sprintf
+    {| ["%s" "post-install" name version depends installed-files] { error-code = 0} |}
+    Globals.opambin_bin  ;
+  "post-session-commands",
+  Printf.sprintf {| ["%s" "post-session"] |}
+    Globals.opambin_bin  ;
+  "pre-remove-commands",
+  Printf.sprintf {| ["%s" "pre-remove" name version depends] |}
+    Globals.opambin_bin ;
+]
+
+let remove_opam_hooks file_contents =
+  let rec iter items found rev =
+    match items with
+    | [] ->
+      if found then begin
+        Printf.eprintf "Found hooks to remove\n%!";
+        Some ( List.rev rev )
+      end
+      else begin
+        Printf.eprintf "No hooks to remove\n%!";
+        None
+      end
+    | item :: items ->
+      match item with
+        | OpamParserTypes.Variable (_, name, _) ->
+            if List.mem_assoc name hooks then
+              iter items true rev
+            else
+              iter items found ( item :: rev )
+      | _ ->
+        iter items found ( item :: rev )
+  in
+  iter file_contents false []
+
 let install_hooks () =
 
   Misc.change_opam_config (fun file_contents ->
       let file_contents =
-        match CommandUninstall.remove_opam_hooks file_contents with
+        match remove_opam_hooks file_contents with
         | None -> file_contents
         | Some file_contents -> file_contents
       in
       Printf.eprintf "Adding %s hooks\n%!" Globals.command;
       Some (
         List.rev @@
-        Misc.opam_variable "pre-build-commands"
-          {| ["%s" "pre-build" name version depends] |}
-          Globals.opambin_bin ::
-        Misc.opam_variable "wrap-build-commands"
-          {| ["%s" "wrap-build" name version depends "--"] |}
-          Globals.opambin_bin ::
-        Misc.opam_variable "pre-install-commands"
-          {| ["%s" "pre-install" name version depends] |}
-          Globals.opambin_bin ::
-        Misc.opam_variable "wrap-install-commands"
-          {| ["%s" "wrap-install" name version depends "--"] |}
-          Globals.opambin_bin ::
-        Misc.opam_variable "post-install-commands"
-          {| ["%s" "post-install" name version depends installed-files] { error-code = 0} |}
-          Globals.opambin_bin  ::
-        Misc.opam_variable "pre-remove-commands"
-          {| ["%s" "pre-remove" name version depends] |}
-          Globals.opambin_bin ::
-        List.rev file_contents
+        (
+          (
+            List.map (fun (hook_name, hook) ->
+                Misc.opam_variable hook_name "%s" hook) hooks
+          )
+          @
+          List.rev file_contents
+        )
       )
     )
 

@@ -105,6 +105,14 @@ let protected_switches = EzConfig.create_option config
     ( EzConfig.list_option EzConfig.string_option )
     []
 
+let exclude_dirs = EzConfig.create_option config
+    [ "exclude_dirs" ]
+    [ "The list of directories to exclude while computing the hash of sources.";
+      "Can also be overwritten using OPAM_BIN_EXCLUDE";
+    ]
+    ( EzConfig.list_option EzConfig.string_option )
+    [ ".git" ; ".hg" ; "_darcs" ]
+
 let current_version = 1
 (* This option should be used in the future to automatically upgrade
    configuration *)

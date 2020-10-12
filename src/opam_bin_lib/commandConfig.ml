@@ -194,6 +194,10 @@ let cmd = {
                 from the list. A glob regexp can also be used for \
                 SWITCH.";
 
+    [ "save" ], Arg.Set need_saving,
+    Ezcmd.info
+      "Save new version of config file (~/.opam/plugins/opam-bin/config)";
+
     [ "protected-switches" ], Arg.String (fun s ->
         modify_list_of_switches Config.protected_switches s ;
         need_saving := true;
