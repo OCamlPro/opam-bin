@@ -39,7 +39,7 @@ let hooks = [
     Globals.opambin_bin ;
   "pre-build-commands",
   Printf.sprintf
-    {| ["%s" "pre-build" name version depends] |}
+    {| ["%s" "pre-build" name version "--opamfile=%%{opamfile}%%" {?opamfile} depends] |}
     Globals.opambin_bin ;
   "wrap-build-commands",
   Printf.sprintf {| ["%s" "wrap-build" name version depends "--"] |}
@@ -52,7 +52,7 @@ let hooks = [
     Globals.opambin_bin ;
   "post-install-commands",
   Printf.sprintf
-    {| ["%s" "post-install" name version depends installed-files] { error-code = 0} |}
+    {| ["%s" "post-install" name version "--opamfile=%%{opamfile}%%" {?opamfile} depends installed-files] { error-code = 0} |}
     Globals.opambin_bin  ;
   "post-session-commands",
   Printf.sprintf {| ["%s" "post-session"] |}

@@ -342,6 +342,9 @@ let cmd =
     cmd_name ;
     cmd_action = (fun () -> action !args) ;
     cmd_args = [
+      [ "opamfile" ] , Arg.String (fun s ->
+          CommandPostInstall.opamfile_arg := Some s),
+      Ezcmd.info "filename of the opam package description";
       [], Anons (fun list -> args := list),
       Ezcmd.info "args"
     ];

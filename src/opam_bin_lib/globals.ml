@@ -70,6 +70,9 @@ let opam_switch_internal_dir () =
 let opam_switch_internal_config_dir () =
   opam_switch_internal_dir () // "config"
 
+let opam_switch_internal_build_dir () =
+  opam_switch_internal_dir () // "build"
+
 let opambin_switch_temp_dir () =
   opam_switch_internal_dir () // command
 
