@@ -223,8 +223,9 @@ Error: patches dir '%s' does not exist.\n
           Misc.call [| "cp" ; "-f";
                               patch ; Globals.marker_patch |];
           Misc.call [| "patch" ; "-p1"; "-i"; patch |] ;
-          if Sys.file_exists "reloc-patch.sh" then
-            Misc.call [| "sh"; "./reloc_patch.sh" |];
+          if Sys.file_exists "reloc-patch.sh" then begin
+            Misc.call [| "sh"; "./reloc-patch.sh" |];
+          end;
           true
     else
       true
