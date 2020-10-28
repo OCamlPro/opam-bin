@@ -53,7 +53,7 @@ jobs:
         run: |
           opam exec -- dune build @doc
           mv _build/default/_doc/_html/ docs/doc
-          sphinx-build sphinx docs/sphinx
+          sphinx-build sphinx docs
 
       - name: deploy-doc
         uses: JamesIves/github-pages-deploy-action@3.6.2
