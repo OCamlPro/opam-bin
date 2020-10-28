@@ -30,7 +30,7 @@ opam-binary is a simple framework to use `opam` with binary packages.
 """
 
 [drom]
-skip = "sphinx/_static/css/fixes.css sphinx/index.rst sphinx/conf.py docs/.nojekyll docs/index.html src/opam_bin_lib/main.ml src/opam_bin/main.ml CHANGES.md sphinx/install.rst sphinx/about.rst"
+skip = "sphinx/_static/css/fixes.css sphinx/index.rst sphinx/conf.py docs/.nojekyll docs/index.html src/opam_bin_lib/main.ml src/opam_bin/main.ml CHANGES.md sphinx/install.rst sphinx/about.rst .github/workflows/doc-deploy.yml"
 
 [dependencies]
 ez_cmdliner = "0.1.0"
