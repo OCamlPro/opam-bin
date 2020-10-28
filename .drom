@@ -2,7 +2,7 @@
 
 # hash of toml configuration files
 # used for generation of all files
-753626d479c972d44ec262d714394208:.
+1efdb4e2a07dd4dc86f11c4982d95448:.
 # end context for .
 
 # begin context for .github/workflows/ci.ml
@@ -59,16 +59,6 @@ b3134e9a8372850fa689e4025a389dd7:Makefile
 # file README.md
 3d6e1593ade17af234c4b21902f18526:README.md
 # end context for README.md
-
-# begin context for docs/doc/index.html
-# file docs/doc/index.html
-7284c6887ce603609be020dd4c47789a:docs/doc/index.html
-# end context for docs/doc/index.html
-
-# begin context for docs/sphinx/index.html
-# file docs/sphinx/index.html
-9b0783ebd25de8ebbb99bb7d004c10cf:docs/sphinx/index.html
-# end context for docs/sphinx/index.html
 
 # begin context for docs/style.css
 # file docs/style.css
