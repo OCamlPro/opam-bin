@@ -12,10 +12,11 @@ mode = "binary"
 name = "opam-bin"
 sphinx-target = "docs"
 synopsis = "The opam-bin tool is a simple framework to use `opam` with binary packages"
-version = "0.9.6"
-windows-ci = false
+version = "1.0.0"
+windows-ci = true
 
 # keys that you could also define:
+# build-profile = "...build-profile..."
 # archive = "...archive..."
 # dev-repo = "...dev-repo..."
 # bug-reports = "...bug-reports..."
@@ -33,8 +34,8 @@ skip = "sphinx/_static/css/fixes.css sphinx/index.rst sphinx/conf.py docs/.nojek
 
 [dependencies]
 ez_cmdliner = "0.1.0"
-ez_file = "0.2.0"
 ez_config = "0.1.0"
+ez_file = "0.2.0"
 ezjsonm = "1.0.0"
 ocplib-json-typed = "0.7.0"
 opam-file-format = "2.0.0"
@@ -49,23 +50,15 @@ for-test = true
 [tools.ppx_inline_test]
 for-test = true
 
-[tools]
-
 [project]
+generators = ["ocamllex", "ocamlyacc"]
 pack-modules = true
 skip-dirs = ["test2"]
 
 
 [[package]]
 dir = "src/opam_bin"
-driver-only = "Opam_bin_lib.Main.main"
-kind = "program"
-name = "opam-bin"
-[package.dependencies]
-opam_bin_lib = "version"
 
 [[package]]
 dir = "src/opam_bin_lib"
-gen-version = "version.ml"
-kind = "library"
-name = "opam_bin_lib"
+
