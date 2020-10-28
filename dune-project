@@ -3,7 +3,7 @@
 (name opam-bin)
 (allow_approximate_merlin)
 (generate_opam_files false)
-(version 0.9.6)
+(version 1.0.0)
 (formatting (enabled_for ocaml reason))
 
 (package
