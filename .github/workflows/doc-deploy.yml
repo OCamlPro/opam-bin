@@ -1,6 +1,11 @@
 
 name: doc-deploy
 on:
+#only for testing
+  pull_request:
+    branches:
+      - master
+#only for testing
   push:
     branches:
       - master
