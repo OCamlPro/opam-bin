@@ -8,9 +8,9 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contributed Binary Repositories &mdash; opam-bin master
- (cefc5d8
-) (2020/10/28 14:53) documentation</title>
+  <title>Frequently Asked Questions &mdash; opam-bin HEAD
+ (e4c86f0
+) (2020/10/28 15:05) documentation</title>
   
 
   
@@ -39,11 +39,11 @@
         <link rel="index" title="Index"
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="opam-bin master
- (cefc5d8
-) (2020/10/28 14:53) documentation" href="index.html"/>
-        <link rel="next" title="Frequently Asked Questions" href="f-a-q.html"/>
-        <link rel="prev" title="Commands" href="commands.html"/> 
+    <link rel="top" title="opam-bin HEAD
+ (e4c86f0
+) (2020/10/28 15:05) documentation" href="index.html"/>
+        <link rel="next" title="About, Thanks and Funding" href="about-and-thanks.html"/>
+        <link rel="prev" title="Contributed Binary Repositories" href="repositories.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -72,8 +72,8 @@
             
             
               <div class="version">
-                master
- (cefc5d8
+                HEAD
+ (e4c86f0
 )
               </div>
             
@@ -106,8 +106,12 @@
 <li class="toctree-l1"><a class="reference internal" href="local-usage.html">Local Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sharing-packages.html">Sharing Packages</a></li>
 <li class="toctree-l1"><a class="reference internal" href="commands.html">Commands</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributed Binary Repositories</a></li>
-<li class="toctree-l1"><a class="reference internal" href="f-a-q.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repositories.html">Contributed Binary Repositories</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Frequently Asked Questions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-patch-didn-t-apply-correctly-what-shall-i-do">The patch didn’t apply correctly. What shall I do ?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#why-not-upstream-patches-to-opam-repository">Why not upstream patches to opam-repository ?</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="about-and-thanks.html">About, Thanks and Funding</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">Copyright and License</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/ocamlpro/opam-bin">Devel and Issues on Github</a></li>
@@ -155,13 +159,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Contributed Binary Repositories</li>
+      <li>Frequently Asked Questions</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/repositories.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/f-a-q.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -174,19 +178,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="contributed-binary-repositories">
-<h1>Contributed Binary Repositories<a class="headerlink" href="#contributed-binary-repositories" title="Permalink to this headline">¶</a></h1>
-<p>Here is a list of contributed binary repositories. You should check
-what packages they export and the operating system/architecture for
-which they work before using them:</p>
-<ul class="simple">
-<li><a class="reference external" href="https://www.origin-labs.com/opam-bin/debian10.4-amd64">Origin Labs Repositories for for Debian 10.4 on amd64</a> : this is
-a set of repositories for different versions of OCaml. The set
-contains a repository with binary packages for OCaml 4.10.0, 4.09.1,
-4.08.1 and 4.07.1. It also contains a repository merging all these
-repositories.</li>
-</ul>
-<p>If you want your binary repository to appear in this list, contact us!</p>
+  <div class="section" id="frequently-asked-questions">
+<h1>Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this headline">¶</a></h1>
+<p>This section will grow over time, and should gather replies to
+Frequently Asked Questions.</p>
+<div class="section" id="the-patch-didn-t-apply-correctly-what-shall-i-do">
+<h2>The patch didn’t apply correctly. What shall I do ?<a class="headerlink" href="#the-patch-didn-t-apply-correctly-what-shall-i-do" title="Permalink to this headline">¶</a></h2>
+<p>Most of the time, we didn’t have time to test a patch that we made for
+a version on other versions of the same package. It’s often the case
+that they will work without modification.</p>
+<p>For a given version of a package, <code class="code docutils literal"><span class="pre">opam-bin</span></code> selects the patch
+with the higest version less or equal to the package being installed.
+Sometimes, it would be better to use the patch for the version just
+higher. This is a good way to solve your problem.</p>
+<p>For that, you will have to use a local version of the
+<code class="code docutils literal"><span class="pre">relocation-patches</span></code> directory:</p>
+<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="o">@</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">:</span><span class="nc">OCamlPro</span><span class="o">/</span><span class="n">relocation</span><span class="o">-</span><span class="n">patches</span>
+<span class="n">opam</span> <span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">patches</span><span class="o">-</span><span class="n">url</span> <span class="n">file</span><span class="o">://$(</span><span class="n">pwd</span><span class="o">)/</span><span class="n">relocation</span><span class="o">-</span><span class="n">patches</span>
+<span class="n">cd</span> <span class="n">relocation</span><span class="o">-</span><span class="n">patches</span><span class="o">/</span><span class="n">patches</span><span class="o">/$</span><span class="nc">NAME</span><span class="o">/</span>
+<span class="n">cp</span> <span class="o">$</span><span class="nn">NEXT_VERSION</span><span class="p">.</span><span class="n">patch</span> <span class="o">$</span><span class="nn">VERSION</span><span class="p">.</span><span class="n">patch</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="why-not-upstream-patches-to-opam-repository">
+<h2>Why not upstream patches to opam-repository ?<a class="headerlink" href="#why-not-upstream-patches-to-opam-repository" title="Permalink to this headline">¶</a></h2>
+<p>Patches in the <code class="code docutils literal"><span class="pre">relocation-patches</span></code> repository should be
+upstreamed to <code class="code docutils literal"><span class="pre">opam-repository</span></code> over time, but the problem is
+that they should be applied to many versions of the same packages. For
+example, the <code class="code docutils literal"><span class="pre">ocaml-variants</span></code> package contains tens of packages
+for every version of OCaml. So, it would take a lot of work. Instead,
+<code class="code docutils literal"><span class="pre">opam-bin</span></code> is able to automatically patch a range of versions
+using a single patch.</p>
+</div>
 </div>
 
 
@@ -199,10 +222,10 @@ repositories.</li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="f-a-q.html" class="btn btn-neutral float-right" title="Frequently Asked Questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="about-and-thanks.html" class="btn btn-neutral float-right" title="About, Thanks and Funding" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="commands.html" class="btn btn-neutral" title="Commands" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="repositories.html" class="btn btn-neutral" title="Contributed Binary Repositories" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -233,7 +256,7 @@ repositories.</li>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'./',
-            VERSION:'master (cefc5d8) (2020/10/28 14:53)',
+            VERSION:'HEAD (e4c86f0) (2020/10/28 15:05)',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
