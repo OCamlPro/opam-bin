@@ -10,6 +10,11 @@
 ac2aab1d8f78befbbfca730668f71e8d:.github/workflows/ci.ml
 # end context for .github/workflows/ci.ml
 
+# begin context for .github/workflows/doc-deploy.yml
+# file .github/workflows/doc-deploy.yml
+b6f9b2d10964e8e60eb6513c2aa8459b:.github/workflows/doc-deploy.yml
+# end context for .github/workflows/doc-deploy.yml
+
 # begin context for .github/workflows/workflow.yml
 # file .github/workflows/workflow.yml
 967061010e6a4961397baf3a7de3748f:.github/workflows/workflow.yml
@@ -17,7 +22,7 @@ ac2aab1d8f78befbbfca730668f71e8d:.github/workflows/ci.ml
 
 # begin context for .gitignore
 # file .gitignore
-0fa419e4bda8a15e9a078c879a6ad74d:.gitignore
+3168dbdfc0988a7af1cdd2bdf64c2a79:.gitignore
 # end context for .gitignore
 
 # begin context for .ocamlformat
@@ -67,7 +72,7 @@ b3134e9a8372850fa689e4025a389dd7:Makefile
 
 # begin context for docs/style.css
 # file docs/style.css
-a95f1ab7d178b468eff6188a527535d9:docs/style.css
+42e9a35df53b46338c20e484a27eab26:docs/style.css
 # end context for docs/style.css
 
 # begin context for drom.toml
