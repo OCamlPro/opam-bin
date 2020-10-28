@@ -55,7 +55,6 @@ generators = ["ocamllex", "ocamlyacc"]
 pack-modules = true
 skip-dirs = ["test2"]
 
-
 [[package]]
 dir = "src/opam_bin"
 
