@@ -41,5 +41,5 @@ let cmd =
     cmd_action = (fun () -> action () ) ;
     cmd_args = [] ;
     cmd_man = [];
-    cmd_doc = "push binary packages to the remote server";
+    cmd_doc = "pull binary packages from the remote server";
   }
