@@ -12,7 +12,7 @@ opam-binary is a simple framework to use `opam` with binary packages.
 authors: ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"]
 maintainer: ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"]
 homepage: "https://ocamlpro.github.io/opam-bin"
-doc: "https://ocamlpro.github.io/opam-bin"
+doc: "https://ocamlpro.github.io/opam-bin/."
 bug-reports: "https://github.com/ocamlpro/opam-bin/issues"
 dev-repo: "git+https://github.com/ocamlpro/opam-bin.git"
 tags: "org:ocamlpro"
