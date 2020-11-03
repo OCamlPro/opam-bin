@@ -2,7 +2,7 @@
 
 # hash of toml configuration files
 # used for generation of all files
-1efdb4e2a07dd4dc86f11c4982d95448:.
+82a72b7167716dca45dccc802dc81cf3:.
 # end context for .
 
 # begin context for .github/workflows/ci.ml
@@ -12,7 +12,7 @@ ac2aab1d8f78befbbfca730668f71e8d:.github/workflows/ci.ml
 
 # begin context for .github/workflows/doc-deploy.yml
 # file .github/workflows/doc-deploy.yml
-b6f9b2d10964e8e60eb6513c2aa8459b:.github/workflows/doc-deploy.yml
+a47c7e59f8c913e9034bffef07d69b81:.github/workflows/doc-deploy.yml
 # end context for .github/workflows/doc-deploy.yml
 
 # begin context for .github/workflows/workflow.yml
@@ -22,7 +22,7 @@ b6f9b2d10964e8e60eb6513c2aa8459b:.github/workflows/doc-deploy.yml
 
 # begin context for .gitignore
 # file .gitignore
-921cf6794c5c8eb0b84c9c7c822d6e39:.gitignore
+f9b6574311e6dccc0c0abf80e371dab1:.gitignore
 # end context for .gitignore
 
 # begin context for .ocamlformat
@@ -52,17 +52,22 @@ c4217a22064a4a18f9587b930b250fbe:LICENSE.md
 
 # begin context for Makefile
 # file Makefile
-5e6a1ca0dd8c5ed563203dfa1f9a6ab0:Makefile
+f3f880430d691833a06a3d252ebdb0f5:Makefile
 # end context for Makefile
 
 # begin context for README.md
 # file README.md
-3d6e1593ade17af234c4b21902f18526:README.md
+47e3b841df569eea17c4d7d4773bb0a1:README.md
 # end context for README.md
+
+# begin context for docs/favicon.png
+# file docs/favicon.png
+7ea9be52d489cbe8c03b43ecf6b2650f:docs/favicon.png
+# end context for docs/favicon.png
 
 # begin context for docs/style.css
 # file docs/style.css
-42e9a35df53b46338c20e484a27eab26:docs/style.css
+0085152add896d7bab7b1a744d2a9af7:docs/style.css
 # end context for docs/style.css
 
 # begin context for drom.toml
@@ -72,7 +77,7 @@ c4c4fb8f9f2e4f95e65528daf6410907:drom.toml
 
 # begin context for dune
 # file dune
-f7100ac43894bdb66dd659aac005a39b:dune
+02ae2bb9a93e7611894f35f89f15ab0e:dune
 # end context for dune
 
 # begin context for dune-project
@@ -82,12 +87,12 @@ f7100ac43894bdb66dd659aac005a39b:dune
 
 # begin context for opam-bin.opam
 # file opam-bin.opam
-c4cf9b2801694816325108547f1168f6:opam-bin.opam
+c60ab30f278171b758f2f5c61bd50e36:opam-bin.opam
 # end context for opam-bin.opam
 
 # begin context for opam_bin_lib.opam
 # file opam_bin_lib.opam
-a44f7aeef625ead99cd321830f70b1cc:opam_bin_lib.opam
+0dd6898a362877955f199465e623e844:opam_bin_lib.opam
 # end context for opam_bin_lib.opam
 
 # begin context for sphinx/_static/css/fixes.css
