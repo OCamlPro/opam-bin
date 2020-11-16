@@ -12,6 +12,8 @@ open Ezcmd.TYPES
 open EzFile.OP
 open EzConfig.OP
 
+module OpamParserTypes = OpamParserTypes.FullPos
+
 let cmd_name = "install"
 
 let add_repo ~repo ~url =
@@ -75,14 +77,15 @@ let remove_opam_hooks file_contents =
         None
       end
     | item :: items ->
-      match item with
-        | OpamParserTypes.Variable (_, name, _) ->
-            if List.mem_assoc name hooks then
+        let open OpamParserTypes in
+        match item.pelem with
+        | Variable (name, _) ->
+            if List.mem_assoc name.pelem hooks then
               iter items true rev
             else
               iter items found ( item :: rev )
-      | _ ->
-        iter items found ( item :: rev )
+        | _ ->
+            iter items found ( item :: rev )
   in
   iter file_contents false []
 

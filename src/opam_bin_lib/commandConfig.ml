@@ -12,6 +12,10 @@ open Ezcmd.TYPES
 open EzConfig.OP
 open EzFile.OP
 
+module OpamParserTypes = OpamParserTypes.FullPos
+module OpamParser = OpamParser.FullPos
+module OpamPrinter = OpamPrinter.FullPos
+
 let need_saving = ref false
 let need_refactoring = ref false
 let need_install_patches = ref false
@@ -20,19 +24,25 @@ let refactor () =
   Printf.eprintf "Refactoring...\n%!";
   let open OpamParserTypes in
   let refactor = function
-    | Section (pos, s) ->
-      let s =
-        if s.section_kind = "url" then
-          { s with section_items = List.map (function
-                  Variable (_, "src", String (_, url)) ->
-                  let archive = Filename.basename url in
-                  let url = !!Config.base_url //
-                            "archives" // archive in
-                  Variable (pos, "src", String (pos, url))
-                | v -> v) s.section_items }
-        else s
-      in
-      Section (pos, s)
+    | { pelem = Section s; pos} ->
+        let s =
+          if s.section_kind.pelem = "url" then
+            let pelem =
+              List.map (fun v ->
+                  match v.pelem with
+                  | Variable ( ({ pelem = "src"; _ } as src),
+                               { pelem = String url; pos = url_pos }) ->
+                      let archive = Filename.basename url in
+                      let url = !!Config.base_url //
+                                "archives" // archive in
+                      { pos = v.pos ;
+                        pelem = Variable (src, { pelem = String url; pos = url_pos })}
+                  | _ -> v) s.section_items.pelem
+            in
+            { s with section_items = { pos = s.section_items.pos; pelem }}
+          else s
+        in
+        { pos; pelem = Section s }
     | v -> v
   in
   let f path =

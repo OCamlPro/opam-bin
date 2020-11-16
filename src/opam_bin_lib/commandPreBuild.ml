@@ -11,7 +11,9 @@
 open Ezcmd.TYPES
 open EzFile.OP
 open EzConfig.OP
-open OpamParserTypes
+open OpamParserTypes.FullPos
+
+module OpamParser = OpamParser.FullPos
 
 let cmd_name = "pre-build"
 
@@ -68,16 +70,17 @@ let check_cached_binary_archive ~version ~repo ~package =
   let md5 = ref None in
   let opam = OpamParser.file ( package_dir // "opam" ) in
   List.iter (function
-      | Section ( _ , { section_kind = "url" ; section_items ; _ } ) ->
-        List.iter (function
-              Variable ( _, "src", String ( _ , v )) -> src := Some v
-            | Variable ( _, "checksum",
-                         List ( _, [ String ( _, v ) ] )) ->
-              assert ( EzString.starts_with v ~prefix:"md5=" );
-              let len = String.length v in
-              md5 := Some ( String.sub v 4 (len-4) )
-            | _ -> ()
-          ) section_items
+      | { pelem = Section { section_kind = { pelem = "url"; _} ; section_items ; _ }; _} ->
+          List.iter (function
+                { pelem = Variable ({ pelem = "src"; _},
+                                    { pelem = String v; _}); _} -> src := Some v
+              | { pelem = Variable ({ pelem = "checksum"; _},
+                                    { pelem = List { pelem = [{ pelem = String v; _} ]; _}; _}); _} ->
+                  assert ( EzString.starts_with v ~prefix:"md5=" );
+                  let len = String.length v in
+                  md5 := Some ( String.sub v 4 (len-4) )
+              | _ -> ()
+            ) section_items.pelem
       | _ -> ()
     ) opam.file_contents ;
   let binary_archive =
