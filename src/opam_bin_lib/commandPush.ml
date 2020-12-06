@@ -13,6 +13,9 @@ open EzConfig.OP
 open EzFile.OP
 module StringMap = EzCompat.StringMap
 
+module OpamParserTypes = OpamParserTypes.FullPos
+module OpamParser = OpamParser.FullPos
+
 type info = {
   depends : string list ;
   nbytes : int ;
@@ -38,10 +41,10 @@ let map_of_packages repo_dir =
        let has_install = ref false in
        let source = ref None in
        List.iter OpamParserTypes.(function
-           | Variable ( _, "install", _ ) -> has_install := true
-           | Section (_,  { section_kind = "url" ; section_items ; _ }) ->
+           | { pelem = Variable ({pelem = "install"; _}, _ ); _} -> has_install := true
+           | { pelem = Section { section_kind = { pelem = "url"; _} ; section_items ; _ }; _} ->
              List.iter (function
-                 | Variable ( _, "src", String (_, src) ) ->
+                 | { pelem = Variable ({ pelem = "src"; _}, { pelem = String src; _}); _}  ->
                    let archive_size =
                      let st = Unix.lstat ( repo_dir //
                                            "../archives" //
@@ -51,7 +54,7 @@ let map_of_packages repo_dir =
                    in
                    source := Some ( src, archive_size )
                  | _ -> ()
-               ) section_items
+               ) section_items.pelem
            | _ -> ()
          ) opam.file_contents ;
 
@@ -172,13 +175,13 @@ opam switch create alt-ergo 4.07.1 --packages alt-ergo
        let install = ref false in
        let src = ref None in
        List.iter OpamParserTypes.(function
-           | Variable ( _, "install", _ ) -> install := true
-           | Section (_,  { section_kind = "url" ; section_items ; _ }) ->
-             List.iter (function
-                 | Variable ( _, "src", String (_, s) ) ->
-                   src := Some s
-                 | _ -> ()
-               ) section_items
+           | { pelem = Variable ({ pelem = "install"; _}, _ ); _} -> install := true
+           | { pelem = Section ({ section_kind = { pelem = "url"; _}; section_items ; _ }); _} ->
+               List.iter (function
+                   | { pelem = Variable ({ pelem = "src"; _}, { pelem = String s; _}); _} ->
+                       src := Some s
+                   | _ -> ()
+                 ) section_items.pelem
            | _ -> ()
          ) opam.file_contents ;
        let src =

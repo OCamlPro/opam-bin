@@ -12,6 +12,10 @@ open EzCompat
 open EzConfig.OP
 open EzFile.OP
 
+module OpamParserTypes = OpamParserTypes.FullPos
+module OpamParser = OpamParser.FullPos
+module OpamPrinter = OpamPrinter.FullPos
+
 let append_text_file file s =
   let oc = open_out_gen [
       Open_creat;
@@ -177,18 +181,25 @@ let change_opam_config f =
     Printf.eprintf "%s backuped and modified\n%!"
       Globals.opam_config_file
 
+let nullpos_value pelem =
+  OpamParserTypes.({
+      pos = { filename = ""; start = 0,0; stop = 0,0 };
+      pelem
+    })
+
 let opam_variable name fmt =
   Printf.kprintf (fun s ->
-      OpamParserTypes.Variable ( ("",0,0), name,
-                                 OpamParser.value_from_string s ""))
+      nullpos_value @@
+      OpamParserTypes.Variable (nullpos_value name,
+                                OpamParser.value_from_string s ""))
     fmt
 
 let opam_section ?name kind list =
-  OpamParserTypes.Section ( ("",0,0),
-                            {
-                              section_kind = kind ;
-                              section_name = name ;
-                              section_items = list })
+  nullpos_value @@
+  OpamParserTypes.(Section {
+      section_kind = nullpos_value kind ;
+      section_name = (match name with Some n -> Some (nullpos_value n) | None -> None) ;
+      section_items = nullpos_value list })
 
 let current_switch () =
   let opam_switch_prefix = Globals.opam_switch_prefix () in

@@ -12,7 +12,10 @@ open EzCompat
 open Ezcmd.TYPES
 open EzFile.OP
 open EzConfig.OP
-open OpamParserTypes
+open OpamParserTypes.FullPos
+
+module OpamParser = OpamParser.FullPos
+module OpamPrinter = OpamPrinter.FullPos
 
 let opamfile_arg = ref None
 
@@ -42,14 +45,18 @@ let add_conflict depends conflicts_ref name _option =
   else
     conflicts_ref := name :: !conflicts_ref
 
-let rec is_post_option = function
-  | Ident (_, "post" ) -> true
-  | Logop  (_, `And, v1, v2 ) -> is_post_option v1 || is_post_option v2
+let rec is_post_option v =
+  match v.pelem with
+  | Ident "post" -> true
+  | Logop ({ pelem = `And; _}, v1, v2 ) ->
+      is_post_option v1 || is_post_option v2
   | _ -> false
 
-let rec is_build_option = function
-  | Ident (_, "build" ) -> true
-  | Logop  (_, `And, v1, v2 ) -> is_build_option v1 || is_build_option v2
+let rec is_build_option v =
+  match v.pelem with
+  | Ident "build" -> true
+  | Logop  ({ pelem = `And; _}, v1, v2 ) ->
+      is_build_option v1 || is_build_option v2
   | _ -> false
 
 let add_post_depend ~dependset ~buildset post_depends name option =
@@ -62,18 +69,17 @@ let add_post_depend ~dependset ~buildset post_depends name option =
 
 let iter_value_list v f =
   let iter_value v =
-    match v with
-    | String (_, name) -> f name [ String ( ("",0,0), "") ]
-    | Option (_, String (_, name), option) -> f name option
-    | _
-      ->
-      Misc.global_log "warning: unexpected depend value %s"
-        ( OpamPrinter.value v)
+    match v.pelem with
+    | String name -> f name [ Misc.nullpos_value (String "") ]
+    | Option ({ pelem = String name; _}, option) -> f name option.pelem
+    | _ ->
+        Misc.global_log "warning: unexpected depend value %s"
+          ( OpamPrinter.value v)
   in
-  match v with
-  | List (_, values) ->
-    List.iter iter_value values
-  | v -> iter_value v
+  match v.pelem with
+  | List values ->
+      List.iter iter_value values.pelem
+  | _ -> iter_value v
 
 let digest s = Digest.to_hex ( Digest.string s)
 let short s = String.sub s 0 8
@@ -350,9 +356,9 @@ let commit ~name ~version ~depends files =
               let opam_depopts = ref None in
               let file_contents =
                 List.fold_left (fun acc v ->
-                    match v with
-                    | Variable (_, name, value) -> begin
-                        match name with
+                    match v.pelem with
+                    | Variable (name, value) -> begin
+                        match name.pelem with
 
                         (* keep *)
                         | "name"
@@ -390,7 +396,7 @@ let commit ~name ~version ~depends files =
                             acc
                         | _ ->
                             Misc.global_log
-                              "discarding unknown field %S" name;
+                              "discarding unknown field %S" name.pelem;
                             acc
                       end
                     | _ -> acc
