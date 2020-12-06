@@ -4,11 +4,16 @@
   (name opam_bin_lib)
   (public_name opam_bin_lib)
   (wrapped true)
-  (libraries re opam-file-format ocplib-json-typed ezjsonm ez_file ez_config ez_cmdliner )
+  (libraries re ocplib-json-typed ezjsonm ez_opam_file ez_file ez_config ez_cmdliner )
   
   
   )
 
+
+(rule
+    (targets version.ml)
+    (deps (:script version.mlt) package.toml)
+    (action (with-stdout-to %{targets} (run %{ocaml} unix.cma %{script}))))
 
 (documentation
   (package opam_bin_lib))

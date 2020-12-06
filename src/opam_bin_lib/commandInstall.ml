@@ -11,6 +11,7 @@
 open Ezcmd.TYPES
 open EzFile.OP
 open EzConfig.OP
+open Ez_opam_file.V1
 
 module OpamParserTypes = OpamParserTypes.FullPos
 

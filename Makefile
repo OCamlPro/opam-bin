@@ -13,20 +13,24 @@ build:
 
 build-deps:
 	if ! [ -e _opam ]; then \
-	   opam switch create . --empty && \
-	   opam install ocaml.4.10.0 ; \
+	   opam switch create . 4.10.0 ; \
 	fi
 	opam install ./*.opam --deps-only
 
 doc-common:
+	opam exec -- dune build @doc
 	mkdir -p _drom/docs
 	rsync -auv docs/. _drom/docs/.
 
-sphinx: doc-common
+sphinx: doc-common 
+	if [ -e ./scripts/before-sphinx.sh ]; then \
+		./scripts/before-sphinx.sh _drom/docs/.; \
+	else \
+		echo No file ./scripts/before-sphinx.sh; \
+	fi
 	sphinx-build sphinx _drom/docs/.
 
-odoc: doc-common
-	opam exec -- dune build @doc
+odoc: doc-common 
 	mkdir -p _drom/docs/doc/.
 	rsync -auv --delete _build/default/_doc/_html/. _drom/docs/doc
 
