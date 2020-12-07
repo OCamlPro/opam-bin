@@ -2,7 +2,7 @@
 
 # hash of toml configuration files
 # used for generation of all files
-82a72b7167716dca45dccc802dc81cf3:.
+7cbe69e3e902fdf5f61189d59f38d859:.
 # end context for .
 
 # begin context for .github/workflows/ci.ml
@@ -52,7 +52,7 @@ c4217a22064a4a18f9587b930b250fbe:LICENSE.md
 
 # begin context for Makefile
 # file Makefile
-f3f880430d691833a06a3d252ebdb0f5:Makefile
+342d4d486cd369e6bd68df8d95984a29:Makefile
 # end context for Makefile
 
 # begin context for README.md
@@ -60,10 +60,20 @@ f3f880430d691833a06a3d252ebdb0f5:Makefile
 47e3b841df569eea17c4d7d4773bb0a1:README.md
 # end context for README.md
 
+# begin context for docs/doc/index.html
+# file docs/doc/index.html
+7284c6887ce603609be020dd4c47789a:docs/doc/index.html
+# end context for docs/doc/index.html
+
 # begin context for docs/favicon.png
 # file docs/favicon.png
 7ea9be52d489cbe8c03b43ecf6b2650f:docs/favicon.png
 # end context for docs/favicon.png
+
+# begin context for docs/sphinx/index.html
+# file docs/sphinx/index.html
+9b0783ebd25de8ebbb99bb7d004c10cf:docs/sphinx/index.html
+# end context for docs/sphinx/index.html
 
 # begin context for docs/style.css
 # file docs/style.css
@@ -72,27 +82,27 @@ f3f880430d691833a06a3d252ebdb0f5:Makefile
 
 # begin context for drom.toml
 # file drom.toml
-c4c4fb8f9f2e4f95e65528daf6410907:drom.toml
+bb9dbdbd7b44e6f916e84a73c71c0f5f:drom.toml
 # end context for drom.toml
 
 # begin context for dune
 # file dune
-02ae2bb9a93e7611894f35f89f15ab0e:dune
+df544cfaf9078d1bba2f90ed1b5adf5f:dune
 # end context for dune
 
 # begin context for dune-project
 # file dune-project
-90ce4fae291eeda6e238d37b35732090:dune-project
+f64198c8b3d061f3e847635f16d0905f:dune-project
 # end context for dune-project
 
 # begin context for opam-bin.opam
 # file opam-bin.opam
-c60ab30f278171b758f2f5c61bd50e36:opam-bin.opam
+e450480d038abdca68b537918efccd2b:opam-bin.opam
 # end context for opam-bin.opam
 
 # begin context for opam_bin_lib.opam
 # file opam_bin_lib.opam
-0dd6898a362877955f199465e623e844:opam_bin_lib.opam
+911ecdc9ed263928ac1593626805af78:opam_bin_lib.opam
 # end context for opam_bin_lib.opam
 
 # begin context for sphinx/_static/css/fixes.css
@@ -117,7 +127,7 @@ cf3f86e8f7d8e90e663c3cb7e438057d:sphinx/license.rst
 
 # begin context for src/opam_bin/dune
 # file src/opam_bin/dune
-ce8a9c5c63d3010f75bde286c1c09b8b:src/opam_bin/dune
+163806d1b478606d1ca0a8a79cbf4902:src/opam_bin/dune
 # end context for src/opam_bin/dune
 
 # begin context for src/opam_bin/index.mld
@@ -132,12 +142,12 @@ ce8a9c5c63d3010f75bde286c1c09b8b:src/opam_bin/dune
 
 # begin context for src/opam_bin/package.toml
 # file src/opam_bin/package.toml
-afc9f006c5ef93b31f3f6bd76d668a39:src/opam_bin/package.toml
+f0db4b50e83c8ae42de249ce17b22c42:src/opam_bin/package.toml
 # end context for src/opam_bin/package.toml
 
 # begin context for src/opam_bin_lib/dune
 # file src/opam_bin_lib/dune
-a95ef3f1521695ae1f8e8a82e35de657:src/opam_bin_lib/dune
+d73e7e186b019c8949169bb133bcce56:src/opam_bin_lib/dune
 # end context for src/opam_bin_lib/dune
 
 # begin context for src/opam_bin_lib/index.mld
@@ -152,13 +162,13 @@ eaf012027c27291033137371807a20d7:src/opam_bin_lib/main.ml
 
 # begin context for src/opam_bin_lib/package.toml
 # file src/opam_bin_lib/package.toml
-1672e93a202f652d83560d91f364e212:src/opam_bin_lib/package.toml
+f39e74d2171cc1d492e2eb6352afc765:src/opam_bin_lib/package.toml
 # end context for src/opam_bin_lib/package.toml
 
-# begin context for src/opam_bin_lib/version.ml
-# file src/opam_bin_lib/version.ml
-a54fef73e317da3c4a862d138d7a7399:src/opam_bin_lib/version.ml
-# end context for src/opam_bin_lib/version.ml
+# begin context for src/opam_bin_lib/version.mlt
+# file src/opam_bin_lib/version.mlt
+2798b344c6caf4c6b42bb19ecf075eb9:src/opam_bin_lib/version.mlt
+# end context for src/opam_bin_lib/version.mlt
 
 # begin context for test/expect-tests/dune
 # file test/expect-tests/dune

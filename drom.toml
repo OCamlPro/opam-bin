@@ -1,5 +1,5 @@
 [project]
-drom-version = "0.1.0"
+drom-version = "0.1"
 
 [project]
 authors = ["Fabrice Le Fessant <fabrice.le_fessant@origin-labs.com>"]
@@ -8,7 +8,6 @@ edition = "4.10.0"
 github-organization = "ocamlpro"
 license = "LGPL2"
 min-edition = "4.07.0"
-mode = "binary"
 name = "opam-bin"
 sphinx-target = "."
 synopsis = "The opam-bin tool is a simple framework to use `opam` with binary packages"
@@ -16,7 +15,7 @@ version = "1.0.0"
 windows-ci = true
 
 # keys that you could also define:
-# build-profile = "...build-profile..."
+# odoc-target = "...odoc-target..."
 # archive = "...archive..."
 # dev-repo = "...dev-repo..."
 # bug-reports = "...bug-reports..."
@@ -29,18 +28,13 @@ description = """
 opam-binary is a simple framework to use `opam` with binary packages.
 """
 
-[drom]
+[project]
 skip = "sphinx/_static/css/fixes.css sphinx/index.rst sphinx/conf.py docs/.nojekyll docs/index.html src/opam_bin_lib/main.ml src/opam_bin/main.ml CHANGES.md sphinx/install.rst sphinx/about.rst docs/README.txt"
 
+# project-wide library dependencies (not for package-specific deps)
 [dependencies]
-ez_cmdliner = "0.1.0"
-ez_config = "0.1.0"
-ez_file = "0.2.0"
-ezjsonm = "1.0.0"
-ocplib-json-typed = "0.7.0"
-opam-file-format = "2.1.1"
-re = ">1.0"
 
+# project-wide tools dependencies (not for package-specific deps)
 [tools.ocamlformat]
 for-test = true
 [tools.odoc]
@@ -51,13 +45,34 @@ for-test = true
 for-test = true
 
 [project]
-generators = ["ocamllex", "ocamlyacc"]
-pack-modules = true
+
+# dirs to skip while scanning for dune files
 skip-dirs = ["test2"]
+
+# dirs to scan for share/ folders (with package names)
+share-dirs = ["share"]
+
+# build profile to use by default
+# build-profile = ...
+
+# Profile options for this project
+#    [profile]
+#    dev = { ocaml-flags = "-w +a-4-40-41-42-44" }
+#    release = { ocaml-flags = "-w -a" }
+[profile]
+# ...
+
+# project-wide fields (depends on project skeleton)
+[fields]
+# ...
+
 
 [[package]]
 dir = "src/opam_bin"
+# edit 'src/opam_bin/package.toml' for package-specific options
+
 
 [[package]]
 dir = "src/opam_bin_lib"
+# edit 'src/opam_bin_lib/package.toml' for package-specific options
 

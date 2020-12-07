@@ -12,8 +12,9 @@ open EzCompat
 open Ezcmd.TYPES
 open EzFile.OP
 open EzConfig.OP
-open OpamParserTypes.FullPos
+open Ez_opam_file.V1
 
+open OpamParserTypes.FullPos
 module OpamParser = OpamParser.FullPos
 module OpamPrinter = OpamPrinter.FullPos
 
