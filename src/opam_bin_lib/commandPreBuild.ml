@@ -8,6 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open Ez_opam_file.V1
 open Ezcmd.TYPES
 open EzFile.OP
 open EzConfig.OP
