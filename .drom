@@ -2,7 +2,7 @@
 
 # hash of toml configuration files
 # used for generation of all files
-7cbe69e3e902fdf5f61189d59f38d859:.
+0247c34b51b17c57ff1eb5377e8e10e5:.
 # end context for .
 
 # begin context for .github/workflows/ci.ml
@@ -12,12 +12,12 @@ ac2aab1d8f78befbbfca730668f71e8d:.github/workflows/ci.ml
 
 # begin context for .github/workflows/doc-deploy.yml
 # file .github/workflows/doc-deploy.yml
-a47c7e59f8c913e9034bffef07d69b81:.github/workflows/doc-deploy.yml
+39d8b5bf5ac8414404f017cbd8747fd6:.github/workflows/doc-deploy.yml
 # end context for .github/workflows/doc-deploy.yml
 
 # begin context for .github/workflows/workflow.yml
 # file .github/workflows/workflow.yml
-967061010e6a4961397baf3a7de3748f:.github/workflows/workflow.yml
+f9a4f3c2903e7a055f763061537c739c:.github/workflows/workflow.yml
 # end context for .github/workflows/workflow.yml
 
 # begin context for .gitignore
@@ -32,7 +32,7 @@ f9b6574311e6dccc0c0abf80e371dab1:.gitignore
 
 # begin context for .ocamlformat-ignore
 # file .ocamlformat-ignore
-5574462426a3706b11f5cbdbb0d4ad91:.ocamlformat-ignore
+a8d1bcd6f62c6b813b77d3ff8959d8d2:.ocamlformat-ignore
 # end context for .ocamlformat-ignore
 
 # begin context for .ocp-indent
@@ -47,12 +47,12 @@ f9b6574311e6dccc0c0abf80e371dab1:.gitignore
 
 # begin context for LICENSE.md
 # file LICENSE.md
-c4217a22064a4a18f9587b930b250fbe:LICENSE.md
+c4286e88f0dca20a879274e23cf2cb8e:LICENSE.md
 # end context for LICENSE.md
 
 # begin context for Makefile
 # file Makefile
-342d4d486cd369e6bd68df8d95984a29:Makefile
+c6724dd15851b4871bf369c1872adcb3:Makefile
 # end context for Makefile
 
 # begin context for README.md
@@ -77,7 +77,7 @@ c4217a22064a4a18f9587b930b250fbe:LICENSE.md
 
 # begin context for docs/style.css
 # file docs/style.css
-0085152add896d7bab7b1a744d2a9af7:docs/style.css
+c8281f46ba9a11d0b61bc8ef67eaa357:docs/style.css
 # end context for docs/style.css
 
 # begin context for drom.toml
@@ -92,18 +92,33 @@ df544cfaf9078d1bba2f90ed1b5adf5f:dune
 
 # begin context for dune-project
 # file dune-project
-f64198c8b3d061f3e847635f16d0905f:dune-project
+8ae15590a8a4dab75a2910fd7d8d02c1:dune-project
 # end context for dune-project
 
 # begin context for opam-bin.opam
 # file opam-bin.opam
-e450480d038abdca68b537918efccd2b:opam-bin.opam
+80e39595939244b93b03ad9126b0a658:opam-bin.opam
 # end context for opam-bin.opam
 
 # begin context for opam_bin_lib.opam
 # file opam_bin_lib.opam
-911ecdc9ed263928ac1593626805af78:opam_bin_lib.opam
+ce142468a7bb14b49f717dd694ea93ef:opam_bin_lib.opam
 # end context for opam_bin_lib.opam
+
+# begin context for scripts/after.sh
+# file scripts/after.sh
+1112fbe7067fce342365a25613b5659d:scripts/after.sh
+# end context for scripts/after.sh
+
+# begin context for scripts/before.sh
+# file scripts/before.sh
+ae050b3099ac0b43d7c7f4295f6b2319:scripts/before.sh
+# end context for scripts/before.sh
+
+# begin context for scripts/copy-bin.sh
+# file scripts/copy-bin.sh
+bb3a9d286f0dc64021db4194427263ee:scripts/copy-bin.sh
+# end context for scripts/copy-bin.sh
 
 # begin context for sphinx/_static/css/fixes.css
 # file sphinx/_static/css/fixes.css
@@ -122,7 +137,7 @@ eb522bc1bb6523b514040c8801bf5f79:sphinx/index.rst
 
 # begin context for sphinx/license.rst
 # file sphinx/license.rst
-cf3f86e8f7d8e90e663c3cb7e438057d:sphinx/license.rst
+bba8067487813e5ef74a6ecfecfc7ac9:sphinx/license.rst
 # end context for sphinx/license.rst
 
 # begin context for src/opam_bin/dune
@@ -147,12 +162,12 @@ f0db4b50e83c8ae42de249ce17b22c42:src/opam_bin/package.toml
 
 # begin context for src/opam_bin_lib/dune
 # file src/opam_bin_lib/dune
-d73e7e186b019c8949169bb133bcce56:src/opam_bin_lib/dune
+9c4b1437084a63665d6cab800f31f102:src/opam_bin_lib/dune
 # end context for src/opam_bin_lib/dune
 
 # begin context for src/opam_bin_lib/index.mld
 # file src/opam_bin_lib/index.mld
-a2b01fb1d6a38919e903da1727db041e:src/opam_bin_lib/index.mld
+b0f7f46dc42e4cb5d16a37784a3ff192:src/opam_bin_lib/index.mld
 # end context for src/opam_bin_lib/index.mld
 
 # begin context for src/opam_bin_lib/main.ml
