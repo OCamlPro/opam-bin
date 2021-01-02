@@ -48,6 +48,25 @@ let clean_all () =
   (* flush the copy of the repo that opam keeps *)
   ()
 
+let clean_unused ~cache ~archive () =
+  if cache then begin
+    (* cache: whether we should remove all files from
+       $OPAMROOT/plugins/opam-bin/share that are not used anywhere in the
+       switches. *)
+  end;
+
+  if archive then begin
+    (* archive: whether we should remove all binary archives that are not used
+       anywhere in any of the switches.
+       HINT: iterate on $OPAMROOT/$SWITCH/etc/opam-bin/packages/$PACKAGE to get
+       all the versions that are currently being used. Then, remove all the
+       other ones from $OPAMROOT/opam-bin/store/repo/packages/,
+       $OPAMROOT/opam-bin/store/archives/ and
+       $OPAMROOT/opam-bin/cache/
+    *)
+  end;
+  ()
+
 let action args =
   match args with
   | [] -> clean_all ()
@@ -56,6 +75,9 @@ let action args =
         | "all" -> clean_all ()
         | "log" -> clean_log ()
         | "store" -> clean_store ()
+        | "unused" -> clean_unused ~cache:true ~archive:true ()
+        | "unused-cache" -> clean_unused ~cache:true ~archive:false ()
+        | "unused-archive" -> clean_unused ~cache:false ~archive:true ()
         | s ->
           Printf.eprintf "Unexpected argument %S.\n%!" s;
           exit 2) args
@@ -69,6 +91,11 @@ let cmd =
     [], Arg.Anons (fun list -> anon_args := list),
     Ezcmd.info "What to clean (`all`, `log` or `store`)";
   ];
-  cmd_man = [];
+  cmd_man = [
+    `S "DESCRIPTION" ;
+    `Blocks [
+      `P "Use 'all', 'log', 'store', 'unused', 'unused-cached' or 'unused-archive' as arguments.";
+    ]
+  ];
   cmd_doc = "clear all packages and archives from the cache and store";
 }

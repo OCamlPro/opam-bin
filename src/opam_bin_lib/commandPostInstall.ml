@@ -321,7 +321,10 @@ let commit ~name ~version ~depends files =
             let cached_archive = cache_dir // bin_md5 in
             if not ( Sys.file_exists cached_archive ) then begin
               EzFile.make_dir ~p:true cache_dir;
-              Misc.call [| "cp";  final_binary_archive ; cached_archive |];
+              if !!Config.share_enabled then
+                Unix.link final_binary_archive cached_archive
+              else
+                Misc.call [| "cp";  final_binary_archive ; cached_archive |];
             end;
 
             let nv = Printf.sprintf "%s.%s" name new_version in
