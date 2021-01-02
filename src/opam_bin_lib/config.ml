@@ -19,6 +19,12 @@ let save () =
   Printf.eprintf "%s config saved in %s .\n%!"
     Globals.command Globals.config_file
 
+
+let old_patches_url =
+  "https://www.typerex.org/opam-bin/relocation-patches.tar.gz"
+let new_patches_url =
+  "https://github.com/OCamlPro/relocation-patches/tarball/master"
+
 let base_url = EzConfig.create_option config
     [ "base_url" ]
     [
@@ -50,8 +56,7 @@ let patches_url = EzConfig.create_option config
       "(https://.../x.tar.gz).";
       "Example: git@github.com:OCamlPro/relocation-patches";
     ]
-    EzConfig.string_option
-    "https://www.typerex.org/opam-bin/relocation-patches.tar.gz"
+    EzConfig.string_option new_patches_url
 
 let title = EzConfig.create_option config
     [ "title" ]
@@ -113,7 +118,7 @@ let exclude_dirs = EzConfig.create_option config
     ( EzConfig.list_option EzConfig.string_option )
     [ ".git" ; ".hg" ; "_darcs" ]
 
-let current_version = 1
+let current_version = 2
 (* This option should be used in the future to automatically upgrade
    configuration *)
 let version = EzConfig.create_option config
@@ -129,7 +134,16 @@ let () =
     Printf.eprintf "No configuration file.\n%!"
 
 let () =
-  if !!version < current_version then begin
+  let must_update = ref false in
+  if !!version < 2 then begin
+    must_update := true;
+    version =:= 2;
+    if !!patches_url = old_patches_url then
+      patches_url =:= new_patches_url
+  end;
+
+
+  if !must_update then begin
     version =:= current_version ;
     save ()
   end

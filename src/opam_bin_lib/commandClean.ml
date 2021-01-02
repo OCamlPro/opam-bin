@@ -64,6 +64,13 @@ let clean_unused ~cache ~archive () =
        $OPAMROOT/opam-bin/store/archives/ and
        $OPAMROOT/opam-bin/cache/
     *)
+    let root = Globals.opam_dir in
+    EzFile.iter_dir ~f:(fun switch ->
+        let packages = EzFile.readdir
+            ( root // switch // "etc" // "opam-bin" // "packages" ) in
+        ignore packages
+      ) root
+
   end;
   ()
 

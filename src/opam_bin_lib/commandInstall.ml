@@ -149,26 +149,42 @@ let install_patches () =
       Printf.eprintf "Downloading patches...\n%!";
       match Misc.wget ~url:patches_url ~output with
       | None ->
-        Printf.kprintf failwith "Could not retrieve archive at %s" patches_url
+          Printf.kprintf failwith "Could not retrieve archive at %s" patches_url
       | Some output ->
 
-        Misc.call [| "rm"; "-rf"; tmp_dir |];
-        EzFile.make_dir ~p:true tmp_dir ;
+          Misc.call [| "rm"; "-rf"; tmp_dir |];
+          EzFile.make_dir ~p:true tmp_dir ;
 
-        Unix.chdir tmp_dir ;
-        Misc.call [| "tar" ; "zxf" ; output |] ;
-        Unix.chdir Globals.curdir;
+          Unix.chdir tmp_dir ;
+          Misc.call [| "tar" ; "zxf" ; output |] ;
+          Unix.chdir Globals.curdir;
 
-        let patches_subdir = tmp_dir // "patches" in
-        if not ( Sys.file_exists patches_subdir ) then
-          Printf.kprintf failwith
-            "archive %s does not contain 'patches/' subdir" patches_url;
+          let patches_subdir =
+          let patches_subdir = tmp_dir // "patches" in
+            match
+              if Sys.file_exists patches_subdir then
+                Some patches_subdir
+              else
+                match EzFile.readdir tmp_dir with
+                | [| dir |] ->
+                    let patches_subdir = tmp_dir // dir // "patches" in
+                    if Sys.file_exists patches_subdir then
+                      Some patches_subdir
+                    else
+                      None
+                | _ -> None
+            with
+            | Some patches_subdir -> patches_subdir
+            | None ->
+                Printf.kprintf failwith
+                  "archive %s does not contain 'patches/' subdir" patches_url
+          in
 
-        Misc.call [| "rm"; "-rf"; opambin_patches_dir |];
-        EzFile.make_dir ~p:true opambin_patches_dir;
-        Sys.rename patches_subdir (opambin_patches_dir // "patches");
-        Misc.call [| "rm"; "-rf"; tmp_dir |];
-        Sys.remove output
+          Misc.call [| "rm"; "-rf"; opambin_patches_dir |];
+          EzFile.make_dir ~p:true opambin_patches_dir;
+          Sys.rename patches_subdir (opambin_patches_dir // "patches");
+          Misc.call [| "rm"; "-rf"; tmp_dir |];
+          Sys.remove output
 
     end
     else
