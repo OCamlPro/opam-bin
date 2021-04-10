@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Frequently Asked Questions &mdash; opam-bin master
- (6c1e3b4
-) (2021/01/02 20:18) documentation</title>
+ (04867ad
+) (2021/04/10 11:11) documentation</title>
   
 
   
@@ -19,46 +19,37 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="opam-bin master
- (6c1e3b4
-) (2021/01/02 20:18) documentation" href="index.html"/>
-        <link rel="next" title="About, Thanks and Funding" href="about-and-thanks.html"/>
-        <link rel="prev" title="Contributed Binary Repositories" href="repositories.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="About, Thanks and Funding" href="about-and-thanks.html" />
+    <link rel="prev" title="Contributed Binary Repositories" href="repositories.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -73,7 +64,7 @@
             
               <div class="version">
                 master
- (6c1e3b4
+ (04867ad
 )
               </div>
             
@@ -126,7 +117,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">opam-bin</a>
@@ -134,9 +125,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -187,13 +179,13 @@ Frequently Asked Questions.</p>
 <p>Most of the time, we didn’t have time to test a patch that we made for
 a version on other versions of the same package. It’s often the case
 that they will work without modification.</p>
-<p>For a given version of a package, <code class="code docutils literal"><span class="pre">opam-bin</span></code> selects the patch
+<p>For a given version of a package, <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> selects the patch
 with the higest version less or equal to the package being installed.
 Sometimes, it would be better to use the patch for the version just
 higher. This is a good way to solve your problem.</p>
 <p>For that, you will have to use a local version of the
-<code class="code docutils literal"><span class="pre">relocation-patches</span></code> directory:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="o">@</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">:</span><span class="nc">OCamlPro</span><span class="o">/</span><span class="n">relocation</span><span class="o">-</span><span class="n">patches</span>
+<code class="code docutils literal notranslate"><span class="pre">relocation-patches</span></code> directory:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="o">@</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">:</span><span class="nc">OCamlPro</span><span class="o">/</span><span class="n">relocation</span><span class="o">-</span><span class="n">patches</span>
 <span class="n">opam</span> <span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">patches</span><span class="o">-</span><span class="n">url</span> <span class="n">file</span><span class="o">://$(</span><span class="n">pwd</span><span class="o">)/</span><span class="n">relocation</span><span class="o">-</span><span class="n">patches</span>
 <span class="n">cd</span> <span class="n">relocation</span><span class="o">-</span><span class="n">patches</span><span class="o">/</span><span class="n">patches</span><span class="o">/$</span><span class="nc">NAME</span><span class="o">/</span>
 <span class="n">cp</span> <span class="o">$</span><span class="nn">NEXT_VERSION</span><span class="p">.</span><span class="n">patch</span> <span class="o">$</span><span class="nn">VERSION</span><span class="p">.</span><span class="n">patch</span>
@@ -202,21 +194,19 @@ higher. This is a good way to solve your problem.</p>
 </div>
 <div class="section" id="why-not-upstream-patches-to-opam-repository">
 <h2>Why not upstream patches to opam-repository ?<a class="headerlink" href="#why-not-upstream-patches-to-opam-repository" title="Permalink to this headline">¶</a></h2>
-<p>Patches in the <code class="code docutils literal"><span class="pre">relocation-patches</span></code> repository should be
-upstreamed to <code class="code docutils literal"><span class="pre">opam-repository</span></code> over time, but the problem is
+<p>Patches in the <code class="code docutils literal notranslate"><span class="pre">relocation-patches</span></code> repository should be
+upstreamed to <code class="code docutils literal notranslate"><span class="pre">opam-repository</span></code> over time, but the problem is
 that they should be applied to many versions of the same packages. For
-example, the <code class="code docutils literal"><span class="pre">ocaml-variants</span></code> package contains tens of packages
+example, the <code class="code docutils literal notranslate"><span class="pre">ocaml-variants</span></code> package contains tens of packages
 for every version of OCaml. So, it would take a lot of work. Instead,
-<code class="code docutils literal"><span class="pre">opam-bin</span></code> is able to automatically patch a range of versions
+<code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> is able to automatically patch a range of versions
 using a single patch.</p>
 </div>
 </div>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -225,7 +215,7 @@ using a single patch.</p>
         <a href="about-and-thanks.html" class="btn btn-neutral float-right" title="About, Thanks and Funding" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="repositories.html" class="btn btn-neutral" title="Contributed Binary Repositories" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="repositories.html" class="btn btn-neutral float-left" title="Contributed Binary Repositories" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -234,11 +224,11 @@ using a single patch.</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, OCamlPro &amp; Origin Labs SAS. &lt;contact@ocamlpro.com&gt;.
+        &copy; Copyright 2020, OCamlPro &amp; Origin Labs SAS. &lt;contact@ocamlpro.com&gt;
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -251,36 +241,15 @@ using a single patch.</p>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'master (6c1e3b4) (2021/01/02 20:18)',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

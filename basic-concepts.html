@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Basic Concepts &mdash; opam-bin master
- (6c1e3b4
-) (2021/01/02 20:18) documentation</title>
+ (04867ad
+) (2021/04/10 11:11) documentation</title>
   
 
   
@@ -19,46 +19,37 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="opam-bin master
- (6c1e3b4
-) (2021/01/02 20:18) documentation" href="index.html"/>
-        <link rel="next" title="Installation" href="installation.html"/>
-        <link rel="prev" title="Introduction" href="introduction.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="Introduction" href="introduction.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -73,7 +64,7 @@
             
               <div class="version">
                 master
- (6c1e3b4
+ (04867ad
 )
               </div>
             
@@ -128,7 +119,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">opam-bin</a>
@@ -136,9 +127,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -182,7 +174,7 @@
             
   <div class="section" id="basic-concepts">
 <h1>Basic Concepts<a class="headerlink" href="#basic-concepts" title="Permalink to this headline">¶</a></h1>
-<p><code class="code docutils literal"><span class="pre">opam-bin</span></code> is a simple framework to use <code class="code docutils literal"><span class="pre">opam</span></code> with binary packages.
+<p><code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> is a simple framework to use <code class="code docutils literal notranslate"><span class="pre">opam</span></code> with binary packages.
 The framework is composed of:</p>
 <ul class="simple">
 <li>A set of repositories containing binary packages. These repositories
@@ -190,63 +182,63 @@ will only work for people using the same distribution on the same
 architecture. You will need to select carefully the right one if
 you want to use them. These repositories are provided by external
 contributors. <a class="reference external" href="repositories.html">Check this list</a></li>
-<li>A <code class="code docutils literal"><span class="pre">git</span></code> repository containing patches to make <code class="code docutils literal"><span class="pre">opam</span></code>
+<li>A <code class="code docutils literal notranslate"><span class="pre">git</span></code> repository containing patches to make <code class="code docutils literal notranslate"><span class="pre">opam</span></code>
 packages relocatable. Relocatable packages are needed because binary
 packages will be installed in different directories by different
 users. The repository is available here:
 <a class="reference external" href="https://github.com/ocamlpro/relocation-patches">https://github.com/ocamlpro/relocation-patches</a></li>
-<li>A tool called <code class="code docutils literal"><span class="pre">opam-bin</span></code> to create and use binary packages,
+<li>A tool called <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> to create and use binary packages,
 available here: <a class="reference external" href="https://github.com/ocamlpro/opam-bin">https://github.com/ocamlpro/opam-bin</a></li>
 </ul>
 <p>If you only want to use a repository of binary packages and not create
 them, you will only need to access one of the binary repositories in
-the first item, without the need for <code class="code docutils literal"><span class="pre">opam-bin</span></code>.
+the first item, without the need for <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code>.
 If you want to develop with a cache of binary packages, or to create
-repositories of binary packages, then you need to install <code class="code docutils literal"><span class="pre">opam-bin</span></code>.</p>
+repositories of binary packages, then you need to install <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code>.</p>
 <div class="section" id="binary-packages">
 <h2>Binary packages<a class="headerlink" href="#binary-packages" title="Permalink to this headline">¶</a></h2>
-<p>Binary packages created by <code class="code docutils literal"><span class="pre">opam-bin</span></code> follow the following convention:</p>
+<p>Binary packages created by <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> follow the following convention:</p>
 <ul>
-<li><p class="first">The binary package created from package <code class="code docutils literal"><span class="pre">$NAME.$VERSION</span></code> is called
-<code class="code docutils literal"><span class="pre">$NAME.$VERSION+bin+$HASH</span></code>, where $HASH is a unique hash. This hash
+<li><p class="first">The binary package created from package <code class="code docutils literal notranslate"><span class="pre">$NAME.$VERSION</span></code> is called
+<code class="code docutils literal notranslate"><span class="pre">$NAME.$VERSION+bin+$HASH</span></code>, where $HASH is a unique hash. This hash
 is used because dependencies between binary packages are strict and
 cannot be changed.</p>
 </li>
-<li><p class="first">An alias package called <code class="code docutils literal"><span class="pre">$NAME+bin.$VERSION</span></code> is also generated, pointing
-to <code class="code docutils literal"><span class="pre">$NAME.$VERSION+bin+$HASH</span></code>. You can use it to install
+<li><p class="first">An alias package called <code class="code docutils literal notranslate"><span class="pre">$NAME+bin.$VERSION</span></code> is also generated, pointing
+to <code class="code docutils literal notranslate"><span class="pre">$NAME.$VERSION+bin+$HASH</span></code>. You can use it to install
 the corresponding binary package. For example:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">opam</span> <span class="n">install</span> <span class="n">ocamlfind</span><span class="o">+</span><span class="n">bin</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">opam</span> <span class="n">install</span> <span class="n">ocamlfind</span><span class="o">+</span><span class="n">bin</span>
 </pre></div>
 </div>
 </li>
 </ul>
-<p>When <code class="code docutils literal"><span class="pre">opam-bin</span></code> is installed and you ask to install a package
-<code class="code docutils literal"><span class="pre">NAME.VERSION</span></code>, OPAM may decide to install the source package instead
+<p>When <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> is installed and you ask to install a package
+<code class="code docutils literal notranslate"><span class="pre">NAME.VERSION</span></code>, OPAM may decide to install the source package instead
 of the binary package. OPAM will always select the source package if
-you have a <code class="code docutils literal"><span class="pre">&quot;NAME&quot;</span> <span class="pre">{</span> <span class="pre">=</span> <span class="pre">VERSION</span> <span class="pre">}</span></code> dependencies asking for the package.</p>
-<p>HOWEVER, <code class="code docutils literal"><span class="pre">opam-bin</span></code> will detect if there is a corresponding binary
+you have a <code class="code docutils literal notranslate"><span class="pre">&quot;NAME&quot;</span> <span class="pre">{</span> <span class="pre">=</span> <span class="pre">VERSION</span> <span class="pre">}</span></code> dependencies asking for the package.</p>
+<p>HOWEVER, <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> will detect if there is a corresponding binary
 package, and if it is the case, it will install the binary package
-instead of compiling the package (<code class="code docutils literal"><span class="pre">opam</span></code> will still show you the build
+instead of compiling the package (<code class="code docutils literal notranslate"><span class="pre">opam</span></code> will still show you the build
 steps, but these build steps will actually not be executed).</p>
 </div>
 <div class="section" id="relocatable-packages">
 <h2>Relocatable packages<a class="headerlink" href="#relocatable-packages" title="Permalink to this headline">¶</a></h2>
 <p>Binary packages have to be relocatable to be installed in many
 different locations. Most OCaml packages are relocatable, but some of
-them are not. For example, <code class="code docutils literal"><span class="pre">ocaml-base-compiler</span></code>,
-<code class="code docutils literal"><span class="pre">ocaml-variants</span></code>, <code class="code docutils literal"><span class="pre">ocamlfind</span></code>, <code class="code docutils literal"><span class="pre">ocamlbuild</span></code>, etc.
+them are not. For example, <code class="code docutils literal notranslate"><span class="pre">ocaml-base-compiler</span></code>,
+<code class="code docutils literal notranslate"><span class="pre">ocaml-variants</span></code>, <code class="code docutils literal notranslate"><span class="pre">ocamlfind</span></code>, <code class="code docutils literal notranslate"><span class="pre">ocamlbuild</span></code>, etc.
 If you want to create binary packages, you should only use relocatable
 packages.</p>
-<p>We provide a specific <code class="code docutils literal"><span class="pre">git</span></code> repository containing patches to
+<p>We provide a specific <code class="code docutils literal notranslate"><span class="pre">git</span></code> repository containing patches to
 make packages relocatable. This repository is available in the
 project:</p>
 <p><a class="reference external" href="https://github.com/OCamlPro/relocation-patches/">https://github.com/OCamlPro/relocation-patches</a></p>
-<p>It can be used automatically by <code class="code docutils literal"><span class="pre">opam-bin</span></code> with any <code class="code docutils literal"><span class="pre">opam</span></code>
+<p>It can be used automatically by <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> with any <code class="code docutils literal notranslate"><span class="pre">opam</span></code>
 repository.</p>
 <p>If you want to use or contribute to this repository, you may want to
-use a local version. You will then have to set the <code class="code docutils literal"><span class="pre">patches_url</span></code>
-option, for example using the <code class="code docutils literal"><span class="pre">opam-bin</span> <span class="pre">config</span></code> command:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">opam</span> <span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">patches</span><span class="o">-</span><span class="n">url</span> <span class="n">file</span><span class="o">:///</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="nc">GIT</span><span class="o">/</span><span class="n">relocation</span><span class="o">-</span><span class="n">patches</span>
+use a local version. You will then have to set the <code class="code docutils literal notranslate"><span class="pre">patches_url</span></code>
+option, for example using the <code class="code docutils literal notranslate"><span class="pre">opam-bin</span> <span class="pre">config</span></code> command:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span> <span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">patches</span><span class="o">-</span><span class="n">url</span> <span class="n">file</span><span class="o">:///</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="nc">GIT</span><span class="o">/</span><span class="n">relocation</span><span class="o">-</span><span class="n">patches</span>
 </pre></div>
 </div>
 <p>Currently, it contains patches for the following packages:</p>
@@ -262,46 +254,46 @@ option, for example using the <code class="code docutils literal"><span class="p
 <li>ocamlfind</li>
 <li>ocaml-variants</li>
 </ul>
-<p><code class="code docutils literal"><span class="pre">opam-bin</span></code> will try to find the best patch for a given source
+<p><code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> will try to find the best patch for a given source
 package. For that, it will use the patch with the highest version less
-or equal to the current package version. If <code class="code docutils literal"><span class="pre">opam-bin</span></code> cannot
+or equal to the current package version. If <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> cannot
 find such a patch, it will disable itself automatically and let
-<code class="code docutils literal"><span class="pre">opam</span></code> build the package without using/creating binary packages.</p>
+<code class="code docutils literal notranslate"><span class="pre">opam</span></code> build the package without using/creating binary packages.</p>
 </div>
 <div class="section" id="file-structure">
 <h2>File Structure<a class="headerlink" href="#file-structure" title="Permalink to this headline">¶</a></h2>
-<p><code class="code docutils literal"><span class="pre">opam-bin</span></code> creates the following file structure in the
-<code class="code docutils literal"><span class="pre">$HOME/.opam/</span></code> directory (or <code class="code docutils literal"><span class="pre">OPAMROOT</span></code>):</p>
+<p><code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> creates the following file structure in the
+<code class="code docutils literal notranslate"><span class="pre">$HOME/.opam/</span></code> directory (or <code class="code docutils literal notranslate"><span class="pre">OPAMROOT</span></code>):</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">~/.opam/</span></code><ul>
-<li><code class="code docutils literal"><span class="pre">plugins/opam-bin/</span></code><ul>
-<li><code class="code docutils literal"><span class="pre">opam-bin.exe</span></code> This file is the executable of
-<code class="code docutils literal"><span class="pre">opam-bin</span></code> used in <code class="code docutils literal"><span class="pre">opam</span></code> wrappers.</li>
-<li><code class="code docutils literal"><span class="pre">opam-bin.log</span></code> This file is an internal log of
-<code class="code docutils literal"><span class="pre">opam-bin</span></code> used for debugging its behavior.</li>
-<li><code class="code docutils literal"><span class="pre">cache/</span></code> This directory contains a cache of the archives
+<li><code class="code docutils literal notranslate"><span class="pre">~/.opam/</span></code><ul>
+<li><code class="code docutils literal notranslate"><span class="pre">plugins/opam-bin/</span></code><ul>
+<li><code class="code docutils literal notranslate"><span class="pre">opam-bin.exe</span></code> This file is the executable of
+<code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> used in <code class="code docutils literal notranslate"><span class="pre">opam</span></code> wrappers.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">opam-bin.log</span></code> This file is an internal log of
+<code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> used for debugging its behavior.</li>
+<li><code class="code docutils literal notranslate"><span class="pre">cache/</span></code> This directory contains a cache of the archives
 of the binary packages created locally. It is necessary as the
-URLs in the <code class="code docutils literal"><span class="pre">opam</span></code> files are not correct before the
+URLs in the <code class="code docutils literal notranslate"><span class="pre">opam</span></code> files are not correct before the
 archives have been uploaded to their final location.</li>
-<li><code class="code docutils literal"><span class="pre">store/</span></code> This directory contains the files that have to be
+<li><code class="code docutils literal notranslate"><span class="pre">store/</span></code> This directory contains the files that have to be
 published to share binary packages between users/computers.<ul>
-<li><code class="code docutils literal"><span class="pre">archives/</span></code> This directory contains all the archives of
+<li><code class="code docutils literal notranslate"><span class="pre">archives/</span></code> This directory contains all the archives of
 the binary packages that have been created locally.</li>
-<li><code class="code docutils literal"><span class="pre">repo/</span></code> This directory contains an <code class="code docutils literal"><span class="pre">opam</span></code>
+<li><code class="code docutils literal notranslate"><span class="pre">repo/</span></code> This directory contains an <code class="code docutils literal notranslate"><span class="pre">opam</span></code>
 repository that exposes the binary packages locally
-created. It is used locally by <code class="code docutils literal"><span class="pre">opam</span></code>, and can be shared
+created. It is used locally by <code class="code docutils literal notranslate"><span class="pre">opam</span></code>, and can be shared
 with other users/computers.</li>
 </ul>
 </li>
 </ul>
 </li>
-<li><code class="code docutils literal"><span class="pre">SWITCH/</span></code><ul>
-<li><code class="code docutils literal"><span class="pre">etc/opam-bin/packages/</span></code> This directory contains, for every
+<li><code class="code docutils literal notranslate"><span class="pre">SWITCH/</span></code><ul>
+<li><code class="code docutils literal notranslate"><span class="pre">etc/opam-bin/packages/</span></code> This directory contains, for every
 binary package that has been installed or built in the switch, its
 binary version.</li>
-<li><code class="code docutils literal"><span class="pre">.opam-switch/opam-bin</span></code> This directory contains information
-on the packages viewed by <code class="code docutils literal"><span class="pre">opam-bin</span></code>. In particular, it contains
-the <code class="code docutils literal"><span class="pre">opam</span></code> file used to generate the binary package, the
+<li><code class="code docutils literal notranslate"><span class="pre">.opam-switch/opam-bin</span></code> This directory contains information
+on the packages viewed by <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code>. In particular, it contains
+the <code class="code docutils literal notranslate"><span class="pre">opam</span></code> file used to generate the binary package, the
 package patch if one was applied.</li>
 </ul>
 </li>
@@ -311,15 +303,15 @@ package patch if one was applied.</li>
 </div>
 <div class="section" id="patches-repository-structure">
 <h2>Patches Repository Structure<a class="headerlink" href="#patches-repository-structure" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="code docutils literal"><span class="pre">git</span></code> repository of patches follows the following structure:</p>
+<p>The <code class="code docutils literal notranslate"><span class="pre">git</span></code> repository of patches follows the following structure:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">patches/</span></code> directory:<ul>
-<li><code class="code docutils literal"><span class="pre">NAME/</span></code> where <code class="code docutils literal"><span class="pre">NAME</span></code> is the name of a package<ul>
-<li><code class="code docutils literal"><span class="pre">VERSION.patch</span></code> where <code class="code docutils literal"><span class="pre">VERSION</span></code> is the minimal version
+<li><code class="code docutils literal notranslate"><span class="pre">patches/</span></code> directory:<ul>
+<li><code class="code docutils literal notranslate"><span class="pre">NAME/</span></code> where <code class="code docutils literal notranslate"><span class="pre">NAME</span></code> is the name of a package<ul>
+<li><code class="code docutils literal notranslate"><span class="pre">VERSION.patch</span></code> where <code class="code docutils literal notranslate"><span class="pre">VERSION</span></code> is the minimal version
 to which this patch can be applied.</li>
-<li><code class="code docutils literal"><span class="pre">NAME.alias</span></code> where <code class="code docutils literal"><span class="pre">NAME</span></code> is another package name,
+<li><code class="code docutils literal notranslate"><span class="pre">NAME.alias</span></code> where <code class="code docutils literal notranslate"><span class="pre">NAME</span></code> is another package name,
 whose patches should be used for this package.</li>
-<li><code class="code docutils literal"><span class="pre">VERSION=.patch</span></code> where <code class="code docutils literal"><span class="pre">VERSION</span></code> is a version that should
+<li><code class="code docutils literal notranslate"><span class="pre">VERSION=.patch</span></code> where <code class="code docutils literal notranslate"><span class="pre">VERSION</span></code> is a version that should
 exactly match the version of the package on which it should be applied</li>
 </ul>
 </li>
@@ -331,9 +323,7 @@ exactly match the version of the package on which it should be applied</li>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -342,7 +332,7 @@ exactly match the version of the package on which it should be applied</li>
         <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="introduction.html" class="btn btn-neutral" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="introduction.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -351,11 +341,11 @@ exactly match the version of the package on which it should be applied</li>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, OCamlPro &amp; Origin Labs SAS. &lt;contact@ocamlpro.com&gt;.
+        &copy; Copyright 2020, OCamlPro &amp; Origin Labs SAS. &lt;contact@ocamlpro.com&gt;
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -368,36 +358,15 @@ exactly match the version of the package on which it should be applied</li>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'master (6c1e3b4) (2021/01/02 20:18)',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>

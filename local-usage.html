@@ -9,8 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Local Usage &mdash; opam-bin master
- (6c1e3b4
-) (2021/01/02 20:18) documentation</title>
+ (04867ad
+) (2021/04/10 11:11) documentation</title>
   
 
   
@@ -19,46 +19,37 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
-  
-  
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  
-
-  
-    <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
-  
-
-  
-        <link rel="index" title="Index"
-              href="genindex.html"/>
-        <link rel="search" title="Search" href="search.html"/>
-    <link rel="top" title="opam-bin master
- (6c1e3b4
-) (2021/01/02 20:18) documentation" href="index.html"/>
-        <link rel="next" title="Sharing Packages" href="sharing-packages.html"/>
-        <link rel="prev" title="Installation" href="installation.html"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/fixes.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Sharing Packages" href="sharing-packages.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -73,7 +64,7 @@
             
               <div class="version">
                 master
- (6c1e3b4
+ (04867ad
 )
               </div>
             
@@ -127,7 +118,7 @@
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
 
       
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+      <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">opam-bin</a>
@@ -135,9 +126,10 @@
       </nav>
 
 
-      
       <div class="wy-nav-content">
+        
         <div class="rst-content">
+        
           
 
 
@@ -183,24 +175,24 @@
 <h1>Local Usage<a class="headerlink" href="#local-usage" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="first-steps">
 <h2>First Steps<a class="headerlink" href="#first-steps" title="Permalink to this headline">¶</a></h2>
-<p><code class="code docutils literal"><span class="pre">opam-bin</span></code> will take care automatically of generating binary
+<p><code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> will take care automatically of generating binary
 packages and using them without supervision. The only thing you need
-to do is to configure <code class="code docutils literal"><span class="pre">opam</span></code> to use <code class="code docutils literal"><span class="pre">opam-bin</span></code>. This is
+to do is to configure <code class="code docutils literal notranslate"><span class="pre">opam</span></code> to use <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code>. This is
 usually done by:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">install</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">install</span>
 </pre></div>
 </div>
 <p>This command will do the following modifications:</p>
 <ul>
-<li><p class="first">Install a copy of <code class="code docutils literal"><span class="pre">opam-bin</span></code> as
-<code class="code docutils literal"><span class="pre">~/.opam/plugins/opam-bin/opam-bin.exe</span></code>, and a link in
-<code class="code docutils literal"><span class="pre">~/.opam/plugins/bin/opam-bin</span></code> (so that <code class="code docutils literal"><span class="pre">opam</span> <span class="pre">bin</span></code> also
+<li><p class="first">Install a copy of <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> as
+<code class="code docutils literal notranslate"><span class="pre">~/.opam/plugins/opam-bin/opam-bin.exe</span></code>, and a link in
+<code class="code docutils literal notranslate"><span class="pre">~/.opam/plugins/bin/opam-bin</span></code> (so that <code class="code docutils literal notranslate"><span class="pre">opam</span> <span class="pre">bin</span></code> also
 works)</p>
 </li>
-<li><p class="first">Modify <code class="code docutils literal"><span class="pre">opam</span></code> configuration files to call <code class="code docutils literal"><span class="pre">opam-bin</span></code> everytime
+<li><p class="first">Modify <code class="code docutils literal notranslate"><span class="pre">opam</span></code> configuration files to call <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> everytime
 you install or remove a package. This is done by modifying the hooks
-in <code class="code docutils literal"><span class="pre">~/.opam/config</span></code>. For example:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">post</span><span class="o">-</span><span class="n">install</span><span class="o">-</span><span class="n">commands</span><span class="o">:</span>
+in <code class="code docutils literal notranslate"><span class="pre">~/.opam/config</span></code>. For example:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">post</span><span class="o">-</span><span class="n">install</span><span class="o">-</span><span class="n">commands</span><span class="o">:</span>
 <span class="o">[</span>
   <span class="s2">&quot;/home/user/.opam/plugins/opam-bin/opam-bin.exe&quot;</span>
   <span class="s2">&quot;post-install&quot;</span> <span class="n">name</span> <span class="n">version</span> <span class="n">build</span><span class="o">-</span><span class="n">id</span> <span class="n">depends</span> <span class="n">installed</span><span class="o">-</span><span class="n">files</span>
@@ -212,32 +204,32 @@ you will have to modify the files manually.</p>
 </li>
 <li><p class="first">Add the local repository of binary packages:</p>
 <ul class="simple">
-<li><code class="code docutils literal"><span class="pre">local-bin</span></code> for
-<code class="code docutils literal"><span class="pre">file:///home/user/.opam/plugins/opam-bin/store/repo</span></code> to be able to
+<li><code class="code docutils literal notranslate"><span class="pre">local-bin</span></code> for
+<code class="code docutils literal notranslate"><span class="pre">file:///home/user/.opam/plugins/opam-bin/store/repo</span></code> to be able to
 install binary packages on user request</li>
 </ul>
 </li>
 </ul>
-<p>After this step, <code class="code docutils literal"><span class="pre">opam-bin</span></code> will create a binary package every
+<p>After this step, <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> will create a binary package every
 time you compile a new source package, if and only if all the
 dependencies have also generated a binary package. It also means that
 you won’t get binary packages in a switch in which you have already
-installed packages without <code class="code docutils literal"><span class="pre">opam-bin</span></code> installed.</p>
+installed packages without <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> installed.</p>
 </div>
 <div class="section" id="simple-example">
 <h2>Simple Example<a class="headerlink" href="#simple-example" title="Permalink to this headline">¶</a></h2>
-<p>Now that <code class="code docutils literal"><span class="pre">opam-bin</span></code> is installed, let’s create a new switch that
+<p>Now that <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> is installed, let’s create a new switch that
 will generate binary packages:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="n">test</span><span class="o">-</span><span class="n">bin</span> <span class="mi">4</span><span class="o">.</span><span class="mi">07</span><span class="o">.</span><span class="mi">1</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="n">test</span><span class="o">-</span><span class="n">bin</span> <span class="mi">4</span><span class="o">.</span><span class="mi">07</span><span class="o">.</span><span class="mi">1</span>
 <span class="n">opam</span> <span class="n">install</span> <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span> <span class="o">-</span><span class="n">y</span>
 </pre></div>
 </div>
 <p>We can check that binary packages have been created:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="kt">list</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="kt">list</span>
 </pre></div>
 </div>
 <p>gives the following output:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="nc">Binary</span> <span class="n">packages</span> <span class="k">in</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">opam</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">store</span><span class="o">/</span><span class="n">archives</span><span class="o">:</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="nc">Binary</span> <span class="n">packages</span> <span class="k">in</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">opam</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">store</span><span class="o">/</span><span class="n">archives</span><span class="o">:</span>
 <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">+</span><span class="n">bin</span><span class="o">+</span><span class="n">e36313ee</span><span class="o">+</span><span class="n">a8034f9e</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
 <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span><span class="o">-</span><span class="n">lib</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">+</span><span class="n">bin</span><span class="o">+</span><span class="n">c8fa4342</span><span class="o">+</span><span class="n">e81dc009</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
 <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span><span class="o">-</span><span class="n">parsers</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">+</span><span class="n">bin</span><span class="o">+</span><span class="mi">716</span><span class="n">cf20e</span><span class="o">+</span><span class="n">b265b234</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
@@ -267,9 +259,9 @@ will generate binary packages:</p>
 <span class="n">zarith</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">1</span><span class="o">+</span><span class="n">bin</span><span class="o">+</span><span class="n">e25c81d3</span><span class="o">+</span><span class="n">f97da984</span><span class="o">-</span><span class="n">bin</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
 </pre></div>
 </div>
-<p>Let’s retry in another switch, to check if <code class="code docutils literal"><span class="pre">opam-bin</span></code> correctly
+<p>Let’s retry in another switch, to check if <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> correctly
 install the binary packages:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">opam</span> <span class="n">update</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">opam</span> <span class="n">update</span>
 <span class="o">$</span> <span class="n">opam</span> <span class="n">switch</span> <span class="kt">list</span><span class="o">-</span><span class="n">available</span>
 <span class="n">ocaml</span><span class="o">-</span><span class="n">base</span><span class="o">-</span><span class="n">compiler</span> <span class="mi">4</span><span class="o">.</span><span class="mi">07</span><span class="o">.</span><span class="mi">1</span><span class="o">+</span><span class="n">bin</span><span class="o">+</span><span class="mi">9</span><span class="n">dc450ca</span><span class="o">+</span><span class="mi">237</span><span class="n">a0dc7</span>
 <span class="o">$</span> <span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="n">test</span><span class="o">-</span><span class="n">reloc</span> <span class="mi">4</span><span class="o">.</span><span class="mi">07</span><span class="o">.</span><span class="mi">1</span><span class="o">+</span><span class="n">bin</span><span class="o">+</span><span class="mi">9</span><span class="n">dc450ca</span><span class="o">+</span><span class="mi">237</span><span class="n">a0dc7</span>
@@ -277,27 +269,27 @@ install the binary packages:</p>
 </pre></div>
 </div>
 <p>Another solution is to start from an empty switch:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="n">test</span><span class="o">-</span><span class="n">reloc</span> <span class="o">--</span><span class="n">empty</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="o">$</span> <span class="n">opam</span> <span class="n">switch</span> <span class="n">create</span> <span class="n">test</span><span class="o">-</span><span class="n">reloc</span> <span class="o">--</span><span class="n">empty</span>
 <span class="o">$</span> <span class="n">opam</span> <span class="n">install</span> <span class="n">alt</span><span class="o">-</span><span class="n">ergo</span><span class="o">+</span><span class="n">bin</span> <span class="o">-</span><span class="n">y</span>
 </pre></div>
 </div>
 <p>We can also search in the generated binary archives for specific files:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">search</span> <span class="n">bin</span><span class="o">/</span><span class="n">alt</span><span class="o">-</span><span class="n">ergo</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">search</span> <span class="n">bin</span><span class="o">/</span><span class="n">alt</span><span class="o">-</span><span class="n">ergo</span>
 </pre></div>
 </div>
 <p>and the output is:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">alt</span><span class="o">-</span><span class="n">ergo</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">+</span><span class="n">bin</span><span class="o">+</span><span class="n">b7812268</span><span class="o">+</span><span class="n">ea4c83e2</span><span class="o">:</span><span class="n">file</span><span class="o">:</span><span class="mi">009664912</span><span class="o">:</span><span class="n">reg</span><span class="o">:</span><span class="n">bin</span><span class="o">/</span><span class="n">alt</span><span class="o">-</span><span class="n">ergo</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">alt</span><span class="o">-</span><span class="n">ergo</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">3</span><span class="o">.</span><span class="mi">2</span><span class="o">+</span><span class="n">bin</span><span class="o">+</span><span class="n">b7812268</span><span class="o">+</span><span class="n">ea4c83e2</span><span class="o">:</span><span class="n">file</span><span class="o">:</span><span class="mi">009664912</span><span class="o">:</span><span class="n">reg</span><span class="o">:</span><span class="n">bin</span><span class="o">/</span><span class="n">alt</span><span class="o">-</span><span class="n">ergo</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="basic-configuration">
 <h2>Basic Configuration<a class="headerlink" href="#basic-configuration" title="Permalink to this headline">¶</a></h2>
-<p>Let’s have a look have the configuration of <code class="code docutils literal"><span class="pre">opam-bin</span></code>:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">config</span>
+<p>Let’s have a look have the configuration of <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code>:</p>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">config</span>
 </pre></div>
 </div>
 <p>outputs something like:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="nc">Current</span> <span class="n">options</span> <span class="o">(</span><span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">opam</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">config</span><span class="o">):</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="nc">Current</span> <span class="n">options</span> <span class="o">(</span><span class="n">from</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">user</span><span class="o">/.</span><span class="n">opam</span><span class="o">/</span><span class="n">plugins</span><span class="o">/</span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span><span class="o">/</span><span class="n">config</span><span class="o">):</span>
   <span class="n">base_url</span> <span class="o">:</span> <span class="o">/</span><span class="n">change</span><span class="o">-</span><span class="n">this</span><span class="o">-</span><span class="n">option</span>
   <span class="n">rsync_url</span> <span class="o">:</span> <span class="nc">None</span>
   <span class="n">patches_url</span> <span class="o">:</span> <span class="n">git</span><span class="o">@</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">:</span><span class="nc">OCamlPro</span><span class="o">/</span><span class="n">relocation</span><span class="o">-</span><span class="n">patches</span>
@@ -312,39 +304,39 @@ install the binary packages:</p>
 <p>We will not discuss the first 2 options that are only useful if you
 plan to share the binary packages that you generate. Instead, we can
 look at the other options.</p>
-<p><code class="code docutils literal"><span class="pre">patches_url</span></code> is the URL to the <code class="code docutils literal"><span class="pre">git</span></code> repository
+<p><code class="code docutils literal notranslate"><span class="pre">patches_url</span></code> is the URL to the <code class="code docutils literal notranslate"><span class="pre">git</span></code> repository
 containing patches to make packages relocatable. It is used when you
-call <code class="code docutils literal"><span class="pre">opam-bin</span> <span class="pre">install</span></code> or <code class="code docutils literal"><span class="pre">opam-bin</span> <span class="pre">install</span> <span class="pre">patches</span></code>. For
+call <code class="code docutils literal notranslate"><span class="pre">opam-bin</span> <span class="pre">install</span></code> or <code class="code docutils literal notranslate"><span class="pre">opam-bin</span> <span class="pre">install</span> <span class="pre">patches</span></code>. For
 example, if you want to use a local copy of this repository, you can
 modify it for later use:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="o">@</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">:</span><span class="nc">OCamlPro</span><span class="o">/</span><span class="n">relocation</span><span class="o">-</span><span class="n">patches</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">git</span><span class="o">@</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">:</span><span class="nc">OCamlPro</span><span class="o">/</span><span class="n">relocation</span><span class="o">-</span><span class="n">patches</span>
 <span class="n">cd</span> <span class="n">relocation</span><span class="o">-</span><span class="n">patches</span>
 <span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">patches</span><span class="o">-</span><span class="n">url</span> <span class="n">file</span><span class="o">://$(</span><span class="n">pwd</span><span class="o">)</span>
 <span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">install</span> <span class="n">patches</span>
 </pre></div>
 </div>
-<p>The next options are used to enable/disable <code class="code docutils literal"><span class="pre">opam-bin</span></code> globally
-(<code class="code docutils literal"><span class="pre">enable</span></code>) and to enable/disable creation of binary packages
-from source packages (<code class="code docutils literal"><span class="pre">enable_create</span></code>). For example, if you want
+<p>The next options are used to enable/disable <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> globally
+(<code class="code docutils literal notranslate"><span class="pre">enable</span></code>) and to enable/disable creation of binary packages
+from source packages (<code class="code docutils literal notranslate"><span class="pre">enable_create</span></code>). For example, if you want
 to create cached binary archives for the dependencies of a package but
 not for the package itself:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">enable</span><span class="o">-</span><span class="n">create</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">enable</span><span class="o">-</span><span class="n">create</span>
 <span class="n">opam</span> <span class="n">install</span> <span class="o">--</span><span class="n">deps</span><span class="o">-</span><span class="n">only</span> <span class="n">coq</span>
 <span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">disable</span><span class="o">-</span><span class="n">create</span>
 <span class="n">opam</span> <span class="n">install</span> <span class="n">coq</span>
 <span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">enable</span><span class="o">-</span><span class="n">create</span>
 </pre></div>
 </div>
-<p>Finally, it is possible to control on which switches <code class="code docutils literal"><span class="pre">opam-bin</span></code>
+<p>Finally, it is possible to control on which switches <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code>
 will be enabled:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">protected</span><span class="o">-</span><span class="n">switches</span> <span class="k">&#39;</span><span class="o">-,</span><span class="mi">4</span><span class="o">.</span><span class="mi">07</span><span class="o">.</span><span class="mi">1</span><span class="o">-</span><span class="n">src</span><span class="o">,*+</span><span class="n">src&#39;</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">protected</span><span class="o">-</span><span class="n">switches</span> <span class="k">&#39;</span><span class="o">-,</span><span class="mi">4</span><span class="o">.</span><span class="mi">07</span><span class="o">.</span><span class="mi">1</span><span class="o">-</span><span class="n">src</span><span class="o">,*+</span><span class="n">src&#39;</span>
 </pre></div>
 </div>
-<p>This will tell <code class="code docutils literal"><span class="pre">opam-bin</span></code> to disable binary packages for switch
-<code class="code docutils literal"><span class="pre">4.07.1-src</span></code> and all switches matching the regexp <code class="code docutils literal"><span class="pre">*+src</span></code>.</p>
-<p>It is also possible to disable <code class="code docutils literal"><span class="pre">opam-bin</span></code> for all switches
+<p>This will tell <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> to disable binary packages for switch
+<code class="code docutils literal notranslate"><span class="pre">4.07.1-src</span></code> and all switches matching the regexp <code class="code docutils literal notranslate"><span class="pre">*+src</span></code>.</p>
+<p>It is also possible to disable <code class="code docutils literal notranslate"><span class="pre">opam-bin</span></code> for all switches
 except some of them:</p>
-<div class="highlight-ocaml"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">not</span><span class="o">-</span><span class="n">all</span><span class="o">-</span><span class="n">switches</span> <span class="o">--</span><span class="n">switches</span> <span class="k">&#39;</span><span class="o">-,*+</span><span class="n">bin&#39;</span>
+<div class="highlight-ocaml notranslate"><div class="highlight"><pre><span></span><span class="n">opam</span><span class="o">-</span><span class="n">bin</span> <span class="n">config</span> <span class="o">--</span><span class="n">not</span><span class="o">-</span><span class="n">all</span><span class="o">-</span><span class="n">switches</span> <span class="o">--</span><span class="n">switches</span> <span class="k">&#39;</span><span class="o">-,*+</span><span class="n">bin&#39;</span>
 </pre></div>
 </div>
 </div>
@@ -352,9 +344,7 @@ except some of them:</p>
 
 
            </div>
-           <div class="articleComments">
-            
-           </div>
+           
           </div>
           <footer>
   
@@ -363,7 +353,7 @@ except some of them:</p>
         <a href="sharing-packages.html" class="btn btn-neutral float-right" title="Sharing Packages" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="installation.html" class="btn btn-neutral" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -372,11 +362,11 @@ except some of them:</p>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2020, OCamlPro &amp; Origin Labs SAS. &lt;contact@ocamlpro.com&gt;.
+        &copy; Copyright 2020, OCamlPro &amp; Origin Labs SAS. &lt;contact@ocamlpro.com&gt;
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -389,36 +379,15 @@ except some of them:</p>
   
 
 
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'master (6c1e3b4) (2021/01/02 20:18)',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true,
-            SOURCELINK_SUFFIX: '.txt'
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
   <script type="text/javascript">
       jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
+          SphinxRtdTheme.Navigation.enable(true);
       });
   </script>
+
+  
+  
+    
    
 
 </body>
