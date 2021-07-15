@@ -4,7 +4,7 @@
   (name opam_bin_lib)
   (public_name opam_bin_lib)
   (wrapped true)
-  (libraries re ocplib-json-typed ezjsonm ez_opam_file ez_file ez_config ez_cmdliner )
+  (libraries re ezjsonm ez_opam_file ez_file ez_config ez_cmdliner )
   
   
   )

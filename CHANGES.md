@@ -1,4 +1,15 @@
 
+## v1.1.0 (2021-07-15 )
+
+* Improvements on --enable-share
+* Remove link to typerex.org
+* Add `opam-bin clean unused` to remove unused shared files
+
+## v1.0.0 ( 2020-10-28 )
+
+* Variable OPAM_BIN_EXCLUDE and config option `exclude_dirs` to list files
+  to skip while computing checksums
+
 ## v0.9.5 ( 2020-09-14 )
 
 * Fix a bug preventing creation of binary packages when sharing is disabled
