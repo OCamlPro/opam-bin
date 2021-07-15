@@ -11,7 +11,7 @@ min-edition = "4.07.0"
 name = "opam-bin"
 sphinx-target = "."
 synopsis = "The opam-bin tool is a simple framework to use `opam` with binary packages"
-version = "1.0.0"
+version = "1.1.0"
 windows-ci = true
 
 # keys that you could also define:

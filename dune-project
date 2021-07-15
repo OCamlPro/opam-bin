@@ -3,7 +3,7 @@
 (name opam-bin)
 (allow_approximate_merlin)
 (generate_opam_files false)
-(version 1.0.0)
+(version 1.1.0)
 (formatting (enabled_for ocaml reason))
 
 (package
@@ -17,7 +17,8 @@
    ppx_expect
    odoc
    ocamlformat
- ))
+  )
+ )
 
 (package
  (name opam_bin_lib)
@@ -26,7 +27,6 @@
  (depends
    (ocaml (>= 4.07.0))
    (re ( > 1.0 ))
-   (ocplib-json-typed (and (>= 0.7.0) (< 1.0.0)))
    (ezjsonm (and (>= 1.0.0) (< 2.0.0)))
    (ez_opam_file (and (>= 0.1.0) (< 1.0.0)))
    (ez_file (and (>= 0.2.0) (< 1.0.0)))
@@ -36,5 +36,6 @@
    ppx_expect
    odoc
    ocamlformat
- ))
+  )
+ )
 
