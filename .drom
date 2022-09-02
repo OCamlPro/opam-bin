@@ -1,8 +1,11 @@
 # Keep this file in your GIT repo to help drom track generated files
+# begin version
+version:0.6.1
+# end version
 
 # hash of toml configuration files
 # used for generation of all files
-c81d53af353e04583f60d16000dd4212:.
+363a85a4c8c952c8b259ad60d6866234:.
 # end context for .
 
 # begin context for .github/workflows/ci.ml
@@ -17,12 +20,12 @@ ac2aab1d8f78befbbfca730668f71e8d:.github/workflows/ci.ml
 
 # begin context for .github/workflows/workflow.yml
 # file .github/workflows/workflow.yml
-99716e015fa6e6e25c587b5c1fa19178:.github/workflows/workflow.yml
+8d48ba971cb19a441266fe08bff0a09d:.github/workflows/workflow.yml
 # end context for .github/workflows/workflow.yml
 
 # begin context for .gitignore
 # file .gitignore
-f9b6574311e6dccc0c0abf80e371dab1:.gitignore
+2b4c8641c65d59b989a475898fcdf225:.gitignore
 # end context for .gitignore
 
 # begin context for .ocamlformat
@@ -47,7 +50,7 @@ a8d1bcd6f62c6b813b77d3ff8959d8d2:.ocamlformat-ignore
 
 # begin context for LICENSE.md
 # file LICENSE.md
-d091b81b6155e5fd5d6556fc8bba0094:LICENSE.md
+a056153b3ebfa635cd0350ea16081078:LICENSE.md
 # end context for LICENSE.md
 
 # begin context for Makefile
@@ -57,7 +60,7 @@ c6724dd15851b4871bf369c1872adcb3:Makefile
 
 # begin context for README.md
 # file README.md
-49d6f9c062198984e39269b52eebbfd2:README.md
+a0e2c60b92cd71e3d12d66a9eb09d925:README.md
 # end context for README.md
 
 # begin context for docs/doc/index.html
@@ -92,18 +95,18 @@ df544cfaf9078d1bba2f90ed1b5adf5f:dune
 
 # begin context for dune-project
 # file dune-project
-f0646ab1206865111531fc2f82eebbe3:dune-project
+4acfa47f01ec60e17da452eeb48b6ae6:dune-project
 # end context for dune-project
 
-# begin context for opam-bin.opam
-# file opam-bin.opam
-0b38571db145d7f37b58768045752c62:opam-bin.opam
-# end context for opam-bin.opam
+# begin context for opam/opam-bin.opam
+# file opam/opam-bin.opam
+999d4e72b536fccf95cd6b3cb02a5377:opam/opam-bin.opam
+# end context for opam/opam-bin.opam
 
-# begin context for opam_bin_lib.opam
-# file opam_bin_lib.opam
-47302bf706be99c6668beca7bbcd3837:opam_bin_lib.opam
-# end context for opam_bin_lib.opam
+# begin context for opam/opam_bin_lib.opam
+# file opam/opam_bin_lib.opam
+573aac19d12363e57c8b68d9fb82af1e:opam/opam_bin_lib.opam
+# end context for opam/opam_bin_lib.opam
 
 # begin context for scripts/after.sh
 # file scripts/after.sh
@@ -137,7 +140,7 @@ eb522bc1bb6523b514040c8801bf5f79:sphinx/index.rst
 
 # begin context for sphinx/license.rst
 # file sphinx/license.rst
-cdf74f69fd392ea9a545b06789762a13:sphinx/license.rst
+2342efdf35013ac7fded1e7877a33885:sphinx/license.rst
 # end context for sphinx/license.rst
 
 # begin context for src/opam_bin/dune
@@ -182,7 +185,7 @@ f39e74d2171cc1d492e2eb6352afc765:src/opam_bin_lib/package.toml
 
 # begin context for src/opam_bin_lib/version.mlt
 # file src/opam_bin_lib/version.mlt
-931696dafd7a11058b6091301b489530:src/opam_bin_lib/version.mlt
+7bb835cc98e0a533eeb013175f9e7858:src/opam_bin_lib/version.mlt
 # end context for src/opam_bin_lib/version.mlt
 
 # begin context for test/expect-tests/dune

@@ -1,5 +1,5 @@
 
-[![Actions Status](https://github.com/ocamlpro/opam-bin/workflows/Main%20Workflow/badge.svg)](https://github.com/ocamlpro/opam-bin/actions)[![Actions Status](https://github.com/ocamlpro/opam-bin/workflows/doc-deploy/badge.svg)](https://github.com/ocamlpro/opam-bin/actions)
+[![Actions Status](https://github.com/ocamlpro/opam-bin/workflows/Main%20Workflow/badge.svg)](https://github.com/ocamlpro/opam-bin/actions)
 [![Release](https://img.shields.io/github/release/ocamlpro/opam-bin.svg)](https://github.com/ocamlpro/opam-bin/releases)
 
 # opam-bin
