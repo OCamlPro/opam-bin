@@ -10,6 +10,7 @@
 
 open EzCompat
 open Ezcmd.TYPES
+open Ez_file.V1
 open EzFile.OP
 (*
 open EzConfig.OP

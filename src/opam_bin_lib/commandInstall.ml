@@ -9,6 +9,7 @@
 (**************************************************************************)
 
 open Ezcmd.TYPES
+open Ez_file.V1
 open EzFile.OP
 open EzConfig.OP
 open Ez_opam_file.V1
@@ -19,18 +20,18 @@ let cmd_name = "install"
 
 let add_repo ~repo ~url =
   if not ( Sys.file_exists (Globals.opam_repo_dir // repo ) ) then
-    Misc.call
+    Misc.call ~nvo:None
       [| "opam"; "remote" ; "add" ; repo ; "--dont-select"; url |]
 
 let install_exe () =
-  let s = FileString.read_file Sys.executable_name in
+  let s = EzFile.read_file Sys.executable_name in
   if Sys.file_exists Globals.opambin_bin then
     Sys.remove Globals.opambin_bin;
   EzFile.write_file Globals.opambin_bin s;
   Unix.chmod  Globals.opambin_bin 0o755;
   Printf.eprintf "Executable copied as %s\n%!" Globals.opambin_bin;
   EzFile.make_dir ~p:true Globals.opam_plugins_bin_dir ;
-  Misc.call [|
+  Misc.call ~nvo:None [|
     "ln"; "-sf" ;
     ".." // Globals.command // Globals.command_exe ;
     Globals.opam_plugins_bin_dir // Globals.command
@@ -137,26 +138,26 @@ let install_patches () =
     let tmp_dir = opambin_patches_dir ^ ".tmp" in
 
     if EzString.starts_with patches_url ~prefix:"git@" then begin
-      Misc.call [| "rm"; "-rf"; tmp_dir |];
-      Misc.call [| "git"; "clone" ; patches_url ; tmp_dir |];
-      Misc.call [| "rm"; "-rf"; opambin_patches_dir |];
-      Misc.call [| "mv"; tmp_dir; opambin_patches_dir |]
+      Misc.call ~nvo:None [| "rm"; "-rf"; tmp_dir |];
+      Misc.call ~nvo:None [| "git"; "clone" ; patches_url ; tmp_dir |];
+      Misc.call ~nvo:None [| "rm"; "-rf"; opambin_patches_dir |];
+      Misc.call ~nvo:None [| "mv"; tmp_dir; opambin_patches_dir |]
     end else
 
     if EzString.starts_with patches_url ~prefix:"https://"
     || EzString.starts_with patches_url ~prefix:"http://" then begin
       let output = Globals.opambin_dir // "relocation-patches.tar.gz" in
       Printf.eprintf "Downloading patches...\n%!";
-      match Misc.wget ~url:patches_url ~output with
+      match Misc.wget ~nvo:None ~url:patches_url ~output with
       | None ->
           Printf.kprintf failwith "Could not retrieve archive at %s" patches_url
       | Some output ->
 
-          Misc.call [| "rm"; "-rf"; tmp_dir |];
+          Misc.call ~nvo:None [| "rm"; "-rf"; tmp_dir |];
           EzFile.make_dir ~p:true tmp_dir ;
 
           Unix.chdir tmp_dir ;
-          Misc.call [| "tar" ; "zxf" ; output |] ;
+          Misc.call ~nvo:None [| "tar" ; "zxf" ; output |] ;
           Unix.chdir Globals.curdir;
 
           let patches_subdir =
@@ -180,10 +181,10 @@ let install_patches () =
                   "archive %s does not contain 'patches/' subdir" patches_url
           in
 
-          Misc.call [| "rm"; "-rf"; opambin_patches_dir |];
+          Misc.call ~nvo:None [| "rm"; "-rf"; opambin_patches_dir |];
           EzFile.make_dir ~p:true opambin_patches_dir;
           Sys.rename patches_subdir (opambin_patches_dir // "patches");
-          Misc.call [| "rm"; "-rf"; tmp_dir |];
+          Misc.call  ~nvo:None [| "rm"; "-rf"; tmp_dir |];
           Sys.remove output
 
     end

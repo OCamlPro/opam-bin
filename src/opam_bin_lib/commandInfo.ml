@@ -16,11 +16,11 @@ let action tail =
   Printf.eprintf "Info on binary packages:\n%!";
   if tail then begin
     if not ( Sys.file_exists Globals.opambin_info ) then
-      Misc.call [| "touch" ; Globals.opambin_info |] ;
-    Misc.call [| "tail"; "-f" ; Globals.opambin_info |]
+      Misc.call ~nvo:None [| "touch" ; Globals.opambin_info |] ;
+    Misc.call ~nvo:None [| "tail"; "-f" ; Globals.opambin_info |]
   end else
   if Sys.file_exists Globals.opambin_info then
-    Misc.call [| "cat" ; Globals.opambin_info |]
+    Misc.call ~nvo:None [| "cat" ; Globals.opambin_info |]
 
 let cmd =
   let tail = ref false in

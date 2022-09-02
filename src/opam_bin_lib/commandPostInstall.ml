@@ -10,6 +10,7 @@
 
 open EzCompat
 open Ezcmd.TYPES
+open Ez_file.V1
 open EzFile.OP
 open EzConfig.OP
 open Ez_opam_file.V1
@@ -30,13 +31,13 @@ let cmd_name = "post-install"
 
 *)
 
-let parse_opam_file file_name =
+let parse_opam_file ~nvo file_name =
   if Sys.file_exists file_name then begin
     let opam = OpamParser.file file_name in
-    Misc.global_log "%s read" opam.file_name;
+    Misc.global_log ~nvo "%s read" opam.file_name;
     opam.file_contents
   end else begin
-    Misc.global_log "%s does not exist" file_name;
+    Misc.global_log ~nvo "%s does not exist" file_name;
     []
   end
 
@@ -68,13 +69,13 @@ let add_post_depend ~dependset ~buildset post_depends name option =
   if List.exists is_build_option option then
     buildset := StringSet.add name !buildset
 
-let iter_value_list v f =
+let iter_value_list ~nvo v f =
   let iter_value v =
     match v.pelem with
     | String name -> f name [ Misc.nullpos_value (String "") ]
     | Option ({ pelem = String name; _}, option) -> f name option.pelem
     | _ ->
-        Misc.global_log "warning: unexpected depend value %s"
+        Misc.global_log ~nvo "warning: unexpected depend value %s"
           ( OpamPrinter.value v)
   in
   match v.pelem with
@@ -131,15 +132,15 @@ let digest_sources () =
     ( Printf.sprintf "/tmp/buffer.%d" (Unix.getpid ()) ) s;
   digest s
 
-let compute_hash ?source_md5 ~name ~version ~depends () =
+let compute_hash ~nvo ?source_md5 ~name ~version ~depends () =
   let missing_versions = ref [] in
   let packages_dir =
     Globals.opambin_switch_packages_dir () in
-  Misc.global_log "depends: %S" depends;
+  Misc.global_log ~nvo "depends: %S" depends;
   let depends = EzString.split depends ' ' in
   let dependset = ref EzCompat.StringSet.empty in
-  let depends = List.map (fun nv ->
-      let name, _ = EzString.cut_at nv '.' in
+  let depends = List.map (fun nvd ->
+      let name, _ = EzString.cut_at nvd '.' in
       let file_name = packages_dir // name in
       let version = match
           open_in file_name
@@ -182,24 +183,24 @@ let compute_hash ?source_md5 ~name ~version ~depends () =
           else
             let oc = Unix.openfile opam_file
                 [ Unix.O_CREAT; Unix.O_WRONLY ; Unix.O_TRUNC ] 0o644 in
-            Misc.call ~stdout:oc
+            Misc.call ~nvo ~stdout:oc
               [| "opam" ; "show" ; nv ; "--raw" ; "--safe" ; "--switch" ; switch |];
             Unix.close oc;
             EzFile.read_file opam_file
         in
-        Misc.global_log "File (%s):\n%s" name opam_content;
+        Misc.global_log ~nvo "File (%s):\n%s" name opam_content;
         let digest_opam = digest opam_content in
-        Misc.global_log "Opam (%s): %s" name digest_opam;
+        Misc.global_log ~nvo "Opam (%s): %s" name digest_opam;
 
         let package_uid = digest ( digest_opam ^ digest_sources ) in
 
-        Misc.global_log "package_uid(%s): %s" name package_uid;
+        Misc.global_log ~nvo "package_uid(%s): %s" name package_uid;
         let s = Printf.sprintf "%s.%s|%s|%s"
             name version package_uid (String.concat "," depends_nv) in
-        Misc.global_log "source(%s) : %s" name s ;
+        Misc.global_log ~nvo "source(%s) : %s" name s ;
         short ( digest s ), opam_file
   in
-  Misc.global_log "source_md5 (%s): %s" name source_md5;
+  Misc.global_log ~nvo "source_md5 (%s): %s" name source_md5;
   ( source_md5, depends, !dependset, !missing_versions, opam_file )
 
 let error_on_missing =
@@ -240,7 +241,7 @@ depends: [
                       Globals.package_info )
     ( Printf.sprintf "depend:%s:%s\n" name new_version )
 
-let commit ~name ~version ~depends files =
+let commit ~nvo ~name ~version ~depends files =
   if not !!Config.create_enabled then
     Misc.info ~name ~version "create-package disabled"
   else
@@ -260,19 +261,19 @@ let commit ~name ~version ~depends files =
           Misc.info ~name ~version "already a binary package"
         else
           let temp_dir = Globals.opambin_switch_temp_dir () in
-          Misc.global_log "package %s is not a binary archive" name ;
-          Misc.global_log "creating binary archive...";
+          Misc.global_log ~nvo "package %s is not a binary archive" name ;
+          Misc.global_log ~nvo "creating binary archive...";
           EzFile.make_dir ~p:true temp_dir ;
           let source_md5 =
             EzFile.read_file ( Globals.backup_source ~name ) in
           let ( source_md5, depends, dependset, missing_versions, opam_file ) =
-            compute_hash ~source_md5 ~name ~version ~depends () in
+            compute_hash ~nvo ~source_md5 ~name ~version ~depends () in
           if missing_versions <> [] then begin
-            Misc.global_log
+            Misc.global_log ~nvo
               "Error in %s: cannot load binary versions from %s\n%!"
               Globals.command
               (String.concat " " missing_versions);
-            Misc.global_log
+            Misc.global_log ~nvo
               " => binary archive disabled for %s.%s" name version;
             Misc.info ~name ~version "missing binary deps";
             if error_on_missing then begin
@@ -287,14 +288,14 @@ let commit ~name ~version ~depends files =
               (* remove directories, otherwise tar will add the content twice *)
               List.filter (fun name -> not ( Sys.is_directory name) ) files
             in
-            Misc.tar_zcf ~prefix:"prefix" binary_archive source_files;
+            Misc.tar_zcf ~nvo ~prefix:"prefix" binary_archive source_files;
             Unix.chdir Globals.curdir;
-            Misc.global_log "create binary archive DONE";
+            Misc.global_log ~nvo "create binary archive DONE";
 
             let bin_md5 =
               digest ( EzFile.read_file binary_archive )
             in
-            Misc.global_log "bin md5 = %s" bin_md5;
+            Misc.global_log ~nvo "bin md5 = %s" bin_md5;
 
             let final_md5 = Printf.sprintf "%s+%s"
                 source_md5 ( short bin_md5 ) in
@@ -304,7 +305,7 @@ let commit ~name ~version ~depends files =
             output_string oc new_version ;
             close_out oc;
 
-            let file_contents = parse_opam_file opam_file in
+            let file_contents = parse_opam_file ~nvo opam_file in
 
             EzFile.make_dir ~p:true Globals.opambin_store_archives_dir;
             let final_binary_archive_basename =
@@ -324,7 +325,7 @@ let commit ~name ~version ~depends files =
               if !!Config.share_enabled then
                 Unix.link final_binary_archive cached_archive
               else
-                Misc.call [| "cp";  final_binary_archive ; cached_archive |];
+                Misc.call ~nvo [| "cp";  final_binary_archive ; cached_archive |];
             end;
 
             let nv = Printf.sprintf "%s.%s" name new_version in
@@ -399,7 +400,7 @@ let commit ~name ~version ~depends files =
                             opam_depopts := Some value ;
                             acc
                         | _ ->
-                            Misc.global_log
+                            Misc.global_log ~nvo
                               "discarding unknown field %S" name.pelem;
                             acc
                       end
@@ -411,7 +412,7 @@ let commit ~name ~version ~depends files =
                 | None -> StringSet.empty
                 | Some value ->
                     let buildset = ref StringSet.empty in
-                    iter_value_list value
+                    iter_value_list value ~nvo
                       ( add_post_depend ~dependset ~buildset post_depends);
                     !buildset
               in
@@ -426,7 +427,7 @@ let commit ~name ~version ~depends files =
                       ) depends;
                     !actual_depends
                 | Some value ->
-                    iter_value_list value
+                    iter_value_list value ~nvo
                       ( add_conflict dependset conflicts);
                     depends
               in
@@ -539,22 +540,24 @@ let commit ~name ~version ~depends files =
             Printf.fprintf oc "total:%09d:nbytes\n" !total_nbytes ;
             close_out oc;
             Misc.info ~name ~version:new_version "binary package created";
-            Misc.global_log "Binary package for %s.%s created successfully"
+            Misc.global_log ~nvo "Binary package for %s.%s created successfully"
               name version
 
 
 let action args =
-  Misc.log_cmd cmd_name args;
   Misc.make_cache_dir ();
   match args with
   | name :: version :: depends :: files ->
       if !!Config.enabled then begin
+        let nv = Printf.sprintf "%s.%s" name version in
+        let nvo = Some nv in
+        Misc.log_cmd ~nvo cmd_name args;
         if !!Config.share_enabled then begin
           let dir = Globals.opam_switch_prefix () in
           let files = EzList.tail_map (fun file -> dir // file ) files in
-          Share.files files ;
+          Share.files ?nvo files ;
         end;
-        commit ~name ~version ~depends files
+        commit ~nvo ~name ~version ~depends files
       end
   | _ ->
       Printf.eprintf

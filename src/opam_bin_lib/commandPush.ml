@@ -11,6 +11,7 @@
 open Ez_opam_file.V1
 open Ezcmd.TYPES
 open EzConfig.OP
+open Ez_file.V1
 open EzFile.OP
 module StringMap = EzCompat.StringMap
 
@@ -273,7 +274,7 @@ opam switch create alt-ergo 4.07.1 --packages alt-ergo
 
 let generate_files repo_dir =
   Unix.chdir repo_dir;
-  Misc.call [| "opam" ; "admin" ; "index" |];
+  Misc.call ~nvo:None [| "opam" ; "admin" ; "index" |];
   Unix.chdir Globals.curdir ;
 
   generate_html_index repo_dir
@@ -420,7 +421,7 @@ let extract_packages s delete =
 
   EzFile.make_dir ~p:true dst_dir ;
   if delete then
-    Misc.call [| "rm"; "-rf"; dst_dir // "packages" |];
+    Misc.call ~nvo:None [| "rm"; "-rf"; dst_dir // "packages" |];
   StringMap.iter (fun package submap ->
       if EzString.ends_with package ~suffix:"+bin" then
         ()
@@ -432,7 +433,7 @@ let extract_packages s delete =
               let nv = Printf.sprintf "%s.%s" package p.version in
               let package_dir = dst_dir // "packages" // package // nv in
               EzFile.make_dir ~p:true package_dir ;
-              Misc.call [|
+              Misc.call ~nvo:None [|
                 "rsync"; "-auv"; "--delete" ;
                 src_dir // "packages" // package // nv // "." ;
                 package_dir
@@ -488,7 +489,7 @@ let action ~merge ~local_only ~extract ~delete () =
           ] in
         Printf.eprintf "Calling '%s'\n%!"
           (String.concat " " args);
-        Misc.call (Array.of_list args);
+        Misc.call ~nvo:None (Array.of_list args);
         Printf.eprintf "Done.\n%!";
         ()
 

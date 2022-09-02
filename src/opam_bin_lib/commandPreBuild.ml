@@ -10,6 +10,7 @@
 
 open Ez_opam_file.V1
 open Ezcmd.TYPES
+open Ez_file.V1
 open EzFile.OP
 open EzConfig.OP
 open OpamParserTypes.FullPos
@@ -64,8 +65,8 @@ archive-mirrors: "../../cache"
 *)
       None
 
-let check_cached_binary_archive ~version ~repo ~package =
-  Misc.global_log "found binary package in repo %s" repo;
+let check_cached_binary_archive ~nvo ~version ~repo ~package =
+  Misc.global_log ~nvo "found binary package in repo %s" repo;
   let package_dir = repo // "packages" // package // version in
   let src = ref None in
   let md5 = ref None in
@@ -87,7 +88,7 @@ let check_cached_binary_archive ~version ~repo ~package =
   let binary_archive =
     match !md5 with
     | None ->
-      Misc.global_log "url.checksum.md5 not found";
+      Misc.global_log ~nvo "url.checksum.md5 not found";
       None
     | Some md5 ->
       match find_archive_in_cache ~repo ~md5 with
@@ -102,7 +103,7 @@ let check_cached_binary_archive ~version ~repo ~package =
 
           let temp_dir = Globals.opambin_switch_temp_dir () in
           let output = temp_dir // md5 in
-          match Misc.wget ~url ~output with
+          match Misc.wget ~nvo ~url ~output with
           | None ->
             Printf.eprintf "Error: could not download archive at %S\n%!" url;
             exit 2
@@ -137,7 +138,7 @@ let check_cached_binary_archive ~version ~repo ~package =
     match binary_archive with
     | None -> ()
     | Some binary_archive ->
-      Misc.call [| "tar" ; "zxf" ; binary_archive |] ;
+      Misc.call ~nvo [| "tar" ; "zxf" ; binary_archive |] ;
   end;
   true
 
@@ -162,7 +163,7 @@ let has_equal_suffix v =
   assert ( len > 0 );
   v.[len-1] = '='
 
-let maybe_apply_patch ~name ~version =
+let maybe_apply_patch ~nvo ~name ~version =
   let keep_version = version in
   let patches_dir =
     let patches_url = !!Config.patches_url in
@@ -180,7 +181,7 @@ Error: patches dir '%s' does not exist.\n
     let package_dir = patches_dir // "patches" // package in
     if Sys.file_exists package_dir then
       let files = Sys.readdir package_dir in
-      Misc.global_log "package %s needs relocation" name;
+      Misc.global_log ~nvo "package %s needs relocation" name;
       let versions = ref [] in
       let alias = ref None in
       Array.iter (fun file ->
@@ -193,7 +194,7 @@ Error: patches dir '%s' does not exist.\n
         ) files;
       match !alias with
       | Some package ->
-          Misc.global_log "lookup patches for %s instead" package;
+          Misc.global_log ~nvo "lookup patches for %s instead" package;
           iter_package package
       | None ->
         let versions = Array.of_list !versions in
@@ -214,21 +215,21 @@ Error: patches dir '%s' does not exist.\n
         in
         match iter version (Array.to_list versions) None with
         | None ->
-          Misc.global_log_err
+          Misc.global_log_err ~nvo
             "Package %S is not relocatable, but no patch found for version %S.\n%!"
             name version;
-          Misc.global_log_err
+          Misc.global_log_err ~nvo
             "You may have to disable opam-bin to install that version.\n%!";
           false
         | Some version ->
           let patch = package_dir // version ^ ".patch" in
-          Misc.global_log "Using patch %s for %s.%s"
+          Misc.global_log ~nvo "Using patch %s for %s.%s"
             patch name keep_version ;
-          Misc.call [| "cp" ; "-f";
+          Misc.call ~nvo [| "cp" ; "-f";
                               patch ; Globals.marker_patch |];
-          Misc.call [| "patch" ; "-p1"; "-i"; patch |] ;
+          Misc.call ~nvo [| "patch" ; "-p1"; "-i"; patch |] ;
           if Sys.file_exists "reloc-patch.sh" then begin
-            Misc.call [| "sh"; "./reloc-patch.sh" |];
+            Misc.call ~nvo [| "sh"; "./reloc-patch.sh" |];
           end;
           true
     else
@@ -236,12 +237,12 @@ Error: patches dir '%s' does not exist.\n
   in
   iter_package name
 
-let cached_binary_archive ~name ~version ~depends =
-  if not ( maybe_apply_patch ~name ~version ) then
+let cached_binary_archive ~nvo ~name ~version ~depends =
+  if not ( maybe_apply_patch ~nvo ~name ~version ) then
     `NotRelocatable
   else
     let ( source_md5, _depends, _dependset, missing_versions, _opam_file ) =
-      CommandPostInstall.compute_hash
+      CommandPostInstall.compute_hash ~nvo
         ~name ~version ~depends () in
     if missing_versions <> [] then
       `MissingVersions missing_versions
@@ -252,13 +253,13 @@ let cached_binary_archive ~name ~version ~depends =
           ( Misc.all_repos () )
           (fun ~repo ~package ~version ->
           if EzString.starts_with version ~prefix:version_prefix then begin
-            check_cached_binary_archive ~package ~repo ~version
+            check_cached_binary_archive ~nvo ~package ~repo ~version
           end else
             false
         ) then
         `BinaryArchiveFound
       else begin
-        Misc.global_log "Could not find cached binary package %s"
+        Misc.global_log ~nvo "Could not find cached binary package %s"
           version_prefix ;
         `NoBinaryArchiveFound source_md5
       end
@@ -274,71 +275,72 @@ let error_on_non_reloc =
   | _ -> true
 
 let action args =
-  Misc.log_cmd cmd_name args ;
   match args with
   | name :: version :: depends :: [] ->
-    let marker_skip = Globals.marker_skip in
-    if not !!Config.enabled
-    || Misc.not_this_switch () then begin
-      Misc.global_log "opam-bin is disabled";
-      EzFile.write_file marker_skip
-        "opam-bin is disabled";
-    end else
-      let marker_source = Globals.marker_source in
-      let marker_opam = Globals.marker_opam in
-      let marker_patch = Globals.marker_patch in
-      if Sys.file_exists marker_source then begin
-        Misc.global_log "removing marker_source";
-        Sys.remove marker_source ;
-      end;
-      if Sys.file_exists marker_opam then begin
-        Misc.global_log "removing marker_opam";
-        Sys.remove marker_opam ;
-      end;
-      if Sys.file_exists marker_patch then begin
-        Misc.global_log "removing marker_patch";
-        Sys.remove marker_patch ;
-      end;
-      if Sys.file_exists Globals.marker_cached then begin
-        Misc.global_log "%s should not already exist!"
-          Globals.marker_cached;
-        exit 2
+      let nvo = Some ( Printf.sprintf "%s.%s" name version ) in
+      Misc.log_cmd ~nvo cmd_name args ;
+      let marker_skip = Globals.marker_skip in
+      if not !!Config.enabled
+      || Misc.not_this_switch () then begin
+        Misc.global_log ~nvo "opam-bin is disabled";
+        EzFile.write_file marker_skip
+          "opam-bin is disabled";
       end else
-      if Sys.file_exists Globals.package_version then begin
-        Misc.global_log "already a binary package";
-        EzFile.write_file marker_source "already-a-binary-package";
-      end else begin
-        Misc.global_log "checking for cached archive";
-        match cached_binary_archive ~name ~version ~depends with
-        | `BinaryArchiveFound ->
-          Misc.global_log "found a binary archive in cache";
-          (* this should have created a marker_cached/ directory *)
-        | `NoBinaryArchiveFound source_md5 ->
-          Misc.global_log "no binary archive found.";
-          if error_on_compile then begin
-            Printf.eprintf
-              "Error: opam-bin is configured to prevent compilation.\n%!";
-            exit 2
-          end;
-          EzFile.write_file marker_source source_md5
-        | `MissingVersions missing_versions ->
-          EzFile.write_file marker_skip
-            ( Printf.sprintf "Missing binary deps: %s"
-                ( String.concat " " missing_versions ) )
-        | `NotRelocatable ->
-          if error_on_non_reloc then begin
-            Printf.eprintf
-              "Error: opam-bin is configured to force relocation.\n%!";
-            exit 2
-          end;
-          EzFile.write_file marker_skip
-            "Missing relocation patch for unrelocatable package"
-      end
+        let marker_source = Globals.marker_source in
+        let marker_opam = Globals.marker_opam in
+        let marker_patch = Globals.marker_patch in
+        if Sys.file_exists marker_source then begin
+          Misc.global_log ~nvo "removing marker_source";
+          Sys.remove marker_source ;
+        end;
+        if Sys.file_exists marker_opam then begin
+          Misc.global_log ~nvo "removing marker_opam";
+          Sys.remove marker_opam ;
+        end;
+        if Sys.file_exists marker_patch then begin
+          Misc.global_log ~nvo "removing marker_patch";
+          Sys.remove marker_patch ;
+        end;
+        if Sys.file_exists Globals.marker_cached then begin
+          Misc.global_log ~nvo "%s should not already exist!"
+            Globals.marker_cached;
+          exit 2
+        end else
+        if Sys.file_exists Globals.package_version then begin
+          Misc.global_log ~nvo "already a binary package";
+          EzFile.write_file marker_source "already-a-binary-package";
+        end else begin
+          Misc.global_log ~nvo "checking for cached archive";
+          match cached_binary_archive ~nvo ~name ~version ~depends with
+          | `BinaryArchiveFound ->
+              Misc.global_log ~nvo "found a binary archive in cache";
+              (* this should have created a marker_cached/ directory *)
+          | `NoBinaryArchiveFound source_md5 ->
+              Misc.global_log ~nvo "no binary archive found.";
+              if error_on_compile then begin
+                Printf.eprintf
+                  "Error: opam-bin is configured to prevent compilation.\n%!";
+                exit 2
+              end;
+              EzFile.write_file marker_source source_md5
+          | `MissingVersions missing_versions ->
+              EzFile.write_file marker_skip
+                ( Printf.sprintf "Missing binary deps: %s"
+                    ( String.concat " " missing_versions ) )
+          | `NotRelocatable ->
+              if error_on_non_reloc then begin
+                Printf.eprintf
+                  "Error: opam-bin is configured to force relocation.\n%!";
+                exit 2
+              end;
+              EzFile.write_file marker_skip
+                "Missing relocation patch for unrelocatable package"
+        end
   | _ ->
-    Misc.global_log "unexpected arg.";
-    Printf.eprintf
-      "Unexpected args: usage is '%s %s name version depends cmd...'\n%!" Globals.command cmd_name ;
-    exit 2
+      Misc.global_log ~nvo:None "unexpected arg.";
+      Printf.eprintf
+        "Unexpected args: usage is '%s %s name version depends cmd...'\n%!" Globals.command cmd_name ;
+      exit 2
 
 
 let cmd =

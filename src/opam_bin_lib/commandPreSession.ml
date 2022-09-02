@@ -10,13 +10,14 @@
 
 open Ezcmd.TYPES
 open EzConfig.OP
+open Ez_file.V1
 (* open EzFile.OP *)
 
 let cmd_name = "pre-session"
 
 let action args =
-  Misc.log_cmd cmd_name args ;
-  Misc.global_log "Session started";
+  Misc.log_cmd ~nvo:None cmd_name args ;
+  Misc.global_log ~nvo:None "Session started";
   begin
     if !!Config.enabled then
       if Misc.not_this_switch () then

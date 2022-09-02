@@ -17,6 +17,7 @@ open OpamParserTypes
 
 *)
 
+open Ez_file.V1
 open EzFile.OP
 
 let exit = Exit
@@ -69,10 +70,10 @@ let check_sharable file =
       Printf.eprintf "check_sharable: false (ext %S) for %s\n%!" ext file ;
       false
 
-let share_file ~share_dir file =
+let share_file ~nvo ~share_dir file =
   match Digest.file file with
   | exception exn ->
-    Misc.global_log "Sharing file %s: exception %s" file
+    Misc.global_log ~nvo "Sharing file %s: exception %s" file
       ( Printexc.to_string exn )
   | md5 ->
     Printf.eprintf "SHARING %s\n%!" file ;
@@ -97,25 +98,25 @@ let share_file ~share_dir file =
     end
 
 
-let files ?( share_dir = Globals.opambin_share_dir ) files =
+let files ?nvo ?( share_dir = Globals.opambin_share_dir ) files =
   EzFile.make_dir ~p:true share_dir ;
   match Unix.stat share_dir with
   | exception exn ->
-    Misc.global_log "Warning: sharing disabled, exception %s"
+    Misc.global_log ~nvo "Warning: sharing disabled, exception %s"
       ( Printexc.to_string exn )
   | { Unix.st_dev = partition_dev ; _ } ->
     List.iter (fun file ->
         match Unix.lstat file with
         | exception exn ->
-          Misc.global_log "Sharing file %s: error %s" file
+          Misc.global_log ~nvo "Sharing file %s: error %s" file
             ( Printexc.to_string exn )
         | st ->
           if st.st_dev <> partition_dev then
-            Misc.global_log "Sharing file %s: other partition" file
+            Misc.global_log ~nvo "Sharing file %s: other partition" file
           else
             match st.st_kind with
             | S_REG ->
               if check_sharable file then
-                share_file ~share_dir file
+                share_file ~nvo ~share_dir file
             | _ -> ()
       ) files

@@ -8,11 +8,12 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open Ez_file.V1
 open EzConfig.OP
 
 let config_filename = Globals.config_file
 let config = EzConfig.create_config_file
-    ( EzFile.Abstract.of_string config_filename )
+    ( FileAbstract.of_string config_filename )
 
 let save () =
   EzConfig.save_with_help config;

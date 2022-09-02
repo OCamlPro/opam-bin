@@ -10,13 +10,14 @@
 
 open Ezcmd.TYPES
 open EzConfig.OP
+open Ez_file.V1
 open EzFile.OP
 
 let cmd_name = "clean"
 
 let clean_log () =
-  if Sys.file_exists Globals.opambin_log then
-    Sys.remove Globals.opambin_log ;
+  let log = Globals.opambin_log ~nvo:None in
+  if Sys.file_exists log then Sys.remove log ;
   if Sys.file_exists Globals.opambin_info then
     Sys.remove Globals.opambin_info ;
   ()
@@ -24,7 +25,7 @@ let clean_log () =
 let clean_store () =
   List.iter (fun dir ->
       Printf.eprintf "Cleaning %s\n%!" dir;
-      Misc.call [| "rm"; "-rf" ; dir |];
+      Misc.call ~nvo:None [| "rm"; "-rf" ; dir |];
       EzFile.make_dir ~p:true dir ;
     )
     [ Globals.opambin_cache_dir ;
@@ -37,10 +38,10 @@ let clean_store () =
       let packages_dir = store_dir // file // "packages" in
       if Sys.file_exists packages_dir then begin
         Printf.eprintf "Cleaning %s\n%!" packages_dir;
-        Misc.call [| "rm" ; "-rf"; packages_dir |];
+        Misc.call ~nvo:None [| "rm" ; "-rf"; packages_dir |];
       end
     ) files;
-  Misc.call [| "opam"; "update" |];
+  Misc.call ~nvo:None [| "opam"; "update" |];
   ()
 
 let clean_all () =
@@ -141,7 +142,7 @@ let clean_unused ~cache ~archive () =
               Printf.eprintf "package %s used in switch %s\n%!" nv switch
             with Not_found ->
               Printf.eprintf "removing package %s\n%!" nv;
-              Misc.call [| "rm"; "-rf";
+              Misc.call ~nvo:None [| "rm"; "-rf";
                            package_dir // nv |]
           ) package_dir
       ) Globals.opambin_store_repo_packages_dir;

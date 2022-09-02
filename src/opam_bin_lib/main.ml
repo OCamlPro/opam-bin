@@ -32,7 +32,9 @@ let commands = [
 
 
 let main () =
-  Printexc.record_backtrace true;
+  (match Sys.getenv "OPAM_BIN_BACK_TRACE" with
+   | exception _ -> ()
+   | _ -> Printexc.record_backtrace true);
   match Sys.argv with
   | [| _ ; "--version" |] ->
     Printf.printf "%s\n%!" Version.version
@@ -53,5 +55,5 @@ let main () =
       let bt = Printexc.get_backtrace () in
       let error = Printexc.to_string exn in
       Printf.eprintf "fatal exception %s\n%s\n%!" error bt ;
-      Misc.global_log "fatal exception %s\n%s" error bt;
+      Misc.global_log ~nvo:None "fatal exception %s\n%s" error bt;
       exit 2

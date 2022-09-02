@@ -8,14 +8,15 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open Ez_file.V1
 open Ezcmd.TYPES
 (* open EzFile.OP *)
 
 let cmd_name = "post-session"
 
 let action args =
-  Misc.log_cmd cmd_name args ;
-  Misc.global_log "Session ended";
+  Misc.log_cmd ~nvo:None cmd_name args ;
+  Misc.global_log ~nvo:None "Session ended";
   let filename = Globals.opambin_session_msg_file () in
   if Sys.file_exists filename then
     let s = EzFile.read_file filename in

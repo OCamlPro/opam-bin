@@ -10,6 +10,7 @@
 
 open Ezcmd.TYPES
 open EzConfig.OP
+open Ez_file.V1
 open EzFile.OP
 
 let cmd_name = "pull"
@@ -31,7 +32,7 @@ let action () =
       ] in
     Printf.eprintf "Calling '%s'\n%!"
       (String.concat " " args);
-    Misc.call (Array.of_list args);
+    Misc.call ~nvo:None (Array.of_list args);
     Printf.eprintf "Done.\n%!";
     ()
 

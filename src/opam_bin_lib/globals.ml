@@ -8,6 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open Ez_file.V1
 open EzFile.OP
 
 let command = "opam-bin"
@@ -35,7 +36,6 @@ let opam_plugins_bin_dir = opam_plugins_dir // "bin"
 let opambin_dir = opam_plugins_dir // command
 let opambin_bin = opambin_dir // command_exe
 let opambin_info = opambin_dir // command_info
-let opambin_log = opambin_dir // command_log
 let opambin_store_dir = opambin_dir // "store"
 let opambin_share_dir = opambin_dir // "share"
 let opambin_cache_dir = opambin_dir // "cache"
@@ -63,6 +63,7 @@ let opam_switch_prefix =
   )
 let opam_switch_prefix () = Lazy.force opam_switch_prefix
 
+
 let opam_switch_dir = opam_switch_prefix
 let opam_switch_internal_dir () =
   opam_switch_dir () // ".opam-switch"
@@ -79,6 +80,13 @@ let opambin_switch_temp_dir () =
 (* Where bin versions are stored to solve deps *)
 let opambin_switch_packages_dir () =
   opam_switch_dir () // "etc" // command // "packages"
+
+let opambin_log ~nvo =
+  match nvo with
+  | None -> opambin_dir // command_log
+  | Some nvo ->
+      opam_switch_internal_dir () // "opam-bin" // nvo ^ ".log"
+
 
 let opambin_session_msg_file () =
   opam_switch_internal_dir () // ( command ^ ".msg" )

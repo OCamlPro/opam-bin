@@ -26,18 +26,19 @@ TODO:
 let cmd_name = "wrap-build"
 
 let action args =
-  Misc.log_cmd cmd_name args ;
   Misc.make_cache_dir ();
   match args with
-  | _name :: _version :: _depends :: cmd ->
-    if Sys.file_exists Globals.marker_source
-    || Sys.file_exists Globals.marker_skip
-    then
-      Misc.call (Array.of_list cmd)
+  | name :: version :: _depends :: cmd ->
+      let nvo = Some ( Printf.sprintf "%s.%s" name version ) in
+      Misc.log_cmd ~nvo:None cmd_name args ;
+      if Sys.file_exists Globals.marker_source
+      || Sys.file_exists Globals.marker_skip
+      then
+        Misc.call ~nvo (Array.of_list cmd)
   | _ ->
-    Printf.eprintf
-      "Unexpected args: usage is '%s %s name version depends cmd...'\n%!" Globals.command cmd_name ;
-    exit 2
+      Printf.eprintf
+        "Unexpected args: usage is '%s %s name version depends cmd...'\n%!" Globals.command cmd_name ;
+      exit 2
 
 let cmd =
   let args = ref [] in

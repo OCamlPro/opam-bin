@@ -8,6 +8,7 @@
 (*                                                                        *)
 (**************************************************************************)
 
+open Ez_file.V1
 open Ezcmd.TYPES
 
 let cmd_name = "list"
@@ -16,7 +17,7 @@ let action () =
   Printf.eprintf "Binary packages in %s:\n%!"
     Globals.opambin_store_archives_dir;
   EzFile.make_dir ~p:true Globals.opambin_store_archives_dir ;
-  Misc.call [| "ls" ; Globals.opambin_store_archives_dir |]
+  Misc.call ~nvo:None [| "ls" ; Globals.opambin_store_archives_dir |]
 
 let cmd = {
   cmd_name ;

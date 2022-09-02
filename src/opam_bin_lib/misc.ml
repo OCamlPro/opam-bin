@@ -10,6 +10,7 @@
 
 open EzCompat
 open EzConfig.OP
+open Ez_file.V1
 open EzFile.OP
 open Ez_opam_file.V1
 
@@ -56,8 +57,8 @@ let info ~name ~version fmt =
         (Printf.sprintf "* %s.%s %s\n" name version s);
     ) fmt
 
-let global_log fmt =
-  log Globals.opambin_log fmt
+let global_log ~nvo fmt =
+  log (Globals.opambin_log ~nvo) fmt
 
 let log_err file fmt =
   Printf.kprintf (fun s ->
@@ -65,20 +66,20 @@ let log_err file fmt =
       append_text_file file
         (Printf.sprintf "%s: %s\n" (date()) s)) fmt
 
-let global_log_err fmt =
-  log_err Globals.opambin_log fmt
+let global_log_err ~nvo fmt =
+  log_err (Globals.opambin_log ~nvo) fmt
 
-let log_cmd cmd_name args =
-  global_log "============================================================";
-  global_log "in %s"Globals.curdir;
-  global_log "cmd: '%s'"
+let log_cmd ~nvo cmd_name args =
+  global_log ~nvo "===========================================================";
+  global_log ~nvo "in %s"Globals.curdir;
+  global_log ~nvo "cmd: '%s'"
     ( String.concat "' '" ( cmd_name :: args) )
 
 let make_cache_dir () =
   EzFile.make_dir ~p:true Globals.opambin_cache_dir
 
-let call ?(stdout = Unix.stdout) args =
-  global_log "calling '%s'"
+let call ~nvo ?(stdout = Unix.stdout) args =
+  global_log ~nvo "calling '%s'"
     (String.concat "' '" (Array.to_list args));
   let pid = Unix.create_process args.(0) args
       Unix.stdin stdout Unix.stderr in
@@ -99,7 +100,7 @@ let call ?(stdout = Unix.stdout) args =
   in
   iter ()
 
-let tar_zcf ?prefix archive files =
+let tar_zcf ~nvo ?prefix archive files =
   let temp_archive = archive ^ ".tmp" in
   begin
     match files with
@@ -123,9 +124,9 @@ let tar_zcf ?prefix archive files =
         args
       in
       let args =  "-cf" :: temp_archive :: args in
-      call @@ Array.of_list ( "tar" :: args )
+      call ~nvo @@ Array.of_list ( "tar" :: args )
   end;
-  call [| "gzip" ; "-n"; temp_archive |];
+  call ~nvo [| "gzip" ; "-n"; temp_archive |];
   Sys.rename ( temp_archive ^ ".gz" ) archive
 
 
@@ -148,9 +149,9 @@ let rotate file rotation =
   List.iter (fun (ext1, ext2) ->
       let file1 = file ^ ext1 in
       let file2 = file ^ ext2 in
-      if FileString.exists file1 then
-        let s = FileString.read_file file1 in
-        FileString.write_file file2 s;
+      if EzFile.exists file1 then
+        let s = EzFile.read_file file1 in
+        EzFile.write_file file2 s;
     ) rotation
 
 let backup_opam_config_done = ref false
@@ -312,17 +313,17 @@ let iter_repos ?name repos ~cont f =
   in
   iter_repos repos |> cont
 
-let write_marker marker content =
+let write_marker ~nvo marker content =
   let dir = Globals.opambin_switch_temp_dir () in
   if not ( Sys.file_exists dir ) then EzFile.make_dir ~p:true dir;
-  global_log "writing marker %s" marker;
+  global_log ~nvo "writing marker %s" marker;
   EzFile.write_file marker content
 
-let wget ~url ~output =
+let wget ~nvo ~url ~output =
   let dirname = Filename.dirname output in
   if not ( Sys.file_exists dirname ) then
     EzFile.make_dir ~p:true dirname;
-  call [| "curl" ;
+  call ~nvo [| "curl" ;
           "--write-out" ; "%{http_code}\\n" ;
           "--retry" ; "3" ;
           "--retry-delay" ; "2" ;
