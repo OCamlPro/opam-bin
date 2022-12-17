@@ -5,7 +5,7 @@
 (name opam-bin)
 (allow_approximate_merlin)
 (generate_opam_files false)
-(version 1.1.0)
+(version 1.2.0)
 (formatting (enabled_for ocaml reason))
 
 (package
