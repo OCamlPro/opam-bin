@@ -19,6 +19,8 @@ module OpamParser = OpamParser.FullPos
 module OpamPrinter = OpamPrinter.FullPos
 
 let append_text_file file s =
+  let dir = Filename.dirname file in
+            EzFile.make_dir ~p:true dir;
   let oc = open_out_gen [
       Open_creat;
       Open_append ;

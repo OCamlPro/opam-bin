@@ -85,7 +85,7 @@ let opambin_log ~nvo =
   match nvo with
   | None -> opambin_dir // command_log
   | Some nvo ->
-      opam_switch_internal_dir () // "opam-bin" // nvo ^ ".log"
+      opam_switch_internal_dir () // command // nvo ^ ".log"
 
 
 let opambin_session_msg_file () =
