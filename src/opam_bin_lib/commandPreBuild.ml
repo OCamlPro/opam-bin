@@ -249,7 +249,8 @@ let cached_binary_archive ~nvo ~name ~version ~depends =
     else
       let version_prefix = Printf.sprintf "%s.%s+bin+%s+"
           name version source_md5 in
-      if Misc.iter_repos ~cont:(fun x -> x)
+      if Misc.iter_repos
+          ~cont:(fun x -> x)
           ( Misc.all_repos () )
           (fun ~repo ~package ~version ->
           if EzString.starts_with version ~prefix:version_prefix then begin
