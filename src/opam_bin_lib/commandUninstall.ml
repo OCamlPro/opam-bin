@@ -35,7 +35,7 @@ let action () =
         Misc.opam_variable "wrap-install-commands"
           "%s"
           {|
-  ["%{hooks}%/sandbox.sh" "build"] {os = "linux" | os = "macos"}
+  ["%{hooks}%/sandbox.sh" "install"] {os = "linux" | os = "macos"}
 |} ::
         List.rev file_contents
       )
