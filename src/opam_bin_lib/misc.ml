@@ -260,7 +260,7 @@ let all_repos () =
 
 
 (* stops if [f] returns true and returns true *)
-let iter_repos ?name repos ~cont f =
+let iter_repos ?name ?nvo repos ~cont f =
   (*
   global_log "Searching repositories in:\n  %s"
     ( String.concat "\n  " repos);
@@ -270,48 +270,67 @@ let iter_repos ?name repos ~cont f =
   let rec iter_repos repos =
     match repos with
     | [] ->
-      false
+        false
     | repo :: repos ->
-      (* Printf.eprintf "Searching repo %S\n%!" repo; *)
-      let packages_dir = repo // "packages" in
-      let packages = match name with
-        | Some name -> [ name ]
-        | None ->
-          try
-            let files = Sys.readdir packages_dir in
-            Array.sort compare files ;
-            Array.to_list files
-          with _ -> []
-      in
-      iter_packages packages repo repos
+        global_log ~nvo "Searching repo %S\n%!" repo;
+        let repo =
+          if Filename.check_suffix repo ".tar.gz" then begin
+            let repo_dir = Filename.chop_suffix repo ".tar.gz" in
+            if not (Sys.file_exists repo_dir) then begin
+              let repo_parent = Filename.dirname repo_dir in
+              let current_dir = Sys.getcwd () in
+              Unix.chdir repo_parent;
+              begin
+                try
+                  call ~nvo [| "tar"; "zxf"; repo |];
+                with exn ->
+                  global_log ~nvo "Error in untar %s: %s" repo (Printexc.to_string exn)
+              end;
+              Unix.chdir current_dir ;
+            end;
+            repo_dir
+          end
+          else repo
+        in
+        let packages_dir = repo // "packages" in
+        let packages = match name with
+          | Some name -> [ name ]
+          | None ->
+              try
+                let files = Sys.readdir packages_dir in
+                Array.sort compare files ;
+                Array.to_list files
+              with _ -> []
+        in
+        iter_packages packages repo repos
 
   and iter_packages packages repo repos =
     match packages with
     | [] ->
-      (* Printf.eprintf "Next repo ?\n%!"; *)
-      iter_repos repos
+        (* Printf.eprintf "Next repo ?\n%!"; *)
+        iter_repos repos
     | package :: packages ->
-      (* Printf.eprintf " Searching package %S\n%!" package ; *)
-      let package_dir = repo // "packages" // package in
-      match Sys.readdir package_dir with
-      | exception _ -> iter_packages packages repo repos
-      | versions ->
-        Array.sort compare versions;
-        let versions = Array.to_list versions in
-        iter_versions versions package packages repo repos
+        (* Printf.eprintf " Searching package %S\n%!" package ; *)
+        let package_dir = repo // "packages" // package in
+        match Sys.readdir package_dir with
+        | exception _ -> iter_packages packages repo repos
+        | versions ->
+            Array.sort compare versions;
+            let versions = Array.to_list versions in
+            iter_versions versions package packages repo repos
 
   and iter_versions versions package packages repo repos =
     match versions with
     | [] ->
-      (* Printf.eprintf " Next package ?\n%!"; *)
-      iter_packages packages repo repos
+        (* Printf.eprintf " Next package ?\n%!"; *)
+        iter_packages packages repo repos
     | version :: versions ->
-      (* Printf.eprintf "  Searching version %S\n%!" version ; *)
-      if f ~repo ~package ~version then begin
-        (* Printf.eprintf "Found, stopping\n%!"; *)
-        true
-      end else
-        iter_versions versions package packages repo repos
+        (* Printf.eprintf "  Searching version %S\n%!" version ; *)
+        if f ~repo ~package ~version then begin
+          (* Printf.eprintf "Found, stopping\n%!"; *)
+          true
+        end else
+          iter_versions versions package packages repo repos
   in
   iter_repos repos |> cont
 
